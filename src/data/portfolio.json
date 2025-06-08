@@ -1,0 +1,70 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "Geoda Azul",
+      "description": "Pieza inspirada en formaciones geológicas naturales con tonos azules profundos",
+      "image": "/images/portfolio/geode-blue.jpg",
+      "dimensions": "30x30 cm",
+      "technique": "Resina epoxi con pigmentos minerales",
+      "category": "natural",
+      "price": "€150",
+      "available": true
+    },
+    {
+      "id": 2,
+      "title": "Océano Profundo",
+      "description": "Recreación de un paisaje marino con efectos de profundidad y movimiento",
+      "image": "/images/portfolio/ocean-deep.jpg",
+      "dimensions": "40x60 cm",
+      "technique": "Resina epoxi con efectos de olas",
+      "category": "natural",
+      "price": "€200",
+      "available": true
+    },
+    {
+      "id": 3,
+      "title": "Abstracción Moderna",
+      "description": "Diseño contemporáneo con formas fluidas y colores vibrantes",
+      "image": "/images/portfolio/abstract-modern.jpg",
+      "dimensions": "50x50 cm",
+      "technique": "Resina epoxi con pigmentos metálicos",
+      "category": "modern",
+      "price": "€180",
+      "available": true
+    },
+    {
+      "id": 4,
+      "title": "Minimalista Blanco",
+      "description": "Pieza minimalista con líneas limpias y diseño esencial",
+      "image": "/images/portfolio/minimal-white.jpg",
+      "dimensions": "35x35 cm",
+      "technique": "Resina epoxi con acabado mate",
+      "category": "modern",
+      "price": "€120",
+      "available": true
+    },
+    {
+      "id": 5,
+      "title": "Geoda Rosa",
+      "description": "Formación geológica con tonos rosados y dorados",
+      "image": "/images/portfolio/geode-pink.jpg",
+      "dimensions": "25x25 cm",
+      "technique": "Resina epoxi con pigmentos minerales y dorado",
+      "category": "natural",
+      "price": "€160",
+      "available": false
+    },
+    {
+      "id": 6,
+      "title": "Océano Turquesa",
+      "description": "Paisaje marino con tonos turquesa y efectos de espuma",
+      "image": "/images/portfolio/ocean-turquoise.jpg",
+      "dimensions": "45x45 cm",
+      "technique": "Resina epoxi con efectos de olas y espuma",
+      "category": "natural",
+      "price": "€190",
+      "available": true
+    }
+  ]
+}
