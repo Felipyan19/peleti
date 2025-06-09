@@ -1,9 +1,21 @@
 "use client";
 
+import React from "react";
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import {
+  Box,
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+} from "@mui/material";
 import { FaTimes } from "react-icons/fa";
 
 const portfolioItems = [
@@ -47,107 +59,153 @@ export default function Portfolio() {
   const [selectedItem, setSelectedItem] = useState<
     (typeof portfolioItems)[0] | null
   >(null);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <section id="portfolio" className="py-20">
-      <div className="container mx-auto px-4">
+    <Box component="section" id="portfolio" sx={{ py: 10 }}>
+      <Container maxWidth="lg">
+        {/* Título */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          style={{ textAlign: "center", marginBottom: 64 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Catálogo</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <Typography variant="h2" gutterBottom>
+            Catálogo
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            mx="auto"
+            maxWidth={600}
+          >
             Explora nuestra colección de piezas únicas, cada una con su propia
             historia y técnica especial.
-          </p>
+          </Typography>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {portfolioItems.map((item, index) => (
-            <motion.div
+        {/* Rejilla de items */}
+        <Box sx={{ display: "flex", flexWrap: "wrap", mx: -2 }}>
+          {portfolioItems.map((item, idx) => (
+            <Box
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              className="bg-white rounded-lg overflow-hidden shadow-lg cursor-pointer"
-              onClick={() => setSelectedItem(item)}
-            >
-              <div className="relative h-64">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <AnimatePresence>
-          {selectedItem && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50"
-              onClick={() => setSelectedItem(null)}
+              sx={{ width: { xs: "100%", sm: "50%", md: "33.33%" }, p: 2 }}
             >
               <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.8, delay: idx * 0.1 }}
               >
-                <div className="relative h-96">
+                <Card
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => setSelectedItem(item)}
+                >
+                  <Box sx={{ position: "relative", width: "100%", pt: "75%" }}>
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      width={500}
+                      height={375}
+                      style={{
+                        objectFit: "cover",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </Box>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {item.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Modal detalle */}
+        <Dialog
+          open={!!selectedItem}
+          onClose={() => setSelectedItem(null)}
+          maxWidth="md"
+          fullWidth
+        >
+          {selectedItem && (
+            <>
+              <DialogTitle sx={{ m: 0, p: 2 }}>
+                {selectedItem.title}
+                <IconButton
+                  aria-label="close"
+                  onClick={() => setSelectedItem(null)}
+                  sx={{
+                    position: "absolute",
+                    right: 8,
+                    top: 8,
+                    color: (t) => t.palette.grey[500],
+                  }}
+                >
+                  <FaTimes />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent dividers>
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: 400,
+                    mb: 2,
+                  }}
+                >
                   <Image
                     src={selectedItem.image}
                     alt={selectedItem.title}
-                    fill
-                    className="object-cover"
+                    width={800}
+                    height={600}
+                    style={{
+                      objectFit: "cover",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                    }}
                   />
-                  <button
-                    className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg"
-                    onClick={() => setSelectedItem(null)}
-                  >
-                    <FaTimes className="w-6 h-6" />
-                  </button>
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold mb-4">
-                    {selectedItem.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    {selectedItem.description}
-                  </p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="font-semibold mb-2">Dimensiones</h4>
-                      <p className="text-gray-600">{selectedItem.dimensions}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-2">Técnica</h4>
-                      <p className="text-gray-600">{selectedItem.technique}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
+                </Box>
+                <Typography variant="body1" paragraph>
+                  {selectedItem.description}
+                </Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", mx: -2 }}>
+                  <Box sx={{ width: "50%", p: 2 }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Dimensiones
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {selectedItem.dimensions}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ width: "50%", p: 2 }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Técnica
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {selectedItem.technique}
+                    </Typography>
+                  </Box>
+                </Box>
+              </DialogContent>
+            </>
           )}
-        </AnimatePresence>
-      </div>
-    </section>
+        </Dialog>
+      </Container>
+    </Box>
   );
 }

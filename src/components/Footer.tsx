@@ -1,124 +1,118 @@
+"use client";
+
 import Link from "next/link";
+import { Box, Container, Typography, Grid, IconButton, useTheme } from "@mui/material";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
+  const theme = useTheme();
+
   return (
-    <footer className="bg-black text-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-4">Resin Art</h3>
-            <p className="text-gray-400">
+    <Box component="footer" sx={{ backgroundColor: "background.default", color: "text.secondary", py: 8 }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          {/* Descripción */}
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom color="text.primary">
+              Resin Art
+            </Typography>
+            <Typography variant="body2">
               Creando piezas únicas en resina con pasión y dedicación.
-            </p>
-          </div>
+            </Typography>
+          </Grid>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Enlaces Rápidos</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="#about"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Sobre Nosotros
+          {/* Enlaces Rápidos */}
+          <Grid item xs={12} md={2}>
+            <Typography variant="subtitle1" gutterBottom color="text.primary">
+              Enlaces Rápidos
+            </Typography>
+            {[
+              { label: "Sobre Nosotros", href: "#about" },
+              { label: "Estilos", href: "#styles" },
+              { label: "Catálogo", href: "#portfolio" },
+              { label: "Contacto", href: "#contact" },
+            ].map(({ label, href }) => (
+              <Box key={href} mb={1}>
+                <Link href={href} passHref legacyBehavior>
+                  <Typography
+                    component="a"
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": { color: theme.palette.primary.main },
+                    }}
+                  >
+                    {label}
+                  </Typography>
                 </Link>
-              </li>
-              <li>
-                <Link
-                  href="#styles"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Estilos
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#portfolio"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Catálogo
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#contact"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Contacto
-                </Link>
-              </li>
-            </ul>
-          </div>
+              </Box>
+            ))}
+          </Grid>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/privacidad"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Política de Privacidad
+          {/* Legal */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="subtitle1" gutterBottom color="text.primary">
+              Legal
+            </Typography>
+            {[
+              { label: "Política de Privacidad", href: "/privacidad" },
+              { label: "Términos y Condiciones", href: "/terminos" },
+              { label: "Política de Cookies", href: "/cookies" },
+            ].map(({ label, href }) => (
+              <Box key={href} mb={1}>
+                <Link href={href} passHref legacyBehavior>
+                  <Typography
+                    component="a"
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      textDecoration: "none",
+                      "&:hover": { color: theme.palette.primary.main },
+                    }}
+                  >
+                    {label}
+                  </Typography>
                 </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terminos"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Términos y Condiciones
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cookies"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Política de Cookies
-                </Link>
-              </li>
-            </ul>
-          </div>
+              </Box>
+            ))}
+          </Grid>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Síguenos</h4>
-            <div className="flex gap-4">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <FaInstagram className="w-6 h-6" />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <FaFacebook className="w-6 h-6" />
-              </a>
-              <a
-                href="https://wa.me/1234567890"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <FaWhatsapp className="w-6 h-6" />
-              </a>
-            </div>
-          </div>
-        </div>
+          {/* Redes Sociales */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="subtitle1" gutterBottom color="text.primary">
+              Síguenos
+            </Typography>
+            <Box display="flex" gap={1}>
+              {[{ Icon: FaInstagram, href: "https://instagram.com" },
+                { Icon: FaFacebook, href: "https://facebook.com" },
+                { Icon: FaWhatsapp, href: "https://wa.me/1234567890" },
+              ].map(({ Icon, href }) => (
+                <IconButton
+                  key={href}
+                  component="a"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    color: "text.secondary",
+                    "&:hover": { color: theme.palette.primary.main },
+                  }}
+                >
+                  <Icon />
+                </IconButton>
+              ))}
+            </Box>
+          </Grid>
+        </Grid>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>
-            &copy; {new Date().getFullYear()} Resin Art. Todos los derechos
-            reservados.
-          </p>
-        </div>
-      </div>
-    </footer>
+        {/* Derechos reservados */}
+        <Box textAlign="center" borderTop={1} borderColor="divider" mt={6} pt={3}>
+          <Typography variant="body2">
+            &copy; {new Date().getFullYear()} Resin Art. Todos los derechos reservados.
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }

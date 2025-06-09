@@ -1,78 +1,138 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
+import Image from "next/image";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  useMediaQuery,
+  useTheme as useMuiTheme,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { useThemeContext } from "./ThemeRegistry";
 
 const MENU_ITEMS = [
   { label: "Inicio", href: "#inicio" },
-  { label: "Sobre Nosotros", href: "#sobre-nosotros" },
+  { label: "Sobre Nosotros", href: "#about" },
   { label: "Estilos", href: "#estilos" },
   { label: "Proceso", href: "#proceso" },
-  { label: "Portafolio", href: "#portafolio" },
+  { label: "Portafolio", href: "#portfolio" },
   { label: "Contacto", href: "#contacto" },
 ];
 
 const Navbar: React.FC = () => {
-  const [visible, setVisible] = useState(false);
-  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const muiTheme = useMuiTheme();
+  const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
+  const { mode, toggleTheme } = useThemeContext();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setVisible(true);
-        if (timeoutId.current) clearTimeout(timeoutId.current);
-        timeoutId.current = setTimeout(() => setVisible(false), 2000);
-      } else {
-        setVisible(false);
-        if (timeoutId.current) clearTimeout(timeoutId.current);
-      }
-    };
+  const handleDrawerToggle = () => setIsOpen(!isOpen);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (timeoutId.current) clearTimeout(timeoutId.current);
-    };
-  }, []);
-
-  // Mostrar menú si se navega a un hash (cambio de sección)
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.scrollY > 0) {
-        setVisible(true);
-        if (timeoutId.current) clearTimeout(timeoutId.current);
-        timeoutId.current = setTimeout(() => setVisible(false), 2000);
-      }
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+      <List>
+        {MENU_ITEMS.map((item) => (
+          <ListItem key={item.href} disablePadding>
+            <ListItemButton
+              component="a"
+              href={item.href}
+              sx={{
+                textAlign: "center",
+                color: "text.primary",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <ListItem disablePadding>
+          <ListItemButton onClick={toggleTheme} sx={{ textAlign: "center" }}>
+            <ListItemText
+              primary={mode === "dark" ? "🌙 Modo oscuro" : "☀️ Modo claro"}
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-opacity duration-300 bg-white/90 shadow ${
-        visible
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-0 pointer-events-none"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-2">
-        <span className="font-bold text-lg flex items-center gap-2">
-          <span className="inline-block w-4 h-4 bg-black rounded-full" /> Peleti
-        </span>
-        <ul className="flex gap-6 text-sm font-medium">
-          {MENU_ITEMS.map((item) => (
-            <li key={item.href}>
-              <a
+    <AppBar position="fixed" color="default" sx={{ bgcolor: "background.paper" }}>
+      <Toolbar
+        sx={{
+          justifyContent: "space-between",
+          maxWidth: "1200px",
+          width: "100%",
+          mx: "auto",
+          px: 2,
+        }}
+      >
+        {/* logo + marca */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Image src="/logo.png" alt="Peleti" width={32} height={32} />
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary" }}>
+            Peleti
+          </Typography>
+        </Box>
+
+        {/* menú móvil o escritorio */}
+        {isMobile ? (
+          <IconButton
+            onClick={handleDrawerToggle}
+            aria-label="open drawer"
+            edge="end"
+            sx={{ color: "text.primary" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        ) : (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+            {MENU_ITEMS.map((item) => (
+              <Button
+                key={item.href}
                 href={item.href}
-                className="hover:text-blue-600 transition-colors"
+                variant="text"
+                sx={{
+                  textTransform: "none",
+                  color: "text.primary",
+                  "&:hover": { color: "primary.main" },
+                }}
               >
                 {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
+              </Button>
+            ))}
+            <IconButton onClick={toggleTheme} color="primary" aria-label="Cambiar tema">
+              {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+          </Box>
+        )}
+
+        <Drawer
+          anchor="right"
+          open={isOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": { width: 240 },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Toolbar>
+    </AppBar>
   );
 };
 

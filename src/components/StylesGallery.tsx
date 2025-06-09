@@ -4,6 +4,19 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Card,
+  CardActionArea,
+  CardContent,
+  useTheme,
+} from "@mui/material";
+
+// Componente animado a partir de Card
+const MotionCard = motion(Card);
 
 const styles = [
   {
@@ -34,6 +47,13 @@ const styles = [
     image: "/images/minimal.jpg",
     category: "modern",
   },
+  {
+    id: 5,
+    name: "Metálico",
+    description: "Acabados con efectos metálicos y brillantes",
+    image: "/images/metallic.jpg",
+    category: "modern",
+  },
 ];
 
 const categories = [
@@ -42,78 +62,128 @@ const categories = [
   { id: "modern", name: "Moderno" },
 ];
 
-export default function StylesGallery() {
+export default function StylesGalleryVento() {
+  const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   const filteredStyles =
     selectedCategory === "all"
       ? styles
-      : styles.filter((style) => style.category === selectedCategory);
+      : styles.filter((s) => s.category === selectedCategory);
 
   return (
-    <section id="styles" className="py-20">
-      <div className="container mx-auto px-4">
+    <Box
+      component="section"
+      id="styles"
+      sx={{ py: 12, backgroundColor: "background.default" }}
+    >
+      <Container maxWidth="lg">
+        {/* Título */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          style={{ textAlign: "center", marginBottom: theme.spacing(6) }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "text.primary",
+              mb: 2,
+            }}
+          >
             Estilos de Figuras
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            mx="auto"
+            maxWidth={600}
+          >
             Explora nuestra colección de estilos únicos, cada uno con su propia
             personalidad y técnica especial.
-          </p>
+          </Typography>
         </motion.div>
 
-        <div className="flex justify-center gap-4 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-6 py-2 rounded-full transition-all ${
-                selectedCategory === category.id
-                  ? "bg-black text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
+        {/* Filtros tipo “pill” */}
+        <Box display="flex" justifyContent="center" gap={2} mb={8}>
+          {categories.map((cat) => {
+            const selected = selectedCategory === cat.id;
+            return (
+              <Button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                variant={selected ? "contained" : "outlined"}
+                color="primary"
+                sx={{
+                  textTransform: "none",
+                  borderRadius: "50px",
+                  px: 3,
+                  py: 1,
+                  transition: "all 0.3s",
+                }}
+              >
+                {cat.name}
+              </Button>
+            );
+          })}
+        </Box>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredStyles.map((style, index) => (
-            <motion.div
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 4,
+            justifyContent: "center",
+          }}
+        >
+          {filteredStyles.map((style) => (
+            <MotionCard
               key={style.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: index * 0.1 }}
-              className="bg-white rounded-lg overflow-hidden shadow-lg"
+              elevation={3}
+              whileHover={{ y: -8, boxShadow: theme.shadows[8] }}
+              transition={{ type: "spring", stiffness: 300 }}
+              sx={{
+                width: 300,        // ancho fijo
+                height: 380,       // alto fijo
+                borderRadius: 3,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
-              <div className="relative h-48">
-                <Image
-                  src={style.image}
-                  alt={style.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{style.name}</h3>
-                <p className="text-gray-600">{style.description}</p>
-              </div>
-            </motion.div>
+              <CardActionArea sx={{ flexGrow: 1 }}>
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "16/9",
+                  }}
+                >
+                  <Image
+                    src={style.image}
+                    alt={style.name}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </Box>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {style.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {style.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </MotionCard>
           ))}
-        </div>
-      </div>
-    </section>
+        </Box>
+      </Container>
+    </Box>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
@@ -9,44 +10,46 @@ export default function About() {
     threshold: 0.1,
   });
 
+  const paragraphs = [
+    "Somos apasionados artistas especializados en la creación de piezas únicas en resina. Nuestro viaje comenzó hace más de 5 años, cuando descubrimos la magia de transformar materiales simples en obras de arte extraordinarias.",
+    "Nuestra misión es crear piezas que no solo sean visualmente impresionantes, sino que también cuenten una historia y evoquen emociones en quienes las contemplan. Cada creación es única, hecha a mano con amor y atención al detalle.",
+    "Nos especializamos en una amplia variedad de técnicas, desde geodas y océanos hasta piezas abstractas y personalizadas. Cada proyecto es una oportunidad para explorar nuevos límites y crear algo verdaderamente especial.",
+  ];
+
   return (
-    <section id="about" className="py-20 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <Box
+      component="section"
+      id="about"
+      sx={{ py: 10, backgroundColor: "background.paper" }}
+    >
+      <Container maxWidth="md">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl mx-auto text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">
+          <Typography
+            variant="h2"
+            component="h2"
+            align="center"
+            gutterBottom
+          >
             Sobre Nosotros
-          </h2>
+          </Typography>
 
-          <div className="space-y-6 text-lg text-gray-700">
-            <p>
-              Somos apasionados artistas especializados en la creación de piezas
-              únicas en resina. Nuestro viaje comenzó hace más de 5 años, cuando
-              descubrimos la magia de transformar materiales simples en obras de
-              arte extraordinarias.
-            </p>
-
-            <p>
-              Nuestra misión es crear piezas que no solo sean visualmente
-              impresionantes, sino que también cuenten una historia y evoquen
-              emociones en quienes las contemplan. Cada creación es única, hecha
-              a mano con amor y atención al detalle.
-            </p>
-
-            <p>
-              Nos especializamos en una amplia variedad de técnicas, desde
-              geodas y océanos hasta piezas abstractas y personalizadas. Cada
-              proyecto es una oportunidad para explorar nuevos límites y crear
-              algo verdaderamente especial.
-            </p>
-          </div>
+          {paragraphs.map((text, i) => (
+            <Typography
+              key={i}
+              variant="body1"
+              color="text.secondary"
+              paragraph
+            >
+              {text}
+            </Typography>
+          ))}
         </motion.div>
-      </div>
-    </section>
+      </Container>
+    </Box>
   );
 }
