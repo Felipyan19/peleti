@@ -2,9 +2,14 @@
 
 import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { useScrollToSection } from "@/utils/useScrollToSection";
 import Image from "next/image";
 
 export default function Hero() {
+  const { ref, shouldAnimate } = useScrollToSection("inicio", {
+    threshold: 0.1,
+  });
+
   return (
     <Box
       component="section"
@@ -24,7 +29,7 @@ export default function Hero() {
         }}
       >
         <Image
-          src="/images/hero-bg.jpg"
+          src="/images/taller-resina.jpg"
           alt="Resin art background"
           fill
           style={{
@@ -44,6 +49,7 @@ export default function Hero() {
 
       {/* Contenido */}
       <Box
+        ref={ref}
         sx={{
           position: "relative",
           zIndex: 2,
@@ -56,33 +62,35 @@ export default function Hero() {
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8 }}
         >
           <Typography variant="h1" component="h1" gutterBottom>
-            Arte en Resina
+            Peleti – Artesanías en Resina
           </Typography>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <Typography variant="h5" component="p" gutterBottom>
-            Piezas únicas y personalizadas
+            Lleva belleza y color a tu espacio con piezas únicas hechas a mano
           </Typography>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <Button
             variant="contained"
             color="primary"
-            href="#portfolio"
+            href="#catalogo"
             size="large"
             sx={{
               textTransform: "none",
@@ -91,7 +99,7 @@ export default function Hero() {
               borderRadius: "9999px",
             }}
           >
-            Ver Catálogo
+            Explora nuestro catálogo
           </Button>
         </motion.div>
       </Box>

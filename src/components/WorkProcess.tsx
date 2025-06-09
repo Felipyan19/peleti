@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { useScrollToSection } from "@/utils/useScrollToSection";
 import { Box, Container, Typography, useTheme } from "@mui/material";
 import {
   Timeline,
@@ -12,38 +12,54 @@ import {
   TimelineOppositeContent,
   TimelineDot,
 } from "@mui/lab";
-import { FaFlask, FaPaintBrush, FaMagic, FaCheckCircle } from "react-icons/fa";
+import {
+  FaFlask,
+  FaPaintBrush,
+  FaMagic,
+  FaCheckCircle,
+  FaSearch,
+} from "react-icons/fa";
 
 const steps = [
   {
     id: 1,
-    title: "Preparación",
-    description: "Selección de materiales y preparación del espacio de trabajo",
-    icon: FaFlask,
-  },
-  {
-    id: 2,
-    title: "Diseño",
-    description: "Planificación del diseño y selección de colores",
+    title: "Diseño y molde",
+    description: "Bosquejamos la pieza y preparamos el molde personalizado.",
     icon: FaPaintBrush,
   },
   {
+    id: 2,
+    title: "Mezcla y pigmentación",
+    description:
+      "Combinamos resina de alta calidad con pigmentos seleccionados.",
+    icon: FaFlask,
+  },
+  {
     id: 3,
-    title: "Creación",
-    description: "Proceso de mezcla y aplicación de la resina",
+    title: "Vaciado y curado",
+    description:
+      "Vertemos con precisión y dejamos secar bajo condiciones controladas.",
     icon: FaMagic,
   },
   {
     id: 4,
-    title: "Acabado",
-    description: "Pulido y detalles finales para un acabado perfecto",
+    title: "Pulido y acabado",
+    description: "Lijamos y pulimos para lograr un brillo perfecto.",
     icon: FaCheckCircle,
+  },
+  {
+    id: 5,
+    title: "Control de calidad",
+    description: "Revisamos cada detalle antes de embalar tu figura.",
+    icon: FaSearch,
   },
 ];
 
 export default function WorkProcess() {
   const theme = useTheme();
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const { ref, shouldAnimate } = useScrollToSection("proceso", {
+    threshold: 0.2,
+  });
 
   return (
     <Box
@@ -56,12 +72,20 @@ export default function WorkProcess() {
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.8 }}
           style={{ textAlign: "center", marginBottom: theme.spacing(8) }}
         >
-          <Typography variant="h2" gutterBottom>
-            Proceso de Trabajo
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: 700,
+              letterSpacing: "0.05em",
+              color: "text.primary",
+              mb: 2,
+            }}
+          >
+            Cómo creamos tus figuras
           </Typography>
           <Typography
             variant="body1"
@@ -99,10 +123,18 @@ export default function WorkProcess() {
                 <TimelineContent sx={{ py: "12px", px: 2 }}>
                   <motion.div
                     initial={{ opacity: 0, x: idx % 2 === 0 ? -20 : 20 }}
-                    animate={inView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.6, delay: idx * 0.1 }}
+                    animate={
+                      shouldAnimate
+                        ? { opacity: 1, x: 0 }
+                        : { opacity: 0, x: idx % 2 === 0 ? -20 : 20 }
+                    }
+                    transition={{ duration: 0.6, delay: 0.2 + idx * 0.1 }}
                   >
-                    <Typography variant="h6" component="span">
+                    <Typography
+                      variant="h6"
+                      component="span"
+                      color="text.primary"
+                    >
                       {step.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">

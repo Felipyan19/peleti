@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { useScrollToSection } from "@/utils/useScrollToSection";
 import {
   Box,
   Container,
@@ -22,43 +22,31 @@ const styles = [
   {
     id: 1,
     name: "Geodas",
-    description: "Piezas inspiradas en formaciones geológicas naturales",
-    image: "/images/geode.jpg",
+    description: "Recreaciones minerales con contrastes de color y brillo.",
+    image: "/images/taller-resina.jpg",
     category: "natural",
   },
   {
     id: 2,
     name: "Océanos",
-    description: "Recreaciones de paisajes marinos con efectos de profundidad",
-    image: "/images/ocean.jpg",
+    description: "Escenas marinas con efecto de profundidad y movimiento.",
+    image: "/images/taller-resina.jpg",
     category: "natural",
   },
   {
     id: 3,
     name: "Abstracto",
-    description: "Diseños modernos y contemporáneos",
-    image: "/images/abstract.jpg",
-    category: "modern",
-  },
-  {
-    id: 4,
-    name: "Minimalista",
-    description: "Piezas con líneas limpias y diseño esencial",
-    image: "/images/minimal.jpg",
-    category: "modern",
-  },
-  {
-    id: 5,
-    name: "Metálico",
-    description: "Acabados con efectos metálicos y brillantes",
-    image: "/images/metallic.jpg",
+    description: "Diseños contemporáneos que juegan con formas y texturas.",
+    image: "/images/taller-resina.jpg",
     category: "modern",
   },
 ];
 
 export default function StylesGalleryVento() {
   const theme = useTheme();
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { ref, shouldAnimate } = useScrollToSection("estilos", {
+    threshold: 0.1,
+  });
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const filteredStyles =
@@ -77,7 +65,7 @@ export default function StylesGalleryVento() {
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
           style={{ textAlign: "center", marginBottom: theme.spacing(6) }}
         >
@@ -90,7 +78,7 @@ export default function StylesGalleryVento() {
               mb: 2,
             }}
           >
-            Estilos de Figuras
+            Estilos disponibles
           </Typography>
           <Typography
             variant="body1"
@@ -98,32 +86,42 @@ export default function StylesGalleryVento() {
             mx="auto"
             maxWidth={600}
           >
-            Explora nuestra colección de estilos únicos, cada uno con su propia
-            personalidad y técnica especial.
+            Descubre nuestra variedad de estilos, pensados para todos los gustos
+            y ambientes.
           </Typography>
         </motion.div>
 
         {/* Filtros */}
-        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
-          <Button
-            variant={selectedCategory === "all" ? "contained" : "outlined"}
-            onClick={() => setSelectedCategory("all")}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <Box
+            sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}
           >
-            Todos
-          </Button>
-          <Button
-            variant={selectedCategory === "natural" ? "contained" : "outlined"}
-            onClick={() => setSelectedCategory("natural")}
-          >
-            Natural
-          </Button>
-          <Button
-            variant={selectedCategory === "modern" ? "contained" : "outlined"}
-            onClick={() => setSelectedCategory("modern")}
-          >
-            Moderno
-          </Button>
-        </Box>
+            <Button
+              variant={selectedCategory === "all" ? "contained" : "outlined"}
+              onClick={() => setSelectedCategory("all")}
+            >
+              Todos
+            </Button>
+            <Button
+              variant={
+                selectedCategory === "natural" ? "contained" : "outlined"
+              }
+              onClick={() => setSelectedCategory("natural")}
+            >
+              Natural
+            </Button>
+            <Button
+              variant={selectedCategory === "modern" ? "contained" : "outlined"}
+              onClick={() => setSelectedCategory("modern")}
+            >
+              Moderno
+            </Button>
+          </Box>
+        </motion.div>
 
         <Box
           sx={{
@@ -133,46 +131,56 @@ export default function StylesGalleryVento() {
             justifyContent: "center",
           }}
         >
-          {filteredStyles.map((style) => (
-            <MotionCard
+          {filteredStyles.map((style, index) => (
+            <motion.div
               key={style.id}
-              elevation={3}
-              whileHover={{ y: -8, boxShadow: theme.shadows[8] }}
-              transition={{ type: "spring", stiffness: 300 }}
-              sx={{
-                width: 300, // ancho fijo
-                height: 380, // alto fijo
-                borderRadius: 3,
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={
+                shouldAnimate
+                  ? { opacity: 1, scale: 1 }
+                  : { opacity: 0, scale: 0.8 }
+              }
+              transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
             >
-              <CardActionArea sx={{ flexGrow: 1 }}>
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "100%",
-                    aspectRatio: "16/9",
-                  }}
-                >
-                  <Image
-                    src={style.image}
-                    alt={style.name}
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </Box>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {style.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {style.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </MotionCard>
+              <MotionCard
+                elevation={3}
+                whileHover={{ y: -8, boxShadow: theme.shadows[8] }}
+                transition={{ type: "spring", stiffness: 300 }}
+                sx={{
+                  width: 300, // ancho fijo
+                  height: 380, // alto fijo
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <CardActionArea sx={{ flexGrow: 1 }}>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      width: "100%",
+                      aspectRatio: "16/9",
+                    }}
+                  >
+                    <Image
+                      src={style.image}
+                      alt={style.name}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  </Box>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {style.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {style.description}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </MotionCard>
+            </motion.div>
           ))}
         </Box>
       </Container>

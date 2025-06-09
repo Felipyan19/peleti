@@ -13,7 +13,6 @@ export default function Footer() {
         py: 4,
         borderTop: 1,
         borderColor: "divider",
-        mt: 8,
       }}
     >
       <Container maxWidth="lg">

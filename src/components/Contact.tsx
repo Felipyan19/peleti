@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { useScrollToSection } from "@/utils/useScrollToSection";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
 
 export default function Contact() {
@@ -27,7 +27,9 @@ export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { ref, shouldAnimate } = useScrollToSection("contacto", {
+    threshold: 0.1,
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -60,15 +62,24 @@ export default function Contact() {
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
         >
           <Box textAlign="center" mb={6}>
-            <Typography variant="h4" gutterBottom>
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: 700,
+                letterSpacing: "0.05em",
+                color: "text.primary",
+                mb: 2,
+              }}
+            >
               Contáctanos
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              ¿Tienes alguna consulta o proyecto? Escríbenos.
+              ¿Tienes alguna pregunta o quieres un diseño a medida? Escríbenos y
+              te responderemos en menos de 24 horas.
             </Typography>
           </Box>
 
@@ -85,63 +96,72 @@ export default function Contact() {
               sm={6}
               sx={{ display: "flex", justifyContent: "center" }}
             >
-              <Box
-                component="form"
-                onSubmit={handleSubmit}
-                noValidate
-                sx={{
-                  width: "100%",
-                  maxWidth: 480,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 3,
-                }}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={
+                  shouldAnimate ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }
+                }
+                transition={{ duration: 0.6, delay: 0.2 }}
+                style={{ width: "100%" }}
               >
-                <TextField
-                  label="Nombre"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  size="medium"
-                />
-                <TextField
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  fullWidth
-                  size="medium"
-                />
-                <TextField
-                  label="Mensaje"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  multiline
-                  rows={4}
-                  fullWidth
-                  size="medium"
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={isSubmitting}
-                  sx={{ textTransform: "none", mt: 2, py: 1.5 }}
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  sx={{
+                    width: "100%",
+                    maxWidth: 480,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 3,
+                  }}
                 >
-                  {isSubmitting ? "Enviando..." : "Enviar"}
-                </Button>
-                {submitStatus === "success" && (
-                  <Alert severity="success">¡Enviado!</Alert>
-                )}
-                {submitStatus === "error" && (
-                  <Alert severity="error">Error. Intenta de nuevo.</Alert>
-                )}
-              </Box>
+                  <TextField
+                    label="Nombre"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    fullWidth
+                    size="medium"
+                  />
+                  <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    fullWidth
+                    size="medium"
+                  />
+                  <TextField
+                    label="Mensaje"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    multiline
+                    rows={4}
+                    fullWidth
+                    size="medium"
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={isSubmitting}
+                    sx={{ textTransform: "none", mt: 2, py: 1.5 }}
+                  >
+                    {isSubmitting ? "Enviando..." : "Enviar"}
+                  </Button>
+                  {submitStatus === "success" && (
+                    <Alert severity="success">¡Enviado!</Alert>
+                  )}
+                  {submitStatus === "error" && (
+                    <Alert severity="error">Error. Intenta de nuevo.</Alert>
+                  )}
+                </Box>
+              </motion.div>
             </Grid>
 
             {/* Redes & Contacto */}
@@ -151,53 +171,70 @@ export default function Contact() {
               sm={6}
               sx={{ display: "flex", justifyContent: "center" }}
             >
-              <Box
-                sx={{
-                  textAlign: "center",
-                  width: "100%",
-                  maxWidth: 480,
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 4,
-                }}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={
+                  shouldAnimate ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }
+                }
+                transition={{ duration: 0.6, delay: 0.4 }}
+                style={{ width: "100%" }}
               >
-                <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-                  {[
-                    { Icon: FaInstagram, href: "https://instagram.com" },
-                    { Icon: FaFacebook, href: "https://facebook.com" },
-                    { Icon: FaWhatsapp, href: "https://wa.me/1234567890" },
-                  ].map(({ Icon, href }) => (
-                    <IconButton
-                      key={href}
-                      component="a"
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        mx: 1,
-                        color: theme.palette.text.primary,
-                        "&:hover": {
-                          transform: "scale(1.1)",
-                          transition: "transform 0.2s ease-in-out",
-                        },
-                      }}
-                    >
-                      <Icon size={24} />
-                    </IconButton>
-                  ))}
-                </Box>
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{ lineHeight: 2 }}
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    width: "100%",
+                    maxWidth: 480,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                  }}
                 >
-                  📍 Ciudad, País
-                  <br />
-                  📞 +1 234 567 890
-                  <br />
-                  ✉️ contacto@resinart.com
-                </Typography>
-              </Box>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "center", gap: 2 }}
+                  >
+                    {[
+                      {
+                        Icon: FaInstagram,
+                        href: "https://instagram.com/peleti_resina",
+                      },
+                      {
+                        Icon: FaFacebook,
+                        href: "https://facebook.com/PeletiResina",
+                      },
+                      { Icon: FaWhatsapp, href: "https://wa.me/573201234567" },
+                    ].map(({ Icon, href }) => (
+                      <IconButton
+                        key={href}
+                        component="a"
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{
+                          mx: 1,
+                          color: theme.palette.text.primary,
+                          "&:hover": {
+                            transform: "scale(1.1)",
+                            transition: "transform 0.2s ease-in-out",
+                          },
+                        }}
+                      >
+                        <Icon size={24} />
+                      </IconButton>
+                    ))}
+                  </Box>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    sx={{ lineHeight: 2 }}
+                  >
+                    Instagram: @peleti_resina
+                    <br />
+                    Facebook: /PeletiResina
+                    <br />
+                    WhatsApp: +57 320 123 4567
+                  </Typography>
+                </Box>
+              </motion.div>
             </Grid>
           </Grid>
         </motion.div>

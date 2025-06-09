@@ -81,7 +81,7 @@ const Navbar: React.FC = () => {
       >
         {/* logo + marca */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Image src="/logo.png" alt="Peleti" width={32} height={32} />
+          <Image src="/images/taller-resina.jpg" alt="Peleti" width={32} height={32} />
           <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary" }}>
             Peleti
           </Typography>
