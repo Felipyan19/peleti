@@ -1,117 +1,106 @@
 "use client";
 
-import Link from "next/link";
-import { Box, Container, Typography, Grid, IconButton, useTheme } from "@mui/material";
-import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
+import { Box, Container, Typography, IconButton, Stack } from "@mui/material";
+import { FaInstagram, FaFacebook, FaTwitter } from "react-icons/fa";
 
 export default function Footer() {
-  const theme = useTheme();
-
   return (
-    <Box component="footer" sx={{ backgroundColor: "background.default", color: "text.secondary", py: 8 }}>
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: "background.default",
+        color: "text.secondary",
+        py: 4,
+        borderTop: 1,
+        borderColor: "divider",
+        mt: 8,
+      }}
+    >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          {/* Descripción */}
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom color="text.primary">
-              Resin Art
-            </Typography>
-            <Typography variant="body2">
-              Creando piezas únicas en resina con pasión y dedicación.
-            </Typography>
-          </Grid>
+        <Stack spacing={2} alignItems="center">
+          {/* <Stack direction="row" spacing={6} justifyContent="center">
+            <Link href="/privacidad">
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  "&:hover": { color: "primary.main" },
+                }}
+              >
+                Política de Privacidad
+              </Typography>
+            </Link>
+            <Link href="/terminos">
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  "&:hover": { color: "primary.main" },
+                }}
+              >
+                Términos de Servicio
+              </Typography>
+            </Link>
+            <Link href="#contact">
+              <Typography
+                variant="body2"
+                sx={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  "&:hover": { color: "primary.main" },
+                }}
+              >
+                Contacto
+              </Typography>
+            </Link>
+          </Stack> */}
 
-          {/* Enlaces Rápidos */}
-          <Grid item xs={12} md={2}>
-            <Typography variant="subtitle1" gutterBottom color="text.primary">
-              Enlaces Rápidos
-            </Typography>
-            {[
-              { label: "Sobre Nosotros", href: "#about" },
-              { label: "Estilos", href: "#styles" },
-              { label: "Catálogo", href: "#portfolio" },
-              { label: "Contacto", href: "#contact" },
-            ].map(({ label, href }) => (
-              <Box key={href} mb={1}>
-                <Link href={href} passHref legacyBehavior>
-                  <Typography
-                    component="a"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      textDecoration: "none",
-                      "&:hover": { color: theme.palette.primary.main },
-                    }}
-                  >
-                    {label}
-                  </Typography>
-                </Link>
-              </Box>
-            ))}
-          </Grid>
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <IconButton
+              component="a"
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "text.secondary",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              <FaInstagram />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "text.secondary",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              <FaFacebook />
+            </IconButton>
+            <IconButton
+              component="a"
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                color: "text.secondary",
+                "&:hover": { color: "primary.main" },
+              }}
+            >
+              <FaTwitter />
+            </IconButton>
+          </Stack>
 
-          {/* Legal */}
-          <Grid item xs={12} md={3}>
-            <Typography variant="subtitle1" gutterBottom color="text.primary">
-              Legal
-            </Typography>
-            {[
-              { label: "Política de Privacidad", href: "/privacidad" },
-              { label: "Términos y Condiciones", href: "/terminos" },
-              { label: "Política de Cookies", href: "/cookies" },
-            ].map(({ label, href }) => (
-              <Box key={href} mb={1}>
-                <Link href={href} passHref legacyBehavior>
-                  <Typography
-                    component="a"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      textDecoration: "none",
-                      "&:hover": { color: theme.palette.primary.main },
-                    }}
-                  >
-                    {label}
-                  </Typography>
-                </Link>
-              </Box>
-            ))}
-          </Grid>
-
-          {/* Redes Sociales */}
-          <Grid item xs={12} md={3}>
-            <Typography variant="subtitle1" gutterBottom color="text.primary">
-              Síguenos
-            </Typography>
-            <Box display="flex" gap={1}>
-              {[{ Icon: FaInstagram, href: "https://instagram.com" },
-                { Icon: FaFacebook, href: "https://facebook.com" },
-                { Icon: FaWhatsapp, href: "https://wa.me/1234567890" },
-              ].map(({ Icon, href }) => (
-                <IconButton
-                  key={href}
-                  component="a"
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: "text.secondary",
-                    "&:hover": { color: theme.palette.primary.main },
-                  }}
-                >
-                  <Icon />
-                </IconButton>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
-
-        {/* Derechos reservados */}
-        <Box textAlign="center" borderTop={1} borderColor="divider" mt={6} pt={3}>
-          <Typography variant="body2">
-            &copy; {new Date().getFullYear()} Resin Art. Todos los derechos reservados.
+          <Typography variant="body2" align="center" sx={{ fontSize: 13 }}>
+            &copy; {new Date().getFullYear()} Peleti. Todos los derechos
+            reservados.
           </Typography>
-        </Box>
+        </Stack>
       </Container>
     </Box>
   );

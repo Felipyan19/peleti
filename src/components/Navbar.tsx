@@ -24,10 +24,10 @@ import { useThemeContext } from "./ThemeRegistry";
 
 const MENU_ITEMS = [
   { label: "Inicio", href: "#inicio" },
-  { label: "Sobre Nosotros", href: "#about" },
+  { label: "Sobre Nosotros", href: "#sobre-nosotros" },
   { label: "Estilos", href: "#estilos" },
   { label: "Proceso", href: "#proceso" },
-  { label: "Portafolio", href: "#portfolio" },
+  { label: "Catálogo", href: "#catalogo" },
   { label: "Contacto", href: "#contacto" },
 ];
 

@@ -19,7 +19,7 @@ export default function About() {
   return (
     <Box
       component="section"
-      id="about"
+      id="sobre-nosotros"
       sx={{ py: 10, backgroundColor: "background.paper" }}
     >
       <Container maxWidth="md">

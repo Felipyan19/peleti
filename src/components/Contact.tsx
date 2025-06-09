@@ -1,19 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { Box, Container, Typography, TextField, Button, IconButton, Grid, Alert, useTheme } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  Grid,
+  Alert,
+  useTheme,
+} from "@mui/material";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
 
 export default function Contact() {
   const theme = useTheme();
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -22,7 +40,7 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await new Promise((res) => setTimeout(res, 1000)); // Simula envío
+      await new Promise((res) => setTimeout(res, 1000));
       setSubmitStatus("success");
       setFormData({ name: "", email: "", message: "" });
     } catch {
@@ -35,30 +53,50 @@ export default function Contact() {
   return (
     <Box
       component="section"
-      id="contact"
-      sx={{ py: 10, backgroundColor: "background.paper" }}
+      id="contacto"
+      sx={{ py: 8, backgroundColor: "background.paper" }}
     >
       <Container maxWidth="md">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
-          {/* Título */}
           <Box textAlign="center" mb={6}>
-            <Typography variant="h2" gutterBottom>
-              Contacto
+            <Typography variant="h4" gutterBottom>
+              Contáctanos
             </Typography>
-            <Typography variant="body1" color="text.secondary" maxWidth={600} mx="auto">
-              ¿Interesado en una pieza personalizada? ¡Contáctanos!
+            <Typography variant="subtitle1" color="text.secondary">
+              ¿Tienes alguna consulta o proyecto? Escríbenos.
             </Typography>
           </Box>
 
-          <Grid container spacing={4}>
+          <Grid
+            container
+            spacing={6}
+            justifyContent="center"
+            alignItems="flex-start"
+          >
             {/* Formulario */}
-            <Grid item xs={12} md={6}>
-              <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{
+                  width: "100%",
+                  maxWidth: 480,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 3,
+                }}
+              >
                 <TextField
                   label="Nombre"
                   name="name"
@@ -66,6 +104,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   fullWidth
+                  size="medium"
                 />
                 <TextField
                   label="Email"
@@ -75,6 +114,7 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   fullWidth
+                  size="medium"
                 />
                 <TextField
                   label="Mensaje"
@@ -85,61 +125,78 @@ export default function Contact() {
                   multiline
                   rows={4}
                   fullWidth
+                  size="medium"
                 />
                 <Button
                   type="submit"
                   variant="contained"
-                  color="primary"
                   disabled={isSubmitting}
-                  sx={{ textTransform: "none", py: 1.5 }}
+                  sx={{ textTransform: "none", mt: 2, py: 1.5 }}
                 >
-                  {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
+                  {isSubmitting ? "Enviando..." : "Enviar"}
                 </Button>
-
-                {submitStatus === "success" && <Alert severity="success">¡Mensaje enviado con éxito!</Alert>}
-                {submitStatus === "error" && <Alert severity="error">Error al enviar el mensaje. Por favor, intenta de nuevo.</Alert>}
+                {submitStatus === "success" && (
+                  <Alert severity="success">¡Enviado!</Alert>
+                )}
+                {submitStatus === "error" && (
+                  <Alert severity="error">Error. Intenta de nuevo.</Alert>
+                )}
               </Box>
             </Grid>
 
             {/* Redes & Contacto */}
-            <Grid item xs={12} md={6}>
-              <Box display="flex" flexDirection="column" gap={6}>
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    Síguenos
-                  </Typography>
-                  <Box display="flex" gap={2}>
-                    {[{ Icon: FaInstagram, href: "https://instagram.com" },
-                      { Icon: FaFacebook, href: "https://facebook.com" },
-                      { Icon: FaWhatsapp, href: "https://wa.me/1234567890" },
-                    ].map(({ Icon, href }) => (
-                      <IconButton
-                        key={href}
-                        component="a"
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        sx={{
-                          bgcolor: "text.primary",
-                          color: "common.white",
-                          "&:hover": { bgcolor: theme.palette.primary.main },
-                        }}
-                      >
-                        <Icon />
-                      </IconButton>
-                    ))}
-                  </Box>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <Box
+                sx={{
+                  textAlign: "center",
+                  width: "100%",
+                  maxWidth: 480,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 4,
+                }}
+              >
+                <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+                  {[
+                    { Icon: FaInstagram, href: "https://instagram.com" },
+                    { Icon: FaFacebook, href: "https://facebook.com" },
+                    { Icon: FaWhatsapp, href: "https://wa.me/1234567890" },
+                  ].map(({ Icon, href }) => (
+                    <IconButton
+                      key={href}
+                      component="a"
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{
+                        mx: 1,
+                        color: theme.palette.text.primary,
+                        "&:hover": {
+                          transform: "scale(1.1)",
+                          transition: "transform 0.2s ease-in-out",
+                        },
+                      }}
+                    >
+                      <Icon size={24} />
+                    </IconButton>
+                  ))}
                 </Box>
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    Información de Contacto
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    📍 Ciudad, País<br />
-                    📞 +1 234 567 890<br />
-                    ✉️ contacto@resinart.com
-                  </Typography>
-                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ lineHeight: 2 }}
+                >
+                  📍 Ciudad, País
+                  <br />
+                  📞 +1 234 567 890
+                  <br />
+                  ✉️ contacto@resinart.com
+                </Typography>
               </Box>
             </Grid>
           </Grid>

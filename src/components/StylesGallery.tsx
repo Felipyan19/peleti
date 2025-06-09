@@ -56,26 +56,20 @@ const styles = [
   },
 ];
 
-const categories = [
-  { id: "all", name: "Todos" },
-  { id: "natural", name: "Natural" },
-  { id: "modern", name: "Moderno" },
-];
-
 export default function StylesGalleryVento() {
   const theme = useTheme();
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const filteredStyles =
     selectedCategory === "all"
       ? styles
-      : styles.filter((s) => s.category === selectedCategory);
+      : styles.filter((style) => style.category === selectedCategory);
 
   return (
     <Box
       component="section"
-      id="styles"
+      id="estilos"
       sx={{ py: 12, backgroundColor: "background.default" }}
     >
       <Container maxWidth="lg">
@@ -109,28 +103,26 @@ export default function StylesGalleryVento() {
           </Typography>
         </motion.div>
 
-        {/* Filtros tipo “pill” */}
-        <Box display="flex" justifyContent="center" gap={2} mb={8}>
-          {categories.map((cat) => {
-            const selected = selectedCategory === cat.id;
-            return (
-              <Button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                variant={selected ? "contained" : "outlined"}
-                color="primary"
-                sx={{
-                  textTransform: "none",
-                  borderRadius: "50px",
-                  px: 3,
-                  py: 1,
-                  transition: "all 0.3s",
-                }}
-              >
-                {cat.name}
-              </Button>
-            );
-          })}
+        {/* Filtros */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
+          <Button
+            variant={selectedCategory === "all" ? "contained" : "outlined"}
+            onClick={() => setSelectedCategory("all")}
+          >
+            Todos
+          </Button>
+          <Button
+            variant={selectedCategory === "natural" ? "contained" : "outlined"}
+            onClick={() => setSelectedCategory("natural")}
+          >
+            Natural
+          </Button>
+          <Button
+            variant={selectedCategory === "modern" ? "contained" : "outlined"}
+            onClick={() => setSelectedCategory("modern")}
+          >
+            Moderno
+          </Button>
         </Box>
 
         <Box
@@ -148,8 +140,8 @@ export default function StylesGalleryVento() {
               whileHover={{ y: -8, boxShadow: theme.shadows[8] }}
               transition={{ type: "spring", stiffness: 300 }}
               sx={{
-                width: 300,        // ancho fijo
-                height: 380,       // alto fijo
+                width: 300, // ancho fijo
+                height: 380, // alto fijo
                 borderRadius: 3,
                 overflow: "hidden",
                 display: "flex",

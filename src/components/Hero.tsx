@@ -1,13 +1,14 @@
 "use client";
 
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Hero() {
-
   return (
     <Box
       component="section"
+      id="inicio"
       sx={{
         position: "relative",
         height: "100vh",
@@ -16,17 +17,21 @@ export default function Hero() {
     >
       {/* Fondo */}
       <Box
-        component="img"
-        src="/images/hero-bg.jpg"
-        alt="Resin art background"
-        fill
         sx={{
           position: "absolute",
           inset: 0,
-          objectFit: "cover",
           zIndex: 0,
         }}
-      />
+      >
+        <Image
+          src="/images/hero-bg.jpg"
+          alt="Resin art background"
+          fill
+          style={{
+            objectFit: "cover",
+          }}
+        />
+      </Box>
       {/* Overlay */}
       <Box
         sx={{
