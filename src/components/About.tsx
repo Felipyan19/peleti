@@ -46,7 +46,6 @@ export default function About() {
             Nuestra historia
           </Typography>
 
-          {/* Imagen ilustrativa del taller */}
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
             <Image
               src="/images/taller-resina.jpg"

@@ -83,7 +83,6 @@ export default function Portfolio() {
   const [showAll, setShowAll] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
-  // Calcula categorías únicas
   const categories = useMemo<string[]>(() => {
     const cats = Array.from(new Set(portfolioItems.map((i) => i.category)));
     return ["All", ...cats];

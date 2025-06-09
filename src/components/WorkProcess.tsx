@@ -68,7 +68,6 @@ export default function WorkProcess() {
       sx={{ py: 10, backgroundColor: "background.paper" }}
     >
       <Container maxWidth="lg">
-        {/* Encabezado */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
@@ -98,7 +97,6 @@ export default function WorkProcess() {
           </Typography>
         </motion.div>
 
-        {/* Timeline */}
         <Timeline position="alternate">
           {steps.map((step, idx) => {
             const Icon = step.icon;

@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 
-// Componente animado a partir de Card
 const MotionCard = motion(Card);
 
 const styles = [
@@ -61,7 +60,6 @@ export default function StylesGalleryVento() {
       sx={{ py: 12, backgroundColor: "background.default" }}
     >
       <Container maxWidth="lg">
-        {/* Título */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 30 }}
@@ -91,7 +89,6 @@ export default function StylesGalleryVento() {
           </Typography>
         </motion.div>
 
-        {/* Filtros */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -147,8 +144,8 @@ export default function StylesGalleryVento() {
                 whileHover={{ y: -8, boxShadow: theme.shadows[8] }}
                 transition={{ type: "spring", stiffness: 300 }}
                 sx={{
-                  width: 300, // ancho fijo
-                  height: 380, // alto fijo
+                  width: 300,
+                  height: 380,
                   borderRadius: 3,
                   overflow: "hidden",
                   display: "flex",

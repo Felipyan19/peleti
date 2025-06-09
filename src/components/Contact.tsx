@@ -89,7 +89,6 @@ export default function Contact() {
             justifyContent="center"
             alignItems="flex-start"
           >
-            {/* Formulario */}
             <Grid
               item
               xs={12}
@@ -164,7 +163,6 @@ export default function Contact() {
               </motion.div>
             </Grid>
 
-            {/* Redes & Contacto */}
             <Grid
               item
               xs={12}

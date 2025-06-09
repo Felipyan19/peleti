@@ -20,7 +20,6 @@ export default function Hero() {
         overflow: "hidden",
       }}
     >
-      {/* Fondo */}
       <Box
         sx={{
           position: "absolute",
@@ -37,7 +36,7 @@ export default function Hero() {
           }}
         />
       </Box>
-      {/* Overlay */}
+
       <Box
         sx={{
           position: "absolute",
@@ -47,7 +46,6 @@ export default function Hero() {
         }}
       />
 
-      {/* Contenido */}
       <Box
         ref={ref}
         sx={{

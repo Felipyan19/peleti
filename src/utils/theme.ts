@@ -13,7 +13,7 @@ export const lightTheme: ThemeOptions = {
     mode: "light",
     primary: elegantBlue,
     secondary: {
-      main: "#757575", // gris medio
+      main: "#757575", 
       contrastText: "#FFFFFF",
     },
     background: {

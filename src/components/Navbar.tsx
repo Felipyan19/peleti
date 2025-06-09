@@ -79,7 +79,6 @@ const Navbar: React.FC = () => {
           px: 2,
         }}
       >
-        {/* logo + marca */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Image src="/images/taller-resina.jpg" alt="Peleti" width={32} height={32} />
           <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary" }}>
@@ -87,7 +86,6 @@ const Navbar: React.FC = () => {
           </Typography>
         </Box>
 
-        {/* menú móvil o escritorio */}
         {isMobile ? (
           <IconButton
             onClick={handleDrawerToggle}

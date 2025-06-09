@@ -7,8 +7,8 @@ import ThemeRegistry from "../components/ThemeRegistry";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Resin Art Gallery",
-  description: "Beautiful resin art pieces and custom creations",
+  title: "Peleti",
+  description: "Peleti – Artesanías en Resina",
 };
 
 export default function RootLayout({
