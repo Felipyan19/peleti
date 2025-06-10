@@ -1,0 +1,33 @@
+{
+    "title": "Contáctanos",
+    "description": "¿Tienes alguna pregunta o quieres un diseño a medida? Escríbenos y te responderemos en menos de 24 horas.",
+    "form": {
+        "name": "Nombre",
+        "email": "Email",
+        "message": "Mensaje"
+    },
+    "submit": {
+        "success": "¡Enviado!",
+        "error": "Error. Intenta de nuevo."
+    },
+    "social": {
+        "instagram": {
+            "title": "Instagram",
+            "info": "@peleti_resina",
+            "url": "https://instagram.com/peleti_resina",
+            "icon": "FaInstagram"
+        },
+        "facebook": {
+            "title": "Facebook",
+            "info": "/PeletiResina",
+            "url": "https://facebook.com/PeletiResina",
+            "icon": "FaFacebook"
+        },
+        "whatsapp": {
+            "title": "WhatsApp",
+            "info": "+57 320 123 4567",
+            "url": "https://wa.me/573201234567",
+            "icon": "FaWhatsapp"
+        }
+    }
+}
