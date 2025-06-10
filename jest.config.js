@@ -18,6 +18,17 @@ const customJestConfig = {
         '!src/**/*.d.ts',
         '!src/**/index.{js,jsx,ts,tsx}',
     ],
+    reporters: [
+        'default',
+        ['jest-junit', {
+            outputDirectory: './reports',
+            outputName: 'junit.xml',
+            classNameTemplate: '{filepath}',
+            titleTemplate: '{title}',
+            ancestorSeparator: ' › ',
+            usePathForSuiteName: true
+        }]
+    ]
 }
 
 module.exports = createJestConfig(customJestConfig) 
