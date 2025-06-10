@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [main, master, develop]
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   test:
     name: Run Tests
@@ -31,11 +35,18 @@ jobs:
       - name: 📝 Comment PR with test results
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
           script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '✅ Tests passed successfully! 🎉'
-            })
+            try {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: '✅ Tests passed successfully! 🎉\n\n**Test Summary:**\n- All tests executed\n- Build successful\n- Ready for review!'
+              });
+              console.log('✅ Comment posted successfully');
+            } catch (error) {
+              console.log('⚠️ Could not post comment:', error.message);
+              console.log('✅ Tests passed - comment posting failed but tests are OK');
+            }

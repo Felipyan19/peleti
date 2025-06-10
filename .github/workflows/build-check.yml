@@ -6,6 +6,10 @@ on:
   push:
     branches: [main, master, develop]
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   build:
     name: Build and Lint

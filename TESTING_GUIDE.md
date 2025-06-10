@@ -193,6 +193,26 @@ peleti/
 - Verificar configuración de branch protection
 - Verificar permisos del repositorio
 
+### ⚠️ Error "Resource not accessible by integration":
+
+**Problema:** El workflow no puede comentar en PRs
+
+**Causa:** Falta de permisos para escribir comentarios
+
+**Solución:** ✅ **Ya corregido** - Agregamos permisos en todos los workflows:
+
+```yaml
+permissions:
+  pull-requests: write
+  contents: read
+```
+
+**Si persiste el error:**
+
+- Verificar que el repositorio tenga GitHub Actions habilitado
+- Verificar que no haya restricciones en la organización
+- El workflow continúa funcionando aunque no pueda comentar (tests siguen validándose)
+
 ## 📈 Métricas y monitoreo
 
 ### En GitHub:
