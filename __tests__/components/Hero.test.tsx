@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import "@testing-library/jest-dom";
 import Hero from "@/components/Hero";
 
 jest.mock("@/utils/useScrollToSection", () => ({
@@ -11,14 +12,21 @@ jest.mock("@/utils/useScrollToSection", () => ({
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: (props: any) => {
-    return <img {...props} />;
+  default: (props: { src: string; alt: string; [key: string]: unknown }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { fill, priority, quality, sizes, ...imgProps } = props;
+    return <img {...imgProps} />;
   },
 }));
 
 jest.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: React.ComponentPropsWithoutRef<"div">) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { whileHover, whileTap, animate, initial, ...domProps } =
+        props as Record<string, unknown>;
+      return <div {...domProps}>{children}</div>;
+    },
   },
 }));
 
@@ -32,7 +40,6 @@ describe("Hero Component", () => {
   it("renders the hero section correctly", () => {
     renderWithTheme(<Hero />);
 
-    // Verificar que el componente se renderiza usando el ID
     const section = document.querySelector("#inicio");
     expect(section).toBeInTheDocument();
   });
