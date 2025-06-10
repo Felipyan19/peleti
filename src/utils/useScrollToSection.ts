@@ -11,8 +11,8 @@ export function useScrollToSection(
   options: UseScrollToSectionOptions = {}
 ) {
   const [ref, inView] = useInView({
-    threshold: options.threshold || 0.1,
-    rootMargin: options.rootMargin || "0px",
+    threshold: options.threshold || 0.05,
+    rootMargin: options.rootMargin || "50px 0px 50px 0px",
   });
 
   const [shouldAnimate, setShouldAnimate] = useState(false);
@@ -41,19 +41,25 @@ export function useScrollToSection(
   }, [sectionId]);
 
   useEffect(() => {
-    if (inView && !hasNavigated) {
+    if (inView) {
       setShouldAnimate(true);
-    }
-  }, [inView, hasNavigated]);
-
-  useEffect(() => {
-    if (!inView) {
-      setShouldAnimate(false);
       if (hasNavigated) {
         setHasNavigated(false);
       }
     }
   }, [inView, hasNavigated]);
+
+  useEffect(() => {
+    if (!inView && shouldAnimate && !hasNavigated) {
+      const timeoutId = setTimeout(() => {
+        if (!inView) {
+          setShouldAnimate(false);
+        }
+      }, 800);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [inView, shouldAnimate, hasNavigated]);
 
   return {
     ref,

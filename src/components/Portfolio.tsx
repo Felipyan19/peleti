@@ -18,6 +18,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { FaTimes } from "react-icons/fa";
+import portfolioData from "@/data/portfolio.json";
 
 const MotionCard = motion(Card);
 
@@ -31,47 +32,6 @@ interface PortfolioItem {
   category: string;
 }
 
-const portfolioItems: PortfolioItem[] = [
-  {
-    id: 1,
-    title: "Geoda Azul",
-    description:
-      "Pieza inspirada en formaciones geológicas naturales con tonos azules profundos",
-    image: "/images/taller-resina.jpg",
-    dimensions: "30x30 cm",
-    technique: "Resina epoxi con pigmentos minerales",
-    category: "Natural",
-  },
-  {
-    id: 2,
-    title: "Océano Profundo",
-    description:
-      "Recreación de un paisaje marino con efectos de profundidad y movimiento",
-    image: "/images/taller-resina.jpg",
-    dimensions: "40x60 cm",
-    technique: "Resina epoxi con efectos de olas",
-    category: "Marino",
-  },
-  {
-    id: 3,
-    title: "Abstracción Moderna",
-    description: "Diseño contemporáneo con formas fluidas y colores vibrantes",
-    image: "/images/taller-resina.jpg",
-    dimensions: "50x50 cm",
-    technique: "Resina epoxi con pigmentos metálicos",
-    category: "Abstracto",
-  },
-  {
-    id: 4,
-    title: "Minimalista Blanco",
-    description: "Pieza minimalista con líneas limpias y diseño esencial",
-    image: "/images/taller-resina.jpg",
-    dimensions: "35x35 cm",
-    technique: "Resina epoxi con acabado mate",
-    category: "Minimalista",
-  },
-];
-
 const VISIBLE_COUNT = 3;
 
 export default function Portfolio() {
@@ -83,6 +43,8 @@ export default function Portfolio() {
   const [showAll, setShowAll] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
+  const portfolioItems = portfolioData.dataPortfolio;
+  
   const categories = useMemo<string[]>(() => {
     const cats = Array.from(new Set(portfolioItems.map((i) => i.category)));
     return ["All", ...cats];
@@ -125,7 +87,7 @@ export default function Portfolio() {
               mb: 2,
             }}
           >
-            Nuestro catálogo
+            {portfolioData.title}
           </Typography>
           <Typography
             variant="body1"
@@ -133,8 +95,7 @@ export default function Portfolio() {
             mx="auto"
             maxWidth={600}
           >
-            Explora algunas de nuestras creaciones favoritas. Haz clic en cada
-            imagen para ver detalles, dimensiones y técnicas utilizadas.
+            {portfolioData.description}
           </Typography>
         </motion.div>
 

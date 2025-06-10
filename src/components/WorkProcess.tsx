@@ -19,47 +19,23 @@ import {
   FaCheckCircle,
   FaSearch,
 } from "react-icons/fa";
-
-const steps = [
-  {
-    id: 1,
-    title: "Diseño y molde",
-    description: "Bosquejamos la pieza y preparamos el molde personalizado.",
-    icon: FaPaintBrush,
-  },
-  {
-    id: 2,
-    title: "Mezcla y pigmentación",
-    description:
-      "Combinamos resina de alta calidad con pigmentos seleccionados.",
-    icon: FaFlask,
-  },
-  {
-    id: 3,
-    title: "Vaciado y curado",
-    description:
-      "Vertemos con precisión y dejamos secar bajo condiciones controladas.",
-    icon: FaMagic,
-  },
-  {
-    id: 4,
-    title: "Pulido y acabado",
-    description: "Lijamos y pulimos para lograr un brillo perfecto.",
-    icon: FaCheckCircle,
-  },
-  {
-    id: 5,
-    title: "Control de calidad",
-    description: "Revisamos cada detalle antes de embalar tu figura.",
-    icon: FaSearch,
-  },
-];
+import workProcessData from "@/data/workProcess.json";
 
 export default function WorkProcess() {
   const theme = useTheme();
   const { ref, shouldAnimate } = useScrollToSection("proceso", {
     threshold: 0.2,
   });
+
+  const steps = workProcessData.stepsData;
+
+  const IconComponent = {
+    FaFlask,
+    FaPaintBrush,
+    FaMagic,
+    FaCheckCircle,
+    FaSearch,
+  };
 
   return (
     <Box
@@ -84,7 +60,7 @@ export default function WorkProcess() {
               mb: 2,
             }}
           >
-            Cómo creamos tus figuras
+            {workProcessData.title}
           </Typography>
           <Typography
             variant="body1"
@@ -92,14 +68,13 @@ export default function WorkProcess() {
             mx="auto"
             maxWidth={600}
           >
-            Cada pieza es creada con dedicación y atención al detalle, siguiendo
-            un proceso cuidadosamente planificado.
+            {workProcessData.description}
           </Typography>
         </motion.div>
 
         <Timeline position="alternate">
           {steps.map((step, idx) => {
-            const Icon = step.icon;
+            const Icon = IconComponent[step.icon as keyof typeof IconComponent];
             return (
               <TimelineItem key={step.id}>
                 <TimelineOppositeContent
@@ -108,7 +83,7 @@ export default function WorkProcess() {
                   variant="body2"
                   color="text.secondary"
                 >
-                  Paso {step.id}
+                  {workProcessData.step} {step.id}
                 </TimelineOppositeContent>
 
                 <TimelineSeparator>

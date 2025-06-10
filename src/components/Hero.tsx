@@ -4,6 +4,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useScrollToSection } from "@/utils/useScrollToSection";
 import Image from "next/image";
+import heroData from "@/data/hero.json";
 
 export default function Hero() {
   const { ref, shouldAnimate } = useScrollToSection("inicio", {
@@ -64,7 +65,7 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
         >
           <Typography variant="h1" component="h1" gutterBottom>
-            Peleti – Artesanías en Resina
+            {heroData.title}
           </Typography>
         </motion.div>
 
@@ -74,7 +75,7 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <Typography variant="h5" component="p" gutterBottom>
-            Lleva belleza y color a tu espacio con piezas únicas hechas a mano
+            {heroData.description}
           </Typography>
         </motion.div>
 
@@ -97,7 +98,7 @@ export default function Hero() {
               borderRadius: "9999px",
             }}
           >
-            Explora nuestro catálogo
+            {heroData.buttonText}
           </Button>
         </motion.div>
       </Box>

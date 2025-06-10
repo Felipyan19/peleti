@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   AppBar,
@@ -33,11 +33,19 @@ const MENU_ITEMS = [
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
   const { mode, toggleTheme } = useThemeContext();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleDrawerToggle = () => setIsOpen(!isOpen);
+
+  const shouldShowMobile = mounted ? isMobile : false;
+  const currentMode = mounted ? mode : "light";
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -60,7 +68,9 @@ const Navbar: React.FC = () => {
         <ListItem disablePadding>
           <ListItemButton onClick={toggleTheme} sx={{ textAlign: "center" }}>
             <ListItemText
-              primary={mode === "dark" ? "🌙 Modo oscuro" : "☀️ Modo claro"}
+              primary={
+                currentMode === "dark" ? "🌙 Modo oscuro" : "☀️ Modo claro"
+              }
             />
           </ListItemButton>
         </ListItem>
@@ -69,7 +79,11 @@ const Navbar: React.FC = () => {
   );
 
   return (
-    <AppBar position="fixed" color="default" sx={{ bgcolor: "background.paper" }}>
+    <AppBar
+      position="fixed"
+      color="default"
+      sx={{ bgcolor: "background.paper" }}
+    >
       <Toolbar
         sx={{
           justifyContent: "space-between",
@@ -80,13 +94,21 @@ const Navbar: React.FC = () => {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Image src="/images/taller-resina.jpg" alt="Peleti" width={32} height={32} />
-          <Typography variant="h6" sx={{ fontWeight: "bold", color: "text.primary" }}>
+          <Image
+            src="/images/taller-resina.jpg"
+            alt="Peleti"
+            width={32}
+            height={32}
+          />
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "text.primary" }}
+          >
             Peleti
           </Typography>
         </Box>
 
-        {isMobile ? (
+        {shouldShowMobile ? (
           <IconButton
             onClick={handleDrawerToggle}
             aria-label="open drawer"
@@ -111,8 +133,16 @@ const Navbar: React.FC = () => {
                 {item.label}
               </Button>
             ))}
-            <IconButton onClick={toggleTheme} color="primary" aria-label="Cambiar tema">
-              {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+            <IconButton
+              onClick={toggleTheme}
+              color="primary"
+              aria-label="Cambiar tema"
+            >
+              {currentMode === "dark" ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
             </IconButton>
           </Box>
         )}

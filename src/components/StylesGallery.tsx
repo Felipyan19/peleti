@@ -14,40 +14,18 @@ import {
   CardContent,
   useTheme,
 } from "@mui/material";
+import styleGalleryData from "@/data/styleGallery.json";
 
 const MotionCard = motion(Card);
-
-const styles = [
-  {
-    id: 1,
-    name: "Geodas",
-    description: "Recreaciones minerales con contrastes de color y brillo.",
-    image: "/images/taller-resina.jpg",
-    category: "natural",
-  },
-  {
-    id: 2,
-    name: "Océanos",
-    description: "Escenas marinas con efecto de profundidad y movimiento.",
-    image: "/images/taller-resina.jpg",
-    category: "natural",
-  },
-  {
-    id: 3,
-    name: "Abstracto",
-    description: "Diseños contemporáneos que juegan con formas y texturas.",
-    image: "/images/taller-resina.jpg",
-    category: "modern",
-  },
-];
 
 export default function StylesGalleryVento() {
   const theme = useTheme();
   const { ref, shouldAnimate } = useScrollToSection("estilos", {
-    threshold: 0.1,
+    threshold: 0.05,
   });
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const styles = styleGalleryData.styles;
   const filteredStyles =
     selectedCategory === "all"
       ? styles
@@ -76,7 +54,7 @@ export default function StylesGalleryVento() {
               mb: 2,
             }}
           >
-            Estilos disponibles
+            {styleGalleryData.title}
           </Typography>
           <Typography
             variant="body1"
@@ -84,8 +62,7 @@ export default function StylesGalleryVento() {
             mx="auto"
             maxWidth={600}
           >
-            Descubre nuestra variedad de estilos, pensados para todos los gustos
-            y ambientes.
+            {styleGalleryData.description}
           </Typography>
         </motion.div>
 
@@ -101,7 +78,7 @@ export default function StylesGalleryVento() {
               variant={selectedCategory === "all" ? "contained" : "outlined"}
               onClick={() => setSelectedCategory("all")}
             >
-              Todos
+              {styleGalleryData.categories.all}
             </Button>
             <Button
               variant={
@@ -109,13 +86,13 @@ export default function StylesGalleryVento() {
               }
               onClick={() => setSelectedCategory("natural")}
             >
-              Natural
+              {styleGalleryData.categories.natural}
             </Button>
             <Button
               variant={selectedCategory === "modern" ? "contained" : "outlined"}
               onClick={() => setSelectedCategory("modern")}
             >
-              Moderno
+              {styleGalleryData.categories.modern}
             </Button>
           </Box>
         </motion.div>

@@ -15,6 +15,13 @@ import {
 import { motion } from "framer-motion";
 import { useScrollToSection } from "@/utils/useScrollToSection";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
+import contactData from "@/data/contact.json";
+
+const IconComponent = {
+  FaInstagram,
+  FaFacebook,
+  FaWhatsapp,
+};
 
 export default function Contact() {
   const theme = useTheme();
@@ -75,11 +82,10 @@ export default function Contact() {
                 mb: 2,
               }}
             >
-              Contáctanos
+              {contactData.title}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              ¿Tienes alguna pregunta o quieres un diseño a medida? Escríbenos y
-              te responderemos en menos de 24 horas.
+              {contactData.description}
             </Typography>
           </Box>
 
@@ -116,7 +122,7 @@ export default function Contact() {
                   }}
                 >
                   <TextField
-                    label="Nombre"
+                    label={contactData.form.name}
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
@@ -125,7 +131,7 @@ export default function Contact() {
                     size="medium"
                   />
                   <TextField
-                    label="Email"
+                    label={contactData.form.email}
                     name="email"
                     type="email"
                     value={formData.email}
@@ -135,7 +141,7 @@ export default function Contact() {
                     size="medium"
                   />
                   <TextField
-                    label="Mensaje"
+                    label={contactData.form.message}
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
@@ -154,10 +160,10 @@ export default function Contact() {
                     {isSubmitting ? "Enviando..." : "Enviar"}
                   </Button>
                   {submitStatus === "success" && (
-                    <Alert severity="success">¡Enviado!</Alert>
+                    <Alert severity="success">{contactData.submit.success}</Alert>
                   )}
                   {submitStatus === "error" && (
-                    <Alert severity="error">Error. Intenta de nuevo.</Alert>
+                    <Alert severity="error">{contactData.submit.error}</Alert>
                   )}
                 </Box>
               </motion.div>
@@ -192,14 +198,14 @@ export default function Contact() {
                   >
                     {[
                       {
-                        Icon: FaInstagram,
-                        href: "https://instagram.com/peleti_resina",
+                        Icon: IconComponent[contactData.social.instagram.icon as keyof typeof IconComponent],
+                        href: contactData.social.instagram.url,
                       },
                       {
-                        Icon: FaFacebook,
-                        href: "https://facebook.com/PeletiResina",
+                        Icon: IconComponent[contactData.social.facebook.icon as keyof typeof IconComponent],
+                        href: contactData.social.facebook.url,
                       },
-                      { Icon: FaWhatsapp, href: "https://wa.me/573201234567" },
+                      { Icon: IconComponent[contactData.social.whatsapp.icon as keyof typeof IconComponent], href: contactData.social.whatsapp.url },
                     ].map(({ Icon, href }) => (
                       <IconButton
                         key={href}
@@ -225,11 +231,11 @@ export default function Contact() {
                     color="text.secondary"
                     sx={{ lineHeight: 2 }}
                   >
-                    Instagram: @peleti_resina
+                    {contactData.social.instagram.title}: {contactData.social.instagram.info}
                     <br />
-                    Facebook: /PeletiResina
+                    {contactData.social.facebook.title}: {contactData.social.facebook.info}
                     <br />
-                    WhatsApp: +57 320 123 4567
+                    {contactData.social.whatsapp.title}: {contactData.social.whatsapp.info}
                   </Typography>
                 </Box>
               </motion.div>
