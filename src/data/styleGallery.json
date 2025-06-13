@@ -11,21 +11,21 @@
           "id": 1,
           "name": "Geodas",
           "description": "Recreaciones minerales con contrastes de color y brillo.",
-          "image": "/images/taller-resina.jpg",
+          "image": "/images/animal.jpg",
           "category": "natural"
         },
         {
           "id": 2,
           "name": "Océanos",
           "description": "Escenas marinas con efecto de profundidad y movimiento.",
-          "image": "/images/taller-resina.jpg",
+          "image": "/images/plum.jpg",
           "category": "natural"
         },
         {
           "id": 3,
           "name": "Abstracto",
           "description": "Diseños contemporáneos que juegan con formas y texturas.",
-          "image": "/images/taller-resina.jpg",
+          "image": "/images/art.jpg",
           "category": "modern"
         }
     ]
