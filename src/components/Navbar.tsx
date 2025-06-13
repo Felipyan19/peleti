@@ -42,7 +42,8 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     setMounted(true);
 
-    // Intersection Observer para detectar cuando el hero está visible
+    document.documentElement.style.scrollBehavior = "smooth";
+
     const heroElement =
       document.getElementById("inicio") ||
       document.querySelector('[data-section="hero"]') ||
@@ -51,31 +52,48 @@ const Navbar: React.FC = () => {
     if (heroElement) {
       const observer = new IntersectionObserver(
         ([entry]) => {
-          // Consideramos que estamos sobre el hero si está visible en al menos 20%
           setIsOverHero(entry.intersectionRatio > 0.2);
         },
         {
           threshold: [0, 0.2, 0.5, 0.8, 1],
-          rootMargin: "-80px 0px 0px 0px", // Offset para el navbar
+          rootMargin: "-80px 0px 0px 0px",
         }
       );
 
       observer.observe(heroElement);
 
-      return () => observer.disconnect();
+      return () => {
+        observer.disconnect();
+        document.documentElement.style.scrollBehavior = "auto";
+      };
     } else {
-      // Fallback con scroll si no encuentra el hero
       const handleScroll = () => {
         const scrollTop = window.scrollY;
         setIsOverHero(scrollTop < window.innerHeight * 0.8);
       };
 
       window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+        document.documentElement.style.scrollBehavior = "auto";
+      };
     }
   }, []);
 
   const handleDrawerToggle = () => setIsOpen(!isOpen);
+
+  const handleNavClick = (href: string) => {
+    console.log(`🚀 Navbar click to: ${href}`);
+    setIsOpen(false);
+
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
 
   const shouldShowMobile = mounted ? isMobile : false;
   const currentMode = mounted ? mode : "light";
@@ -88,6 +106,10 @@ const Navbar: React.FC = () => {
             <ListItemButton
               component="a"
               href={item.href}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick(item.href);
+              }}
               sx={{
                 textAlign: "center",
                 color: "text.primary",
@@ -180,7 +202,12 @@ const Navbar: React.FC = () => {
             {MENU_ITEMS.map((item) => (
               <Button
                 key={item.href}
+                component="a"
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavClick(item.href);
+                }}
                 variant="text"
                 sx={{
                   textTransform: "none",
