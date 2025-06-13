@@ -4,9 +4,17 @@ import "@testing-library/jest-dom";
 import About from "@/components/About";
 
 jest.mock("@/utils/useScrollToSection", () => ({
-  useScrollToSection: jest.fn(() => ({
+  useEnhancedAnimation: jest.fn(() => ({
     ref: { current: null },
     shouldAnimate: true,
+    getContainerVariants: () => ({
+      hidden: { opacity: 0 },
+      visible: { opacity: 1 },
+    }),
+    getStaggerVariants: () => ({
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0 },
+    }),
   })),
 }));
 
@@ -56,7 +64,7 @@ describe("About Component", () => {
 
     const image = screen.getByAltText("Taller de resina artesanal");
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute("src", "/images/taller-resina.jpg");
+    expect(image).toHaveAttribute("src", "/images/animal.jpg");
   });
 
   it("displays all paragraphs from about data", () => {
