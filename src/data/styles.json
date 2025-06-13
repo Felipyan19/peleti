@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Geodas",
       "description": "Piezas inspiradas en formaciones geológicas naturales",
-      "image": "/images/geode.jpg",
+      "image": "/images/animal.jpg",
       "category": "natural",
       "techniques": [
         "Pigmentos minerales",
@@ -16,7 +16,7 @@
       "id": 2,
       "name": "Océanos",
       "description": "Recreaciones de paisajes marinos con efectos de profundidad",
-      "image": "/images/ocean.jpg",
+      "image": "/images/plum.jpg",
       "category": "natural",
       "techniques": [
         "Efectos de olas",
@@ -28,7 +28,7 @@
       "id": 3,
       "name": "Abstracto",
       "description": "Diseños modernos y contemporáneos",
-      "image": "/images/abstract.jpg",
+      "image": "/images/art.jpg",
       "category": "modern",
       "techniques": ["Pigmentos metálicos", "Efectos de flujo", "Acabado mixto"]
     },
@@ -36,7 +36,7 @@
       "id": 4,
       "name": "Minimalista",
       "description": "Piezas con líneas limpias y diseño esencial",
-      "image": "/images/minimal.jpg",
+      "image": "/images/animal.jpg",
       "category": "modern",
       "techniques": ["Pigmentos sólidos", "Líneas limpias", "Acabado mate"]
     }

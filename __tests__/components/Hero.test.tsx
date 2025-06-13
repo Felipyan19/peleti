@@ -4,9 +4,17 @@ import "@testing-library/jest-dom";
 import Hero from "@/components/Hero";
 
 jest.mock("@/utils/useScrollToSection", () => ({
-  useScrollToSection: jest.fn(() => ({
+  useEnhancedAnimation: jest.fn(() => ({
     ref: { current: null },
     shouldAnimate: true,
+    getContainerVariants: () => ({
+      hidden: { opacity: 0 },
+      visible: { opacity: 1 },
+    }),
+    getStaggerVariants: () => ({
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0 },
+    }),
   })),
 }));
 
@@ -75,7 +83,7 @@ describe("Hero Component", () => {
 
     const image = screen.getByAltText("Resin art background");
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute("src", "/images/taller-resina.jpg");
+    expect(image).toHaveAttribute("src", "/images/art.jpg");
   });
 
   it("has the correct section id", () => {
