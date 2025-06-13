@@ -34,12 +34,45 @@ const MENU_ITEMS = [
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isOverHero, setIsOverHero] = useState(true);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
   const { mode, toggleTheme } = useThemeContext();
 
   useEffect(() => {
     setMounted(true);
+
+    // Intersection Observer para detectar cuando el hero está visible
+    const heroElement =
+      document.getElementById("inicio") ||
+      document.querySelector('[data-section="hero"]') ||
+      document.querySelector("section:first-of-type");
+
+    if (heroElement) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          // Consideramos que estamos sobre el hero si está visible en al menos 20%
+          setIsOverHero(entry.intersectionRatio > 0.2);
+        },
+        {
+          threshold: [0, 0.2, 0.5, 0.8, 1],
+          rootMargin: "-80px 0px 0px 0px", // Offset para el navbar
+        }
+      );
+
+      observer.observe(heroElement);
+
+      return () => observer.disconnect();
+    } else {
+      // Fallback con scroll si no encuentra el hero
+      const handleScroll = () => {
+        const scrollTop = window.scrollY;
+        setIsOverHero(scrollTop < window.innerHeight * 0.8);
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
   }, []);
 
   const handleDrawerToggle = () => setIsOpen(!isOpen);
@@ -82,7 +115,17 @@ const Navbar: React.FC = () => {
     <AppBar
       position="fixed"
       color="default"
-      sx={{ bgcolor: "background.paper" }}
+      elevation={0}
+      sx={{
+        bgcolor: isOverHero ? "transparent" : "background.paper",
+        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: isOverHero
+          ? "none"
+          : "0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)",
+        borderBottom: isOverHero
+          ? "none"
+          : `1px solid ${muiTheme.palette.divider}`,
+      }}
     >
       <Toolbar
         sx={{
@@ -99,10 +142,19 @@ const Navbar: React.FC = () => {
             alt="Peleti"
             width={32}
             height={32}
+            style={{
+              filter: isOverHero ? "brightness(0) invert(1)" : "none",
+              transition: "filter 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
           />
           <Typography
             variant="h6"
-            sx={{ fontWeight: "bold", color: "text.primary" }}
+            sx={{
+              fontWeight: "bold",
+              color: isOverHero ? "white" : "text.primary",
+              transition: "color 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              textShadow: isOverHero ? "0 1px 3px rgba(0,0,0,0.3)" : "none",
+            }}
           >
             Peleti
           </Typography>
@@ -113,7 +165,13 @@ const Navbar: React.FC = () => {
             onClick={handleDrawerToggle}
             aria-label="open drawer"
             edge="end"
-            sx={{ color: "text.primary" }}
+            sx={{
+              color: isOverHero ? "white" : "text.primary",
+              transition: "color 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              filter: isOverHero
+                ? "drop-shadow(0 1px 2px rgba(0,0,0,0.3))"
+                : "none",
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -126,8 +184,15 @@ const Navbar: React.FC = () => {
                 variant="text"
                 sx={{
                   textTransform: "none",
-                  color: "text.primary",
-                  "&:hover": { color: "primary.main" },
+                  color: isOverHero ? "white" : "text.primary",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  textShadow: isOverHero ? "0 1px 2px rgba(0,0,0,0.3)" : "none",
+                  "&:hover": {
+                    color: isOverHero
+                      ? "rgba(255, 255, 255, 0.8)"
+                      : "primary.main",
+                    transform: "translateY(-1px)",
+                  },
                 }}
               >
                 {item.label}
@@ -135,8 +200,17 @@ const Navbar: React.FC = () => {
             ))}
             <IconButton
               onClick={toggleTheme}
-              color="primary"
               aria-label="Cambiar tema"
+              sx={{
+                color: isOverHero ? "white" : "primary.main",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                filter: isOverHero
+                  ? "drop-shadow(0 1px 2px rgba(0,0,0,0.3))"
+                  : "none",
+                "&:hover": {
+                  transform: "scale(1.1)",
+                },
+              }}
             >
               {currentMode === "dark" ? (
                 <Brightness7Icon />
