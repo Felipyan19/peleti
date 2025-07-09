@@ -4,41 +4,75 @@
   "dataPortfolio": [
     {
       "id": 1,
-      "title": "Geoda Azul",
-      "description":
-        "Pieza inspirada en formaciones geológicas naturales con tonos azules profundos",
-      "image": "/images/animal.jpg",
-      "dimensions": "30x30 cm",
-      "technique": "Resina epoxi con pigmentos minerales",
-      "category": "Natural"
+      "title": "El Guerrero de Bronce",
+      "description": "Figura épica de un guerrero ancestral con armadura detallada, recreada con efectos metálicos y pátina envejecida que resalta cada pliegue del metal.",
+      "image": "/images/guerrero.jpg",
+      "dimensions": "45x30 cm",
+      "technique": "Resina epoxi con pigmentos metálicos y acabado envejecido",
+      "category": "Figurativo"
     },
     {
       "id": 2,
-      "title": "Océano Profundo",
-      "description":
-        "Recreación de un paisaje marino con efectos de profundidad y movimiento",
-      "image": "/images/plum.jpg",
-      "dimensions": "40x60 cm",
-      "technique": "Resina epoxi con efectos de olas",
-      "category": "Marino"
+      "title": "Excalibur Legendaria",
+      "description": "Recreación de la mítica espada con efectos de acero templado, empuñadura dorada y gemas incrustadas que capturan la luz de forma mágica.",
+      "image": "/images/espada.jpg",
+      "dimensions": "60x20 cm",
+      "technique": "Resina epoxi con efectos de acero y incrustaciones doradas",
+      "category": "Histórico"
     },
     {
       "id": 3,
-      "title": "Abstracción Moderna",
-      "description": "Diseño contemporáneo con formas fluidas y colores vibrantes",
-      "image": "/images/art.jpg",
-      "dimensions": "50x50 cm",
-      "technique": "Resina epoxi con pigmentos metálicos",
-      "category": "Abstracto"
+      "title": "Coro Angelical",
+      "description": "Arcángeles en formación celestial con auras luminosas y texturas etéreas que evocan la divina presencia en tonos nacarados y dorados.",
+      "image": "/images/arcangeles.jpg",
+      "dimensions": "50x40 cm",
+      "technique": "Resina epoxi con pigmentos nacarados y efectos luminosos",
+      "category": "Religioso"
     },
     {
       "id": 4,
-      "title": "Minimalista Blanco",
-      "description": "Pieza minimalista con líneas limpias y diseño esencial",
-      "image": "/images/animal.jpg",
-      "dimensions": "35x35 cm",
-      "technique": "Resina epoxi con acabado mate",
-      "category": "Minimalista"
+      "title": "Lazos Eternos",
+      "description": "Emotiva representación familiar que captura la intimidad y el amor en una composición cálida con tonos tierra y acabados suaves.",
+      "image": "/images/familia.jpg",
+      "dimensions": "40x35 cm",
+      "technique": "Resina epoxi con pigmentos cálidos y acabado satinado",
+      "category": "Figurativo"
+    },
+    {
+      "id": 5,
+      "title": "Madre Celestial",
+      "description": "Figura de la Virgen con manto azul celeste y detalles dorados, irradiando serenidad y gracia divina con efectos de luz sagrada.",
+      "image": "/images/virgen.jpg",
+      "dimensions": "35x50 cm",
+      "technique": "Resina epoxi con azules celestiales y detalles dorados",
+      "category": "Religioso"
+    },
+    {
+      "id": 6,
+      "title": "La Balanza Eterna",
+      "description": "Alegoría de la justicia con efectos de mármol blanco y detalles en bronce, simbolizando la equidad y la verdad universal.",
+      "image": "/images/justicia.jpg",
+      "dimensions": "42x38 cm",
+      "technique": "Resina epoxi con efectos de mármol y acabados metálicos",
+      "category": "Figurativo"
+    },
+    {
+      "id": 7,
+      "title": "Majada Africana",
+      "description": "Manada de elefantes en su hábitat natural con texturas orgánicas que recrean la sabana y la majestuosidad de estos gigantes gentiles.",
+      "image": "/images/elefantes.jpg",
+      "dimensions": "55x35 cm",
+      "technique": "Resina epoxi con texturas naturales y pigmentos tierra",
+      "category": "Natural"
+    },
+    {
+      "id": 8,
+      "title": "Saga Nórdica",
+      "description": "Guerreros vikingos con cascos cornudos y armas de batalla, recreados con efectos de hierro forjado y runas místicas grabadas.",
+      "image": "/images/vikingos.jpg",
+      "dimensions": "48x32 cm",
+      "technique": "Resina epoxi con efectos de hierro oxidado y grabados rúnicos",
+      "category": "Histórico"
     }
   ]
 }

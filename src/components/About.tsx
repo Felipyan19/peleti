@@ -3,6 +3,7 @@
 import { Box, Container, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
+import { useRandomImages } from "@/utils/useRandomImages";
 import Image from "next/image";
 import aboutData from "@/data/about.json";
 
@@ -13,6 +14,8 @@ export default function About() {
       staggerDelay: 0.15,
       animationDuration: 0.8,
     });
+
+  const { currentImage } = useRandomImages();
 
   return (
     <Box
@@ -57,6 +60,10 @@ export default function About() {
                   transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
                 }}
                 style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "800px",
+                  aspectRatio: "16/9",
                   borderRadius: "40px",
                   overflow: "hidden",
                   boxShadow:
@@ -65,14 +72,15 @@ export default function About() {
                 }}
               >
                 <Image
-                  src={aboutData.image}
-                  alt="Taller de resina artesanal"
-                  width={800}
-                  height={450}
+                  src={currentImage.path}
+                  alt={`Peleti - ${currentImage.name}`}
+                  fill
                   style={{
                     borderRadius: "40px",
                     objectFit: "cover",
-                    transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    objectPosition: "center",
+                    transition: "all 1.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                    filter: "contrast(1.05) brightness(1.02)",
                   }}
                 />
               </motion.div>

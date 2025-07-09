@@ -13,20 +13,20 @@ export const lightTheme: ThemeOptions = {
     mode: "light",
     primary: elegantBlue,
     secondary: {
-      main: "#757575", 
+      main: "#757575",
       contrastText: "#FFFFFF",
     },
     background: {
-      default: "#FFFFFF",
-      paper: "#F5F5F5",
+      default: "#fafafa",
+      paper: "#ffffff",
     },
     text: {
       primary: "#212121",
       secondary: "#757575",
     },
-    error:   { main: "#D32F2F" },
+    error: { main: "#D32F2F" },
     warning: { main: "#FFA000" },
-    info:    { main: elegantBlue.main },
+    info: { main: elegantBlue.main },
     success: { main: "#388E3C" },
   },
   typography: {
@@ -40,11 +40,11 @@ export const lightTheme: ThemeOptions = {
       "sans-serif",
     ].join(","),
     h1: { fontSize: "2.5rem", fontWeight: 700 },
-    h2: { fontSize: "2rem",   fontWeight: 600 },
-    h3: { fontSize: "1.75rem",fontWeight: 600 },
+    h2: { fontSize: "2rem", fontWeight: 600 },
+    h3: { fontSize: "1.75rem", fontWeight: 600 },
     h4: { fontSize: "1.5rem", fontWeight: 600 },
-    h5: { fontSize: "1.25rem",fontWeight: 600 },
-    h6: { fontSize: "1rem",   fontWeight: 600 },
+    h5: { fontSize: "1.25rem", fontWeight: 600 },
+    h6: { fontSize: "1rem", fontWeight: 600 },
     button: { textTransform: "none", fontWeight: 500 },
   },
   shape: { borderRadius: 8 },
@@ -52,7 +52,7 @@ export const lightTheme: ThemeOptions = {
     MuiAppBar: {
       defaultProps: { elevation: 1 },
       styleOverrides: {
-        root: { backgroundColor: "#FFFFFF", color: "#212121" },
+        root: { backgroundColor: "#ffffff", color: "#212121" },
       },
     },
     MuiButton: {
@@ -81,7 +81,7 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: "dark",
     primary: {
-      main: elegantBlue.light,   // un poco más claro sobre fondo oscuro
+      main: elegantBlue.light, // un poco más claro sobre fondo oscuro
       light: elegantBlue.main,
       dark: elegantBlue.dark,
       contrastText: "#000000",
@@ -91,16 +91,16 @@ export const darkTheme: ThemeOptions = {
       contrastText: "#000000",
     },
     background: {
-      default: "#121212",
-      paper: "#1E1E1E",
+      default: "#020617",
+      paper: "#1a1a2e",
     },
     text: {
       primary: "#FFFFFF",
       secondary: "#B0BEC5",
     },
-    error:   { main: "#EF5350" },
+    error: { main: "#EF5350" },
     warning: { main: "#FFA000" },
-    info:    { main: elegantBlue.light },
+    info: { main: elegantBlue.light },
     success: { main: "#66BB6A" },
   },
   typography: lightTheme.typography,
@@ -109,7 +109,7 @@ export const darkTheme: ThemeOptions = {
     MuiAppBar: {
       defaultProps: { elevation: 1 },
       styleOverrides: {
-        root: { backgroundColor: "#1E1E1E", color: "#FFFFFF" },
+        root: { backgroundColor: "#1a1a2e", color: "#FFFFFF" },
       },
     },
     MuiButton: {
@@ -131,13 +131,13 @@ export const darkTheme: ThemeOptions = {
         root: {
           borderRadius: 12,
           padding: 8,
-          backgroundColor: "#1E1E1E",
+          backgroundColor: "#1a1a2e",
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
-        root: { backgroundColor: "#1E1E1E" },
+        root: { backgroundColor: "#1a1a2e" },
       },
     },
   },
