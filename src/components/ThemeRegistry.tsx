@@ -2,6 +2,7 @@
 
 import { createContext, useState, useMemo, useContext, useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { lightTheme, darkTheme } from "../utils/theme";
 
@@ -54,7 +55,48 @@ export default function ThemeRegistry({
     <ThemeContext.Provider value={{ mode, toggleTheme }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {children}
+        <Box
+          sx={{
+            minHeight: "100vh",
+            width: "100%",
+            position: "relative",
+            backgroundColor: mode === "dark" ? "#020617" : "#fafafa",
+            color: mode === "dark" ? "#ffffff" : "#212121",
+          }}
+        >
+          {/* Fondo modo oscuro - Dark Radial Glow */}
+          {mode === "dark" && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 0,
+                pointerEvents: "none",
+                background: `radial-gradient(circle 500px at 50% 200px, #3e3e3e, transparent)`,
+              }}
+            />
+          )}
+
+          {/* Fondo modo claro - Diagonal Grid */}
+          {mode === "light" && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 0,
+                pointerEvents: "none",
+                backgroundImage: `
+                  repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 20px),
+                  repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 20px)
+                `,
+                backgroundSize: "40px 40px",
+              }}
+            />
+          )}
+
+          {/* Contenido principal */}
+          <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>
+        </Box>
       </ThemeProvider>
     </ThemeContext.Provider>
   );
