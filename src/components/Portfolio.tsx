@@ -446,19 +446,68 @@ export default function Portfolio() {
                 </IconButton>
               </DialogTitle>
               <DialogContent sx={{ p: 0 }}>
-                <Box sx={{ position: "relative", width: "100%" }}>
-                  <Image
-                    src={selectedItem.image}
-                    alt={selectedItem.title}
-                    width={800}
-                    height={600}
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      maxHeight: "60vh",
-                      objectFit: "cover",
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: "100%",
+                    height: "60vh",
+                    overflow: "hidden",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {/* Imagen de fondo difuminada */}
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 0,
                     }}
-                  />
+                  >
+                    <Image
+                      src={selectedItem.image}
+                      alt=""
+                      fill
+                      style={{
+                        objectFit: "cover",
+                        filter: "blur(20px) brightness(0.3)",
+                        transform: "scale(1.1)",
+                      }}
+                    />
+                  </Box>
+
+                  {/* Imagen principal ajustada */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      zIndex: 1,
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Image
+                      src={selectedItem.image}
+                      alt={selectedItem.title}
+                      width={800}
+                      height={600}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        width: "auto",
+                        height: "auto",
+                        objectFit: "contain",
+                        borderRadius: "8px",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+                      }}
+                    />
+                  </Box>
                 </Box>
                 <Box sx={{ p: 4 }}>
                   <Typography

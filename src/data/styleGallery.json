@@ -1,32 +1,48 @@
 {
-    "title": "Estilos disponibles",
-    "description": "Descubre nuestra variedad de estilos, pensados para todos los gustos y ambientes.",
-    "categories": {
-        "all": "Todos",
-        "natural": "Natural",
-        "modern": "Moderno"
+  "title": "Técnicas y Estilos",
+  "description": "Cada estilo refleja una filosofía artística única, combinando técnicas especializadas con paletas cromáticas cuidadosamente seleccionadas.",
+  "styles": [
+    {
+      "id": 1,
+      "name": "Clásico & Escultórico",
+      "description": "Recreamos la elegancia atemporal de las grandes obras escultóricas. Figuras humanas, mitológicas y religiosas cobran vida con acabados que evocan mármol, oro y bronce envejecido.",
+      "icon": "FaUniversity",
+      "techniques": [
+        "Acabados metálicos multicapa",
+        "Pátinas envejecidas realistas",
+        "Efectos de mármol veteado",
+        "Incrustaciones doradas"
+      ],
+
+      "examples": "Vírgenes, arcángeles, figuras clásicas, alegorías"
     },
-    "styles": [
-        {
-          "id": 1,
-          "name": "Geodas",
-          "description": "Recreaciones minerales con contrastes de color y brillo.",
-          "image": "/images/animal.jpg",
-          "category": "natural"
-        },
-        {
-          "id": 2,
-          "name": "Océanos",
-          "description": "Escenas marinas con efecto de profundidad y movimiento.",
-          "image": "/images/plum.jpg",
-          "category": "natural"
-        },
-        {
-          "id": 3,
-          "name": "Abstracto",
-          "description": "Diseños contemporáneos que juegan con formas y texturas.",
-          "image": "/images/art.jpg",
-          "category": "modern"
-        }
-    ]
+    {
+      "id": 2,
+      "name": "Épico & Histórico",
+      "description": "Forjamos la esencia de épocas legendarias. Guerreros, armas y elementos históricos recreados con la fuerza del hierro, el temple del acero y la nobleza del cobre.",
+      "icon": "FaShieldAlt",
+      "techniques": [
+        "Efectos de hierro forjado",
+        "Oxidaciones controladas",
+        "Grabados rúnicos",
+        "Temple de acero realista"
+      ],
+
+      "examples": "Vikingos, guerreros, espadas, armaduras"
+    },
+    {
+      "id": 3,
+      "name": "Natural & Orgánico",
+      "description": "Capturamos la esencia pura de la naturaleza. Fauna y elementos orgánicos que respiran vida con texturas auténticas y paletas que honran los tonos terrestres.",
+      "icon": "FaLeaf",
+      "techniques": [
+        "Texturas orgánicas realistas",
+        "Acabados mate naturales",
+        "Gradientes terrestres",
+        "Efectos de madera y piedra"
+      ],
+
+      "examples": "Elefantes, fauna silvestre, elementos botánicos"
+    }
+  ]
 }
