@@ -1,50 +1,94 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
+import { fileToBase64AndMime, mapHeroForResponse, parseBoolean, parseDataUrl } from '@/utils/server/imageHelpers';
 
 const prisma = new PrismaClient();
 
-function parseDataUrl(data: string | null | undefined): { base64: string | null; mime: string | null } {
-	if (!data || typeof data !== 'string') return { base64: null, mime: null };
-	const match = data.match(/^data:(.+);base64,(.+)$/);
-	if (match) {
-		return { mime: match[1] || null, base64: match[2] || null };
-	}
-	return { base64: data, mime: null };
-}
+ 
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+	const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
 	const heroes = await prisma.hero.findMany({ orderBy: { createdAt: 'desc' } });
-	return NextResponse.json(heroes);
+	const mapped = heroes.map((h) => mapHeroForResponse(h, { includeBase64 }));
+	return NextResponse.json(mapped);
 }
 
 export async function POST(req: NextRequest) {
 	try {
-		const body = await req.json();
-		const { title, description, buttonText, imageBase64, imageMime, metaTitle, metaDescription, ogImageBase64, ogImageMime, published } = body ?? {};
+		const contentType = req.headers.get('content-type') || '';
+		let title: string | null = null;
+		let description: string | null = null;
+		let buttonText: string | null = null;
+		let metaTitle: string | null = null;
+		let metaDescription: string | null = null;
+		let publishedVal: boolean | undefined = undefined;
+		let main: { base64: string | null; mime: string | null } = { base64: null, mime: null };
+		let og: { base64: string | null; mime: string | null } = { base64: null, mime: null };
+
+		if (contentType.includes('multipart/form-data')) {
+			const form = await req.formData();
+			title = (form.get('title') as string) ?? null;
+			description = (form.get('description') as string) ?? null;
+			buttonText = (form.get('buttonText') as string) ?? null;
+			metaTitle = (form.get('metaTitle') as string) ?? null;
+			metaDescription = (form.get('metaDescription') as string) ?? null;
+			publishedVal = parseBoolean(form.get('published'));
+
+			const imageFile = form.get('image') as File | null;
+			const ogImageFile = form.get('ogImage') as File | null;
+
+			if (imageFile instanceof File) {
+				main = await fileToBase64AndMime(imageFile);
+			} else {
+				const imageBase64 = (form.get('imageBase64') as string) ?? null;
+				const parsed = parseDataUrl(imageBase64);
+				main = { base64: parsed.base64, mime: parsed.mime };
+			}
+
+			if (ogImageFile instanceof File) {
+				og = await fileToBase64AndMime(ogImageFile);
+			} else {
+				const ogImageBase64 = (form.get('ogImageBase64') as string) ?? null;
+				const parsed = parseDataUrl(ogImageBase64);
+				og = { base64: parsed.base64, mime: parsed.mime };
+			}
+		} else {
+			const body = await req.json();
+			const { title: t, description: d, buttonText: bt, imageBase64, imageMime, metaTitle: mt, metaDescription: md, ogImageBase64, ogImageMime, published } = body ?? {};
+			title = t ?? null;
+			description = d ?? null;
+			buttonText = bt ?? null;
+			metaTitle = mt ?? null;
+			metaDescription = md ?? null;
+			publishedVal = typeof published === 'boolean' ? published : parseBoolean(published);
+
+			const parsedMain = parseDataUrl(imageBase64);
+			main = { base64: parsedMain.base64, mime: parsedMain.mime ?? (imageMime ?? null) };
+			const parsedOg = parseDataUrl(ogImageBase64);
+			og = { base64: parsedOg.base64, mime: parsedOg.mime ?? (ogImageMime ?? null) };
+		}
 
 		if (!title || !description) {
 			return NextResponse.json({ error: 'title and description are required' }, { status: 400 });
 		}
-
-		const mainImage = parseDataUrl(imageBase64);
-		const ogImage = parseDataUrl(ogImageBase64);
 
 		const created = await prisma.hero.create({
 			data: {
 				title,
 				description,
 				buttonText: buttonText ?? null,
-				imageBase64: mainImage.base64 ?? null,
-				imageMime: (mainImage.mime ?? imageMime) ?? null,
+				imageBase64: main.base64 ?? null,
+				imageMime: main.mime ?? null,
 				metaTitle: metaTitle ?? null,
 				metaDescription: metaDescription ?? null,
-				ogImageBase64: ogImage.base64 ?? null,
-				ogImageMime: (ogImage.mime ?? ogImageMime) ?? null,
-				published: typeof published === 'boolean' ? published : true,
+				ogImageBase64: og.base64 ?? null,
+				ogImageMime: og.mime ?? null,
+				published: publishedVal ?? true,
 			},
 		});
 
-		return NextResponse.json(created, { status: 201 });
+		const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
+		return NextResponse.json(mapHeroForResponse(created, { includeBase64 }), { status: 201 });
 	} catch (err) {
 		console.error(err);
 		return NextResponse.json({ error: 'Server error' }, { status: 500 });

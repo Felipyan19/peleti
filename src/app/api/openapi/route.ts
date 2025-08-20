@@ -51,7 +51,10 @@ export async function GET() {
 					tags: ['Hero'],
 					requestBody: {
 						required: true,
-						content: { 'application/json': { schema: { $ref: '#/components/schemas/HeroCreate' } } },
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/HeroCreate' } },
+							'multipart/form-data': { schema: { $ref: '#/components/schemas/HeroCreateMultipart' } },
+						},
 					},
 					responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/Hero' } } } } },
 				},
@@ -66,7 +69,13 @@ export async function GET() {
 				put: {
 					summary: 'Update hero',
 					tags: ['Hero'],
-					requestBody: { required: true, content: { 'application/json': { schema: { $ref: '#/components/schemas/HeroUpdate' } } } },
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/HeroUpdate' } },
+							'multipart/form-data': { schema: { $ref: '#/components/schemas/HeroUpdateMultipart' } },
+						},
+					},
 					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/Hero' } } } }, '404': { description: 'Not found' } },
 				},
 				delete: {
@@ -135,6 +144,20 @@ export async function GET() {
 						published: { type: 'boolean' },
 					},
 				},
+				HeroCreateMultipart: {
+					type: 'object',
+					required: ['title', 'description'],
+					properties: {
+						title: { type: 'string' },
+						description: { type: 'string' },
+						buttonText: { type: 'string' },
+						image: { type: 'string', format: 'binary', description: 'Main image file' },
+						ogImage: { type: 'string', format: 'binary', description: 'OG image file' },
+						metaTitle: { type: 'string' },
+						metaDescription: { type: 'string' },
+						published: { type: 'string', description: 'boolean as string (true/false)' },
+					},
+				},
 				HeroUpdate: {
 					type: 'object',
 					properties: {
@@ -148,6 +171,19 @@ export async function GET() {
 						ogImageBase64: { type: 'string', format: 'byte' },
 						ogImageMime: { type: 'string' },
 						published: { type: 'boolean' },
+					},
+				},
+				HeroUpdateMultipart: {
+					type: 'object',
+					properties: {
+						title: { type: 'string' },
+						description: { type: 'string' },
+						buttonText: { type: 'string' },
+						image: { type: 'string', format: 'binary', description: 'Main image file' },
+						ogImage: { type: 'string', format: 'binary', description: 'OG image file' },
+						metaTitle: { type: 'string' },
+						metaDescription: { type: 'string' },
+						published: { type: 'string', description: 'boolean as string (true/false)' },
 					},
 				},
 			},
