@@ -1,17 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { fileToBase64AndMime, mapHeroForResponse, parseBoolean, parseDataUrl } from '@/utils/server/imageHelpers';
+import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { validateHeroQuery } from '@/utils/validation/heroValidation';
+import { HeroListResponse } from '@/types/hero';
 
 const prisma = new PrismaClient();
 
- 
-
-export async function GET(req: NextRequest) {
-	const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
-	const heroes = await prisma.hero.findMany({ orderBy: { createdAt: 'desc' } });
+export const GET = withErrorHandling(async (req: NextRequest) => {
+	const query = validateHeroQuery(req.nextUrl.searchParams);
+	const { page, limit, includeBase64, published } = query;
+	
+	const skip = (page - 1) * limit;
+	
+	const where = published !== undefined ? { published } : {};
+	
+	const [heroes, total] = await Promise.all([
+		prisma.hero.findMany({
+			where,
+			orderBy: { createdAt: 'desc' },
+			skip,
+			take: limit,
+		}),
+		prisma.hero.count({ where }),
+	]);
+	
 	const mapped = heroes.map((h) => mapHeroForResponse(h, { includeBase64 }));
-	return NextResponse.json(mapped);
-}
+	
+	const response: HeroListResponse = {
+		heroes: mapped,
+		total,
+		page,
+		limit,
+	};
+	
+	return ApiResponse.success(response);
+});
 
 export async function POST(req: NextRequest) {
 	try {

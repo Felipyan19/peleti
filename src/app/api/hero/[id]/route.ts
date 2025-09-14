@@ -1,115 +1,155 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
-import { fileToBase64AndMime, mapHeroForResponse, parseBoolean, parseDataUrl } from '@/utils/server/imageHelpers';
+import { fileToBase64AndMime, mapHeroForResponse, parseDataUrl } from '@/utils/server/imageHelpers';
+import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { validateHeroUpdate, validateHeroParams } from '@/utils/validation/heroValidation';
 
 const prisma = new PrismaClient();
 
  
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
+	const { id } = validateHeroParams(params);
 	const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
-	const hero = await prisma.hero.findUnique({ where: { id: params.id } });
-	if (!hero) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-	return NextResponse.json(mapHeroForResponse(hero, { includeBase64 }));
-}
+	
+	const hero = await prisma.hero.findUnique({ where: { id } });
+	if (!hero) {
+		throw ApiResponse.notFound('Hero not found');
+	}
+	
+	const response = mapHeroForResponse(hero, { includeBase64 });
+	return ApiResponse.success(response);
+});
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-	try {
-		const contentType = req.headers.get('content-type') || '';
-		let title: string | undefined;
-		let description: string | undefined;
-		let buttonText: string | undefined;
-		let metaTitle: string | undefined;
-		let metaDescription: string | undefined;
-		let publishedVal: boolean | undefined = undefined;
-		let main: { base64: string | null; mime: string | null } = { base64: null, mime: null };
-		let og: { base64: string | null; mime: string | null } = { base64: null, mime: null };
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
+	const { id } = validateHeroParams(params);
+	const contentType = req.headers.get('content-type') || '';
+	let heroData: Record<string, unknown> = {};
 
-		if (contentType.includes('multipart/form-data')) {
-			const form = await req.formData();
-			title = (form.get('title') as string) ?? undefined;
-			description = (form.get('description') as string) ?? undefined;
-			buttonText = (form.get('buttonText') as string) ?? undefined;
-			metaTitle = (form.get('metaTitle') as string) ?? undefined;
-			metaDescription = (form.get('metaDescription') as string) ?? undefined;
-			publishedVal = parseBoolean(form.get('published'));
+	// Check if hero exists
+	const existingHero = await prisma.hero.findUnique({ where: { id } });
+	if (!existingHero) {
+		throw ApiResponse.notFound('Hero not found');
+	}
 
-			const imageFile = form.get('image') as File | null;
-			const ogImageFile = form.get('ogImage') as File | null;
+	if (contentType.includes('multipart/form-data')) {
+		const form = await req.formData();
+		heroData = {
+			title: form.get('title'),
+			description: form.get('description'),
+			buttonText: form.get('buttonText'),
+			metaTitle: form.get('metaTitle'),
+			metaDescription: form.get('metaDescription'),
+			published: form.get('published'),
+		};
 
-			if (imageFile instanceof File) {
-				main = await fileToBase64AndMime(imageFile);
-			} else {
-				const imageBase64 = (form.get('imageBase64') as string) ?? null;
-				const parsed = parseDataUrl(imageBase64);
-				main = { base64: parsed.base64, mime: parsed.mime };
-			}
+		// Handle image files
+		const imageFile = form.get('image') as File | null;
+		const ogImageFile = form.get('ogImage') as File | null;
 
-			if (ogImageFile instanceof File) {
-				og = await fileToBase64AndMime(ogImageFile);
-			} else {
-				const ogImageBase64 = (form.get('ogImageBase64') as string) ?? null;
-				const parsed = parseDataUrl(ogImageBase64);
-				og = { base64: parsed.base64, mime: parsed.mime };
-			}
+		if (imageFile instanceof File) {
+			const main = await fileToBase64AndMime(imageFile);
+			heroData.imageBase64 = main.base64;
+			heroData.imageMime = main.mime;
 		} else {
-			const body = await req.json();
-			const { title: t, description: d, buttonText: bt, imageBase64, imageMime, metaTitle: mt, metaDescription: md, ogImageBase64, ogImageMime, published } = body ?? {};
-			title = t;
-			description = d;
-			buttonText = bt;
-			metaTitle = mt;
-			metaDescription = md;
-			publishedVal = typeof published === 'boolean' ? published : parseBoolean(published);
-
-			const parsedMain = parseDataUrl(imageBase64);
-			main = { base64: parsedMain.base64, mime: parsedMain.mime ?? (imageMime ?? null) };
-			const parsedOg = parseDataUrl(ogImageBase64);
-			og = { base64: parsedOg.base64, mime: parsedOg.mime ?? (ogImageMime ?? null) };
+			const imageBase64 = form.get('imageBase64') as string;
+			if (imageBase64) {
+				const parsed = parseDataUrl(imageBase64);
+				heroData.imageBase64 = parsed.base64;
+				heroData.imageMime = parsed.mime;
+			}
 		}
 
-		const updated = await prisma.hero.update({
-			where: { id: params.id },
-			data: {
-				title,
-				description,
-				buttonText,
-				imageBase64: main.base64 ?? undefined,
-				imageMime: main.mime ?? undefined,
-				metaTitle,
-				metaDescription,
-				ogImageBase64: og.base64 ?? undefined,
-				ogImageMime: og.mime ?? undefined,
-				published: publishedVal,
-			},
-		});
-		const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
-		return NextResponse.json(mapHeroForResponse(updated, { includeBase64 }));
-	} catch (err) {
-		console.error(err);
-		return NextResponse.json({ error: 'Server error' }, { status: 500 });
+		if (ogImageFile instanceof File) {
+			const og = await fileToBase64AndMime(ogImageFile);
+			heroData.ogImageBase64 = og.base64;
+			heroData.ogImageMime = og.mime;
+		} else {
+			const ogImageBase64 = form.get('ogImageBase64') as string;
+			if (ogImageBase64) {
+				const parsed = parseDataUrl(ogImageBase64);
+				heroData.ogImageBase64 = parsed.base64;
+				heroData.ogImageMime = parsed.mime;
+			}
+		}
+	} else {
+		const body = await req.json();
+		const { imageBase64, imageMime, ogImageBase64, ogImageMime, ...rest } = body;
+		
+		heroData = {
+			...rest,
+			imageBase64: imageBase64 ? parseDataUrl(imageBase64).base64 : undefined,
+			imageMime: imageBase64 ? (parseDataUrl(imageBase64).mime ?? imageMime) : undefined,
+			ogImageBase64: ogImageBase64 ? parseDataUrl(ogImageBase64).base64 : undefined,
+			ogImageMime: ogImageBase64 ? (parseDataUrl(ogImageBase64).mime ?? ogImageMime) : undefined,
+		};
 	}
-}
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
-	try {
-		await prisma.hero.delete({ where: { id: params.id } });
-		return NextResponse.json({ ok: true });
-	} catch (err) {
-		return NextResponse.json({ error: 'Not found' }, { status: 404 });
+	// Validate the data
+	const validatedData = validateHeroUpdate(heroData);
+
+	// Only update fields that are provided
+	const updateData: Record<string, unknown> = {};
+	Object.keys(validatedData).forEach(key => {
+		if (validatedData[key as keyof typeof validatedData] !== undefined) {
+			updateData[key] = validatedData[key as keyof typeof validatedData];
+		}
+	});
+
+	const updated = await prisma.hero.update({
+		where: { id },
+		data: updateData,
+	});
+
+	const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
+	const response = mapHeroForResponse(updated, { includeBase64 });
+	
+	return ApiResponse.success(response);
+});
+
+export const DELETE = withErrorHandling(async (_: NextRequest, { params }: { params: { id: string } }) => {
+	const { id } = validateHeroParams(params);
+	
+	// Check if hero exists
+	const existingHero = await prisma.hero.findUnique({ where: { id } });
+	if (!existingHero) {
+		throw ApiResponse.notFound('Hero not found');
 	}
-}
+	
+	await prisma.hero.delete({ where: { id } });
+	return ApiResponse.noContent();
+});
 
-export async function GET_IMAGE(_: NextRequest, { params }: { params: { id: string } }) {
-	const hero = await prisma.hero.findUnique({ where: { id: params.id } });
-	if (!hero || !hero.imageBase64 || !hero.imageMime) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+export const GET_IMAGE = withErrorHandling(async (_: NextRequest, { params }: { params: { id: string } }) => {
+	const { id } = validateHeroParams(params);
+	
+	const hero = await prisma.hero.findUnique({ where: { id } });
+	if (!hero || !hero.imageBase64 || !hero.imageMime) {
+		throw ApiResponse.notFound('Hero image not found');
+	}
+	
 	const bytes = Buffer.from(hero.imageBase64, 'base64');
-	return new NextResponse(bytes, { headers: { 'Content-Type': hero.imageMime, 'Cache-Control': 'public, max-age=3600, immutable' } });
-}
+	return new NextResponse(bytes, { 
+		headers: { 
+			'Content-Type': hero.imageMime, 
+			'Cache-Control': 'public, max-age=3600, immutable' 
+		} 
+	});
+});
 
-export async function GET_OG_IMAGE(_: NextRequest, { params }: { params: { id: string } }) {
-	const hero = await prisma.hero.findUnique({ where: { id: params.id } });
-	if (!hero || !hero.ogImageBase64 || !hero.ogImageMime) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+export const GET_OG_IMAGE = withErrorHandling(async (_: NextRequest, { params }: { params: { id: string } }) => {
+	const { id } = validateHeroParams(params);
+	
+	const hero = await prisma.hero.findUnique({ where: { id } });
+	if (!hero || !hero.ogImageBase64 || !hero.ogImageMime) {
+		throw ApiResponse.notFound('Hero OG image not found');
+	}
+	
 	const bytes = Buffer.from(hero.ogImageBase64, 'base64');
-	return new NextResponse(bytes, { headers: { 'Content-Type': hero.ogImageMime, 'Cache-Control': 'public, max-age=3600, immutable' } });
-}
+	return new NextResponse(bytes, { 
+		headers: { 
+			'Content-Type': hero.ogImageMime, 
+			'Cache-Control': 'public, max-age=3600, immutable' 
+		} 
+	});
+});
