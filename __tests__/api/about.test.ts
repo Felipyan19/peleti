@@ -2,13 +2,13 @@
  * @jest-environment node
  */
 import { NextRequest } from 'next/server';
-import { GET as getHeroes, POST as createHero } from '@/app/api/hero/route';
-import { GET as getHero, PUT as updateHero, DELETE as deleteHero } from '@/app/api/hero/[id]/route';
+import { GET as getAbouts, POST as createAbout } from '@/app/api/about/route';
+import { GET as getAbout, PUT as updateAbout, DELETE as deleteAbout } from '@/app/api/about/[id]/route';
 
 // Mock Prisma
 jest.mock('@/generated/prisma', () => {
   const mockPrisma = {
-    hero: {
+    about: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       create: jest.fn(),
@@ -44,25 +44,25 @@ jest.mock('@/utils/api/responseHelpers', () => ({
 
 // Mock image helpers
 jest.mock('@/utils/server/imageHelpers', () => ({
-  mapHeroForResponse: (hero: any, options: any) => hero,
+  mapAboutForResponse: (about: any, options: any) => about,
   fileToBase64AndMime: jest.fn(),
   parseDataUrl: jest.fn(() => ({ base64: null, mime: null })),
   parseBoolean: jest.fn((val) => val === 'true' || val === true),
 }));
 
 // Mock validation
-jest.mock('@/utils/validation/heroValidation', () => ({
-  validateHeroQuery: jest.fn((params) => ({
+jest.mock('@/utils/validation/aboutValidation', () => ({
+  validateAboutQuery: jest.fn((params) => ({
     page: parseInt(params.get('page') || '1'),
     limit: parseInt(params.get('limit') || '10'),
     includeBase64: params.get('includeBase64') === 'true',
     published: params.get('published') ? params.get('published') === 'true' : undefined,
   })),
-  validateHeroParams: jest.fn(async (params) => ({ id: (await params).id })),
-  validateHeroUpdate: jest.fn((data) => data),
+  validateAboutParams: jest.fn(async (params) => ({ id: (await params).id })),
+  validateAboutUpdate: jest.fn((data) => data),
 }));
 
-describe('Hero API', () => {
+describe('About API', () => {
   let mockPrisma: any;
 
   beforeEach(() => {
@@ -72,14 +72,13 @@ describe('Hero API', () => {
     mockPrisma = new PrismaClient();
   });
 
-  describe('GET /api/hero', () => {
-    it('should return paginated list of heroes', async () => {
-      const mockHeroes = [
+  describe('GET /api/about', () => {
+    it('should return paginated list of about sections', async () => {
+      const mockAbouts = [
         {
           id: '1',
-          title: 'Test Hero',
-          description: 'Test Description',
-          buttonText: 'Click me',
+          title: 'Test About',
+          paragraphs: ['Paragraph 1', 'Paragraph 2'],
           imageBase64: null,
           imageMime: null,
           metaTitle: null,
@@ -92,28 +91,28 @@ describe('Hero API', () => {
         },
       ];
 
-      mockPrisma.hero.findMany.mockResolvedValue(mockHeroes);
-      mockPrisma.hero.count.mockResolvedValue(1);
+      mockPrisma.about.findMany.mockResolvedValue(mockAbouts);
+      mockPrisma.about.count.mockResolvedValue(1);
 
-      const request = new NextRequest('http://localhost:3000/api/hero?page=1&limit=10');
-      const response = await getHeroes(request);
+      const request = new NextRequest('http://localhost:3000/api/about?page=1&limit=10');
+      const response = await getAbouts(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.heroes).toHaveLength(1);
+      expect(data.abouts).toHaveLength(1);
       expect(data.total).toBe(1);
       expect(data.page).toBe(1);
       expect(data.limit).toBe(10);
     });
 
     it('should filter by published status', async () => {
-      mockPrisma.hero.findMany.mockResolvedValue([]);
-      mockPrisma.hero.count.mockResolvedValue(0);
+      mockPrisma.about.findMany.mockResolvedValue([]);
+      mockPrisma.about.count.mockResolvedValue(0);
 
-      const request = new NextRequest('http://localhost:3000/api/hero?published=true');
-      await getHeroes(request);
+      const request = new NextRequest('http://localhost:3000/api/about?published=true');
+      await getAbouts(request);
 
-      expect(mockPrisma.hero.findMany).toHaveBeenCalledWith(
+      expect(mockPrisma.about.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { published: true },
         })
@@ -121,18 +120,17 @@ describe('Hero API', () => {
     });
   });
 
-  describe('POST /api/hero', () => {
-    it('should create a new hero with valid data', async () => {
-      const heroData = {
-        title: 'New Hero',
-        description: 'New Description',
-        buttonText: 'Click me',
+  describe('POST /api/about', () => {
+    it('should create a new about section with valid data', async () => {
+      const aboutData = {
+        title: 'New About',
+        paragraphs: ['Paragraph 1', 'Paragraph 2'],
         published: true,
       };
 
-      const mockCreatedHero = {
+      const mockCreatedAbout = {
         id: '1',
-        ...heroData,
+        ...aboutData,
         imageBase64: null,
         imageMime: null,
         metaTitle: null,
@@ -143,42 +141,41 @@ describe('Hero API', () => {
         updatedAt: new Date(),
       };
 
-      mockPrisma.hero.create.mockResolvedValue(mockCreatedHero);
+      mockPrisma.about.create.mockResolvedValue(mockCreatedAbout);
 
-      const request = new NextRequest('http://localhost:3000/api/hero', {
+      const request = new NextRequest('http://localhost:3000/api/about', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(heroData),
+        body: JSON.stringify(aboutData),
       });
 
-      const response = await createHero(request);
+      const response = await createAbout(request);
       expect(response.status).toBe(201);
     });
 
     it('should return 400 for missing required fields', async () => {
       const invalidData = {
         title: '', // Empty title
-        description: 'Valid description',
+        paragraphs: [], // Empty paragraphs
       };
 
-      const request = new NextRequest('http://localhost:3000/api/hero', {
+      const request = new NextRequest('http://localhost:3000/api/about', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invalidData),
       });
 
-      const response = await createHero(request);
+      const response = await createAbout(request);
       expect(response.status).toBe(400);
     });
   });
 
-  describe('GET /api/hero/[id]', () => {
-    it('should return hero by id', async () => {
-      const mockHero = {
+  describe('GET /api/about/[id]', () => {
+    it('should return about section by id', async () => {
+      const mockAbout = {
         id: '1',
-        title: 'Test Hero',
-        description: 'Test Description',
-        buttonText: 'Click me',
+        title: 'Test About',
+        paragraphs: ['Paragraph 1', 'Paragraph 2'],
         imageBase64: null,
         imageMime: null,
         metaTitle: null,
@@ -190,31 +187,30 @@ describe('Hero API', () => {
         updatedAt: new Date(),
       };
 
-      mockPrisma.hero.findUnique.mockResolvedValue(mockHero);
+      mockPrisma.about.findUnique.mockResolvedValue(mockAbout);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/1');
-      const response = await getHero(request, { params: Promise.resolve({ id: '1' }) });
+      const request = new NextRequest('http://localhost:3000/api/about/1');
+      const response = await getAbout(request, { params: Promise.resolve({ id: '1' }) });
 
       expect(response.status).toBe(200);
     });
 
-    it('should return 404 for non-existent hero', async () => {
-      mockPrisma.hero.findUnique.mockResolvedValue(null);
+    it('should return 404 for non-existent about section', async () => {
+      mockPrisma.about.findUnique.mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/non-existent');
-      const response = await getHero(request, { params: Promise.resolve({ id: 'non-existent' }) });
+      const request = new NextRequest('http://localhost:3000/api/about/non-existent');
+      const response = await getAbout(request, { params: Promise.resolve({ id: 'non-existent' }) });
 
       expect(response.status).toBe(404);
     });
   });
 
-  describe('PUT /api/hero/[id]', () => {
-    it('should update existing hero', async () => {
-      const existingHero = {
+  describe('PUT /api/about/[id]', () => {
+    it('should update existing about section', async () => {
+      const existingAbout = {
         id: '1',
         title: 'Original Title',
-        description: 'Original Description',
-        buttonText: 'Original Button',
+        paragraphs: ['Original Paragraph 1', 'Original Paragraph 2'],
         imageBase64: null,
         imageMime: null,
         metaTitle: null,
@@ -226,46 +222,45 @@ describe('Hero API', () => {
         updatedAt: new Date(),
       };
 
-      const updatedHero = {
-        ...existingHero,
+      const updatedAbout = {
+        ...existingAbout,
         title: 'Updated Title',
         updatedAt: new Date(),
       };
 
-      mockPrisma.hero.findUnique.mockResolvedValue(existingHero);
-      mockPrisma.hero.update.mockResolvedValue(updatedHero);
+      mockPrisma.about.findUnique.mockResolvedValue(existingAbout);
+      mockPrisma.about.update.mockResolvedValue(updatedAbout);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/1', {
+      const request = new NextRequest('http://localhost:3000/api/about/1', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: 'Updated Title' }),
       });
 
-      const response = await updateHero(request, { params: Promise.resolve({ id: '1' }) });
+      const response = await updateAbout(request, { params: Promise.resolve({ id: '1' }) });
       expect(response.status).toBe(200);
     });
 
-    it('should return 404 for non-existent hero', async () => {
-      mockPrisma.hero.findUnique.mockResolvedValue(null);
+    it('should return 404 for non-existent about section', async () => {
+      mockPrisma.about.findUnique.mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/non-existent', {
+      const request = new NextRequest('http://localhost:3000/api/about/non-existent', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: 'Updated Title' }),
       });
 
-      const response = await updateHero(request, { params: Promise.resolve({ id: 'non-existent' }) });
+      const response = await updateAbout(request, { params: Promise.resolve({ id: 'non-existent' }) });
       expect(response.status).toBe(404);
     });
   });
 
-  describe('DELETE /api/hero/[id]', () => {
-    it('should delete existing hero', async () => {
-      const existingHero = {
+  describe('DELETE /api/about/[id]', () => {
+    it('should delete existing about section', async () => {
+      const existingAbout = {
         id: '1',
-        title: 'Test Hero',
-        description: 'Test Description',
-        buttonText: 'Click me',
+        title: 'Test About',
+        paragraphs: ['Paragraph 1', 'Paragraph 2'],
         imageBase64: null,
         imageMime: null,
         metaTitle: null,
@@ -277,25 +272,25 @@ describe('Hero API', () => {
         updatedAt: new Date(),
       };
 
-      mockPrisma.hero.findUnique.mockResolvedValue(existingHero);
-      mockPrisma.hero.delete.mockResolvedValue(existingHero);
+      mockPrisma.about.findUnique.mockResolvedValue(existingAbout);
+      mockPrisma.about.delete.mockResolvedValue(existingAbout);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/1', {
+      const request = new NextRequest('http://localhost:3000/api/about/1', {
         method: 'DELETE',
       });
 
-      const response = await deleteHero(request, { params: Promise.resolve({ id: '1' }) });
+      const response = await deleteAbout(request, { params: Promise.resolve({ id: '1' }) });
       expect(response.status).toBe(204);
     });
 
-    it('should return 404 for non-existent hero', async () => {
-      mockPrisma.hero.findUnique.mockResolvedValue(null);
+    it('should return 404 for non-existent about section', async () => {
+      mockPrisma.about.findUnique.mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/hero/non-existent', {
+      const request = new NextRequest('http://localhost:3000/api/about/non-existent', {
         method: 'DELETE',
       });
 
-      const response = await deleteHero(request, { params: Promise.resolve({ id: 'non-existent' }) });
+      const response = await deleteAbout(request, { params: Promise.resolve({ id: 'non-existent' }) });
       expect(response.status).toBe(404);
     });
   });

@@ -12,7 +12,7 @@ export class ApiResponse {
   }
 
   static noContent() {
-    return NextResponse.json(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 
   static badRequest(error: string, details?: Record<string, unknown>) {
@@ -65,20 +65,31 @@ export function withErrorHandling<T extends unknown[], R>(
       return await handler(...args);
     } catch (error) {
       console.error('API Error:', error);
-      
+      // Pass through already-formed Next.js responses (e.g., thrown via ApiResponse.*)
+      // Next.js supports throwing a Response/NextResponse to short-circuit handlers
+      if (error instanceof NextResponse || error instanceof Response) {
+        // rethrow so Next.js returns it as-is
+        throw error as unknown as R;
+      }
+
+      // Handle Zod validation errors explicitly
+      if ((error as { name?: string; issues?: unknown })?.name === 'ZodError') {
+        throw ApiResponse.badRequest('Invalid request data', { issues: (error as { issues: unknown }).issues }) as unknown as R;
+      }
+
       if (error instanceof Error) {
         if (error.message.includes('validation')) {
-          throw ApiResponse.unprocessableEntity('Validation error', { message: error.message });
+          throw ApiResponse.unprocessableEntity('Validation error', { message: error.message }) as unknown as R;
         }
         if (error.message.includes('not found')) {
-          throw ApiResponse.notFound(error.message);
+          throw ApiResponse.notFound(error.message) as unknown as R;
         }
         if (error.message.includes('duplicate') || error.message.includes('unique')) {
-          throw ApiResponse.conflict('Resource already exists');
+          throw ApiResponse.conflict('Resource already exists') as unknown as R;
         }
       }
-      
-      throw ApiResponse.internalServerError();
+
+      throw ApiResponse.internalServerError() as unknown as R;
     }
   };
 }

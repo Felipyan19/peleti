@@ -41,6 +41,7 @@ export function validateHeroQuery(searchParams: URLSearchParams) {
   return heroQuerySchema.parse(query);
 }
 
-export function validateHeroParams(params: { id: string }) {
-  return heroParamsSchema.parse(params);
+export async function validateHeroParams(params: Promise<{ id: string }>) {
+  const resolvedParams = await params;
+  return heroParamsSchema.parse(resolvedParams);
 }
