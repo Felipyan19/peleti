@@ -6,7 +6,7 @@ export async function GET() {
 		info: {
 			title: 'Peleti API',
 			version: '1.0.0',
-			description: 'Auth, Hero, About and StyleGallery CRUD endpoints',
+			description: 'Auth, Hero, About, StyleGallery and WorkProcess CRUD endpoints',
 		},
 		servers: [{ url: 'http://localhost:3000' }],
 		paths: {
@@ -258,6 +258,148 @@ export async function GET() {
 				delete: {
 					summary: 'Delete style gallery settings',
 					tags: ['StyleGallery'],
+					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
+				},
+			},
+			'/api/work-process': {
+				get: {
+					summary: 'Get complete work process (settings + steps)',
+					tags: ['WorkProcess'],
+					responses: {
+						'200': {
+							description: 'Complete work process with settings and published steps',
+							content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkProcessResponse' } } },
+						},
+					},
+				},
+			},
+			'/api/work-process/settings': {
+				get: {
+					summary: 'List work process settings',
+					tags: ['WorkProcess'],
+					responses: {
+						'200': {
+							description: 'List of work process settings',
+							content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/WorkProcessSettings' } } } },
+						},
+					},
+				},
+				post: {
+					summary: 'Create work process settings',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettingsCreate' } },
+						},
+					},
+					responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettings' } } } } },
+				},
+				put: {
+					summary: 'Update work process settings (bulk)',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettingsUpdate' } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettings' } } } } },
+				},
+				delete: {
+					summary: 'Delete all work process settings',
+					tags: ['WorkProcess'],
+					responses: { '204': { description: 'No Content' } },
+				},
+			},
+			'/api/work-process/settings/{id}': {
+				parameters: [{ in: 'path', name: 'id', schema: { type: 'string', format: 'uuid' }, required: true }],
+				get: {
+					summary: 'Get work process settings by ID',
+					tags: ['WorkProcess'],
+					responses: { '200': { description: 'Ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettings' } } } }, '404': { description: 'Not found' } },
+				},
+				put: {
+					summary: 'Update work process settings by ID',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettingsUpdate' } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkProcessSettings' } } } }, '404': { description: 'Not found' } },
+				},
+				delete: {
+					summary: 'Delete work process settings by ID',
+					tags: ['WorkProcess'],
+					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
+				},
+			},
+			'/api/work-process/steps': {
+				get: {
+					summary: 'List work steps',
+					tags: ['WorkProcess'],
+					parameters: [
+						{ in: 'query', name: 'published', schema: { type: 'boolean' }, required: false },
+						{ in: 'query', name: 'order', schema: { type: 'integer' }, required: false },
+					],
+					responses: {
+						'200': {
+							description: 'List of work steps',
+							content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/WorkStep' } } } },
+						},
+					},
+				},
+				post: {
+					summary: 'Create work step',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/WorkStepCreate' } },
+						},
+					},
+					responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkStep' } } } } },
+				},
+				put: {
+					summary: 'Update work steps (bulk)',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/WorkStepUpdate' } } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/WorkStep' } } } } } },
+				},
+				delete: {
+					summary: 'Delete all work steps',
+					tags: ['WorkProcess'],
+					responses: { '204': { description: 'No Content' } },
+				},
+			},
+			'/api/work-process/steps/{id}': {
+				parameters: [{ in: 'path', name: 'id', schema: { type: 'string', format: 'uuid' }, required: true }],
+				get: {
+					summary: 'Get work step by ID',
+					tags: ['WorkProcess'],
+					responses: { '200': { description: 'Ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkStep' } } } }, '404': { description: 'Not found' } },
+				},
+				put: {
+					summary: 'Update work step by ID',
+					tags: ['WorkProcess'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/WorkStepUpdate' } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/WorkStep' } } } }, '404': { description: 'Not found' } },
+				},
+				delete: {
+					summary: 'Delete work step by ID',
+					tags: ['WorkProcess'],
 					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
 				},
 			},
@@ -532,6 +674,75 @@ export async function GET() {
 					properties: {
 						title: { type: 'string' },
 						description: { type: 'string' },
+					},
+				},
+				WorkProcessSettings: {
+					type: 'object',
+					properties: {
+						id: { type: 'string', format: 'uuid' },
+						title: { type: 'string' },
+						description: { type: 'string' },
+						stepLabel: { type: 'string', nullable: true },
+						createdAt: { type: 'string', format: 'date-time' },
+						updatedAt: { type: 'string', format: 'date-time' },
+					},
+				},
+				WorkProcessSettingsCreate: {
+					type: 'object',
+					required: ['title', 'description'],
+					properties: {
+						title: { type: 'string', minLength: 1, maxLength: 255 },
+						description: { type: 'string', minLength: 1, maxLength: 1000 },
+						stepLabel: { type: 'string', maxLength: 100 },
+					},
+				},
+				WorkProcessSettingsUpdate: {
+					type: 'object',
+					properties: {
+						title: { type: 'string', minLength: 1, maxLength: 255 },
+						description: { type: 'string', minLength: 1, maxLength: 1000 },
+						stepLabel: { type: 'string', maxLength: 100 },
+					},
+				},
+				WorkStep: {
+					type: 'object',
+					properties: {
+						id: { type: 'string', format: 'uuid' },
+						title: { type: 'string' },
+						description: { type: 'string' },
+						icon: { type: 'string', nullable: true },
+						order: { type: 'integer', minimum: 0 },
+						published: { type: 'boolean' },
+						createdAt: { type: 'string', format: 'date-time' },
+						updatedAt: { type: 'string', format: 'date-time' },
+					},
+				},
+				WorkStepCreate: {
+					type: 'object',
+					required: ['title', 'description'],
+					properties: {
+						title: { type: 'string', minLength: 1, maxLength: 255 },
+						description: { type: 'string', minLength: 1, maxLength: 1000 },
+						icon: { type: 'string', maxLength: 100 },
+						order: { type: 'integer', minimum: 0 },
+						published: { type: 'boolean' },
+					},
+				},
+				WorkStepUpdate: {
+					type: 'object',
+					properties: {
+						title: { type: 'string', minLength: 1, maxLength: 255 },
+						description: { type: 'string', minLength: 1, maxLength: 1000 },
+						icon: { type: 'string', maxLength: 100 },
+						order: { type: 'integer', minimum: 0 },
+						published: { type: 'boolean' },
+					},
+				},
+				WorkProcessResponse: {
+					type: 'object',
+					properties: {
+						settings: { $ref: '#/components/schemas/WorkProcessSettings' },
+						steps: { type: 'array', items: { $ref: '#/components/schemas/WorkStep' } },
 					},
 				},
 			},

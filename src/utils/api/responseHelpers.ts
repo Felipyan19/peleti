@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ApiError } from '@/types/hero';
 
+// Re-export ApiError type for workProcess
+export type { ApiError };
+
 // Standardized API response helpers
 export class ApiResponse {
   static success<T>(data: T, status: number = 200) {
