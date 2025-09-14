@@ -6,7 +6,7 @@ export async function GET() {
 		info: {
 			title: 'Peleti API',
 			version: '1.0.0',
-			description: 'Auth, Hero and About CRUD endpoints',
+			description: 'Auth, Hero, About and StyleGallery CRUD endpoints',
 		},
 		servers: [{ url: 'http://localhost:3000' }],
 		paths: {
@@ -165,6 +165,100 @@ export async function GET() {
 					summary: 'Get about section OG image',
 					tags: ['About'],
 					responses: { '200': { description: 'Image file', content: { 'image/*': { schema: { type: 'string', format: 'binary' } } } }, '404': { description: 'Not found' } },
+				},
+			},
+			'/api/style-gallery/styles': {
+				get: {
+					summary: 'List style gallery styles',
+					tags: ['StyleGallery'],
+					parameters: [
+						{ in: 'query', name: 'page', schema: { type: 'integer', minimum: 1 }, required: false },
+						{ in: 'query', name: 'limit', schema: { type: 'integer', minimum: 1, maximum: 100 }, required: false },
+						{ in: 'query', name: 'published', schema: { type: 'boolean' }, required: false },
+					],
+					responses: {
+						'200': {
+							description: 'List of style gallery styles',
+							content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyleListResponse' } } },
+						},
+					},
+				},
+				post: {
+					summary: 'Create style gallery style',
+					tags: ['StyleGallery'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyleCreate' } },
+						},
+					},
+					responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyle' } } } } },
+				},
+			},
+			'/api/style-gallery/styles/{id}': {
+				parameters: [{ in: 'path', name: 'id', schema: { type: 'string', format: 'uuid' }, required: true }],
+				get: {
+					summary: 'Get style gallery style',
+					tags: ['StyleGallery'],
+					responses: { '200': { description: 'Ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyle' } } } }, '404': { description: 'Not found' } },
+				},
+				put: {
+					summary: 'Update style gallery style',
+					tags: ['StyleGallery'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyleUpdate' } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGalleryStyle' } } } }, '404': { description: 'Not found' } },
+				},
+				delete: {
+					summary: 'Delete style gallery style',
+					tags: ['StyleGallery'],
+					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
+				},
+			},
+			'/api/style-gallery/settings': {
+				get: {
+					summary: 'Get style gallery settings',
+					tags: ['StyleGallery'],
+					responses: { '200': { description: 'Ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettings' } } } }, '404': { description: 'Not found' } },
+				},
+				post: {
+					summary: 'Create style gallery settings',
+					tags: ['StyleGallery'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettingsCreate' } },
+						},
+					},
+					responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettings' } } } } },
+				},
+			},
+			'/api/style-gallery/settings/{id}': {
+				parameters: [{ in: 'path', name: 'id', schema: { type: 'string', format: 'uuid' }, required: true }],
+				get: {
+					summary: 'Get style gallery settings by ID',
+					tags: ['StyleGallery'],
+					responses: { '200': { description: 'Ok', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettings' } } } }, '404': { description: 'Not found' } },
+				},
+				put: {
+					summary: 'Update style gallery settings',
+					tags: ['StyleGallery'],
+					requestBody: {
+						required: true,
+						content: {
+							'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettingsUpdate' } },
+						},
+					},
+					responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/StyleGallerySettings' } } } }, '404': { description: 'Not found' } },
+				},
+				delete: {
+					summary: 'Delete style gallery settings',
+					tags: ['StyleGallery'],
+					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
 				},
 			},
 		},
@@ -364,6 +458,80 @@ export async function GET() {
 						total: { type: 'integer' },
 						page: { type: 'integer' },
 						limit: { type: 'integer' },
+					},
+				},
+				StyleGalleryStyle: {
+					type: 'object',
+					properties: {
+						id: { type: 'string', format: 'uuid' },
+						name: { type: 'string' },
+						description: { type: 'string' },
+						icon: { type: 'string' },
+						techniques: { type: 'array', items: { type: 'string' } },
+						examples: { type: 'string' },
+						order: { type: 'integer' },
+						published: { type: 'boolean' },
+						createdAt: { type: 'string', format: 'date-time' },
+						updatedAt: { type: 'string', format: 'date-time' },
+					},
+				},
+				StyleGalleryStyleCreate: {
+					type: 'object',
+					required: ['name', 'description', 'techniques'],
+					properties: {
+						name: { type: 'string' },
+						description: { type: 'string' },
+						icon: { type: 'string' },
+						techniques: { type: 'array', items: { type: 'string' } },
+						examples: { type: 'string' },
+						order: { type: 'integer' },
+						published: { type: 'boolean' },
+					},
+				},
+				StyleGalleryStyleUpdate: {
+					type: 'object',
+					properties: {
+						name: { type: 'string' },
+						description: { type: 'string' },
+						icon: { type: 'string' },
+						techniques: { type: 'array', items: { type: 'string' } },
+						examples: { type: 'string' },
+						order: { type: 'integer' },
+						published: { type: 'boolean' },
+					},
+				},
+				StyleGalleryStyleListResponse: {
+					type: 'object',
+					properties: {
+						styles: { type: 'array', items: { $ref: '#/components/schemas/StyleGalleryStyle' } },
+						total: { type: 'integer' },
+						page: { type: 'integer' },
+						limit: { type: 'integer' },
+					},
+				},
+				StyleGallerySettings: {
+					type: 'object',
+					properties: {
+						id: { type: 'string', format: 'uuid' },
+						title: { type: 'string' },
+						description: { type: 'string' },
+						createdAt: { type: 'string', format: 'date-time' },
+						updatedAt: { type: 'string', format: 'date-time' },
+					},
+				},
+				StyleGallerySettingsCreate: {
+					type: 'object',
+					required: ['title', 'description'],
+					properties: {
+						title: { type: 'string' },
+						description: { type: 'string' },
+					},
+				},
+				StyleGallerySettingsUpdate: {
+					type: 'object',
+					properties: {
+						title: { type: 'string' },
+						description: { type: 'string' },
 					},
 				},
 			},

@@ -1,5 +1,6 @@
 import type { HeroResponse } from '@/types/hero';
 import type { AboutResponse } from '@/types/about';
+import type { StyleGalleryStyleResponse, StyleGallerySettingsResponse } from '@/types/styleGallery';
 export function parseDataUrl(data: string | null | undefined): { base64: string | null; mime: string | null } {
 	if (!data || typeof data !== 'string') return { base64: null, mime: null };
 	const match = data.match(/^data:(.+);base64,(.+)$/);
@@ -83,6 +84,51 @@ export function mapAboutForResponse(about: Record<string, unknown>, options?: { 
 		ogImageUrl: about?.ogImageBase64 ? `/api/about/${about.id}/og-image` : undefined,
 		imageBase64: includeBase64 && typeof about?.imageBase64 === 'string' ? about.imageBase64 : undefined,
 		ogImageBase64: includeBase64 && typeof about?.ogImageBase64 === 'string' ? about.ogImageBase64 : undefined,
+	};
+}
+
+export function mapStyleGalleryStyleForResponse(style: Record<string, unknown>): StyleGalleryStyleResponse {
+	return {
+		id: String(style.id),
+		name: String(style.name),
+		description: String(style.description),
+		icon: typeof style?.icon === 'string' ? style.icon : undefined,
+		techniques: Array.isArray(style.techniques) ? style.techniques.map(String) : [],
+		examples: typeof style?.examples === 'string' ? style.examples : undefined,
+		order: typeof style?.order === 'number' ? style.order : 0,
+		published: Boolean(style.published),
+		createdAt:
+			typeof style?.createdAt === 'string'
+				? style.createdAt
+				: (style?.createdAt && typeof style.createdAt === 'object' && 'toISOString' in style.createdAt
+					? (style.createdAt as { toISOString: () => string }).toISOString()
+					: ''),
+		updatedAt:
+			typeof style?.updatedAt === 'string'
+				? style.updatedAt
+				: (style?.updatedAt && typeof style.updatedAt === 'object' && 'toISOString' in style.updatedAt
+					? (style.updatedAt as { toISOString: () => string }).toISOString()
+					: ''),
+	};
+}
+
+export function mapStyleGallerySettingsForResponse(settings: Record<string, unknown>): StyleGallerySettingsResponse {
+	return {
+		id: String(settings.id),
+		title: String(settings.title),
+		description: String(settings.description),
+		createdAt:
+			typeof settings?.createdAt === 'string'
+				? settings.createdAt
+				: (settings?.createdAt && typeof settings.createdAt === 'object' && 'toISOString' in settings.createdAt
+					? (settings.createdAt as { toISOString: () => string }).toISOString()
+					: ''),
+		updatedAt:
+			typeof settings?.updatedAt === 'string'
+				? settings.updatedAt
+				: (settings?.updatedAt && typeof settings.updatedAt === 'object' && 'toISOString' in settings.updatedAt
+					? (settings.updatedAt as { toISOString: () => string }).toISOString()
+					: ''),
 	};
 }
 
