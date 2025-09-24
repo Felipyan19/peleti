@@ -1,0 +1,24 @@
+{
+  "name": "peleti-seeder",
+  "version": "1.0.0",
+  "description": "Database seeder scripts for Peleti application",
+  "main": "seedAll.js",
+  "scripts": {
+    "seed": "node seedAll.js",
+    "clear": "node seedAll.js clear",
+    "stats": "node seedAll.js stats",
+    "seed:hero": "node migrations/seedHero.js",
+    "seed:about": "node migrations/seedAbout.js",
+    "seed:contact": "node migrations/seedContact.js",
+    "seed:portfolio": "node migrations/seedPortfolio.js",
+    "seed:styles": "node migrations/seedStyles.js",
+    "seed:stylegallery": "node migrations/seedStyleGallery.js",
+    "seed:workprocess": "node migrations/seedWorkProcess.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.0",
+    "mime-types": "^2.1.35"
+  },
+  "author": "Peleti Team",
+  "license": "ISC"
+}
