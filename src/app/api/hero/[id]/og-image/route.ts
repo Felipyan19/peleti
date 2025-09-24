@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
+import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 
 const prisma = new PrismaClient();
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export const GET = withErrorHandling(async (_: NextRequest, { params }: { params: { id: string } }) => {
 	const hero = await prisma.hero.findUnique({ where: { id: params.id } });
 	if (!hero || !hero.ogImageBase64 || !hero.ogImageMime) {
-		return NextResponse.json({ error: 'Not found' }, { status: 404 });
+		throw ApiResponse.notFound('Hero OG image not found');
 	}
 	const bytes = Buffer.from(hero.ogImageBase64, 'base64');
 	return new NextResponse(bytes, {
@@ -15,6 +16,6 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
 			'Cache-Control': 'public, max-age=3600, immutable',
 		},
 	});
-}
+});
 
 

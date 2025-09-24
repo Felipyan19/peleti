@@ -8,7 +8,8 @@ export async function GET() {
 			version: '2.0.0',
 			description: 'Complete CRUD API for Peleti artisan resin crafts website including Authentication, Content Management, Portfolio, Contact, Users, and Styles',
 		},
-		servers: [{ url: 'http://localhost:3000' }],
+		// Use relative base URL so Swagger calls the same origin/port as the app
+		servers: [{ url: '/' }],
 		tags: [
 			{ name: 'Auth', description: 'Authentication endpoints' },
 			{ name: 'Hero', description: 'Hero section management' },
@@ -69,6 +70,7 @@ export async function GET() {
 				post: {
 					summary: 'Create hero',
 					tags: ['Hero'],
+					security: [{ BearerAuth: [] }],
 					requestBody: {
 						required: true,
 						content: {
@@ -92,6 +94,7 @@ export async function GET() {
 				put: {
 					summary: 'Update hero',
 					tags: ['Hero'],
+					security: [{ BearerAuth: [] }],
 					requestBody: {
 						required: true,
 						content: {
@@ -104,6 +107,7 @@ export async function GET() {
 				delete: {
 					summary: 'Delete hero',
 					tags: ['Hero'],
+					security: [{ BearerAuth: [] }],
 					responses: { '204': { description: 'No Content' }, '404': { description: 'Not found' } },
 				},
 			},
@@ -939,6 +943,14 @@ export async function GET() {
 			},
 		},
 		components: {
+			securitySchemes: {
+				BearerAuth: {
+					type: 'http',
+					scheme: 'bearer',
+					bearerFormat: 'JWT',
+					description: 'JWT token obtained from /api/auth/login endpoint'
+				}
+			},
 			schemas: {
 				// Auth
 				LoginRequest: {

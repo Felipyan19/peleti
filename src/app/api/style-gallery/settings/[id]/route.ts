@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { mapStyleGallerySettingsForResponse } from '@/utils/server/imageHelpers';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 import { validateStyleGallerySettingsParams, validateStyleGallerySettingsUpdate } from '@/utils/validation/styleGalleryValidation';
 
 const prisma = new PrismaClient();
@@ -18,7 +19,7 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
 	return ApiResponse.success(response);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
 	const { id } = await validateStyleGallerySettingsParams(params);
 	const body = await req.json();
 	
@@ -45,11 +46,11 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
 	});
 
 	const response = mapStyleGallerySettingsForResponse(updated);
-	
-	return ApiResponse.success(response);
-});
 
-export const DELETE = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+	return ApiResponse.success(response);
+}));
+
+export const DELETE = withErrorHandling(withAuthProtection(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
 	const { id } = await validateStyleGallerySettingsParams(params);
 	
 	// Check if settings exists
@@ -60,4 +61,4 @@ export const DELETE = withErrorHandling(async (_: NextRequest, { params }: { par
 	
 	await prisma.styleGallerySettings.delete({ where: { id } });
 	return ApiResponse.noContent();
-});
+}));

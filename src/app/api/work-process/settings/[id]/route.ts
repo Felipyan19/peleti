@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 import { workProcessSettingsUpdateSchema } from '@/utils/validation/workProcessValidation';
 
 const prisma = new PrismaClient();
@@ -21,7 +22,7 @@ export const GET = withErrorHandling(async (request: NextRequest, { params }: { 
 });
 
 // PUT /api/work-process/settings/[id] - Update work process settings by ID
-export const PUT = withErrorHandling(async (request: NextRequest, { params }: { params: { id: string } }) => {
+export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: { id: string } }) => {
   const { id } = params;
   const body = await request.json();
   const validatedData = workProcessSettingsUpdateSchema.parse(body);
@@ -32,10 +33,10 @@ export const PUT = withErrorHandling(async (request: NextRequest, { params }: { 
   });
 
   return ApiResponse.success(updatedSettings);
-});
+}));
 
 // DELETE /api/work-process/settings/[id] - Delete work process settings by ID
-export const DELETE = withErrorHandling(async (request: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: { id: string } }) => {
   const { id } = params;
 
   await prisma.workProcessSettings.delete({
@@ -43,4 +44,4 @@ export const DELETE = withErrorHandling(async (request: NextRequest, { params }:
   });
 
   return ApiResponse.noContent();
-});
+}));

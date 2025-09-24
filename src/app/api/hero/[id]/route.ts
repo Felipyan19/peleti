@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { fileToBase64AndMime, mapHeroForResponse, parseDataUrl, parseBoolean } from '@/utils/server/imageHelpers';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 import { validateHeroUpdate, validateHeroParams } from '@/utils/validation/heroValidation';
 
 const prisma = new PrismaClient();
@@ -21,7 +22,7 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
 	return ApiResponse.success(response);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
 	const { id } = await validateHeroParams(params);
 	const contentType = req.headers.get('content-type') || '';
 	let heroData: Record<string, unknown> = {};
@@ -109,11 +110,11 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
 
 	const includeBase64 = req.nextUrl.searchParams.get('includeBase64') === 'true';
 	const response = mapHeroForResponse(updated, { includeBase64 });
-	
-	return ApiResponse.success(response);
-});
 
-export const DELETE = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+	return ApiResponse.success(response);
+}));
+
+export const DELETE = withErrorHandling(withAuthProtection(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
 	const { id } = await validateHeroParams(params);
 	
 	// Check if hero exists
@@ -124,7 +125,7 @@ export const DELETE = withErrorHandling(async (_: NextRequest, { params }: { par
 	
 	await prisma.hero.delete({ where: { id } });
 	return ApiResponse.noContent();
-});
+}));
 
 export const GET_IMAGE = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
 	const { id } = await validateHeroParams(params);

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 import { workStepCreateSchema, workStepQuerySchema } from '@/utils/validation/workProcessValidation';
 
 const prisma = new PrismaClient();
@@ -26,7 +27,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
 });
 
 // POST /api/work-process/steps - Create new work step
-export const POST = withErrorHandling(async (request: NextRequest) => {
+export const POST = withErrorHandling(withAuthProtection(async (request: NextRequest) => {
   const body = await request.json();
   const validatedData = workStepCreateSchema.parse(body);
 
@@ -43,10 +44,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   });
 
   return ApiResponse.created(step);
-});
+}));
 
 // PUT /api/work-process/steps - Update multiple work steps (bulk update)
-export const PUT = withErrorHandling(async (request: NextRequest) => {
+export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequest) => {
   const body = await request.json();
   
   if (!Array.isArray(body)) {
@@ -64,11 +65,11 @@ export const PUT = withErrorHandling(async (request: NextRequest) => {
   const updatedSteps = await Promise.all(updatePromises);
 
   return ApiResponse.success(updatedSteps);
-});
+}));
 
 // DELETE /api/work-process/steps - Delete all work steps
-export const DELETE = withErrorHandling(async (request: NextRequest) => {
+export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest) => {
   await prisma.workStep.deleteMany();
   
   return ApiResponse.noContent();
-});
+}));

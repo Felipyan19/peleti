@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { mapStyleGalleryStyleForResponse } from '@/utils/server/imageHelpers';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 import { validateStyleGalleryStyleQuery, validateStyleGalleryStyleCreate } from '@/utils/validation/styleGalleryValidation';
 import { StyleGalleryStyleListResponse } from '@/types/styleGallery';
 
@@ -37,41 +38,36 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 	return ApiResponse.success(response);
 });
 
-export async function POST(req: NextRequest) {
-	try {
-		const body = await req.json();
-		const { name, description, icon, techniques, examples, order, published } = body ?? {};
+export const POST = withErrorHandling(withAuthProtection(async (req: NextRequest) => {
+	const body = await req.json();
+	const { name, description, icon, techniques, examples, order, published } = body ?? {};
 
-		if (!name || !description || !techniques || !Array.isArray(techniques)) {
-			return NextResponse.json({ error: 'name, description, and techniques are required' }, { status: 400 });
-		}
-
-		// Validate the data
-		const validatedData = validateStyleGalleryStyleCreate({
-			name,
-			description,
-			icon,
-			techniques,
-			examples,
-			order,
-			published,
-		});
-
-		const created = await prisma.styleGalleryStyle.create({
-			data: {
-				name: validatedData.name,
-				description: validatedData.description,
-				icon: validatedData.icon ?? null,
-				techniques: validatedData.techniques,
-				examples: validatedData.examples ?? null,
-				order: validatedData.order ?? 0,
-				published: validatedData.published ?? true,
-			},
-		});
-
-		return NextResponse.json(mapStyleGalleryStyleForResponse(created), { status: 201 });
-	} catch (err) {
-		console.error(err);
-		return NextResponse.json({ error: 'Server error' }, { status: 500 });
+	if (!name || !description || !techniques || !Array.isArray(techniques)) {
+		throw ApiResponse.badRequest('name, description, and techniques are required');
 	}
-}
+
+	// Validate the data
+	const validatedData = validateStyleGalleryStyleCreate({
+		name,
+		description,
+		icon,
+		techniques,
+		examples,
+		order,
+		published,
+	});
+
+	const created = await prisma.styleGalleryStyle.create({
+		data: {
+			name: validatedData.name,
+			description: validatedData.description,
+			icon: validatedData.icon ?? null,
+			techniques: validatedData.techniques,
+			examples: validatedData.examples ?? null,
+			order: validatedData.order ?? 0,
+			published: validatedData.published ?? true,
+		},
+	});
+
+	return ApiResponse.created(mapStyleGalleryStyleForResponse(created));
+}));

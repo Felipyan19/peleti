@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAuthProtection } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
@@ -23,7 +24,7 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(settings);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: { id: string } }) => {
   const { id } = params;
   const body = await req.json();
   const {
@@ -53,9 +54,9 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   });
 
   return ApiResponse.success(updated);
-});
+}));
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: { id: string } }) => {
   const { id } = params;
 
   await prisma.contactSettings.delete({
@@ -63,4 +64,4 @@ export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { p
   });
 
   return ApiResponse.success({ message: 'Contact settings deleted successfully' });
-});
+}));

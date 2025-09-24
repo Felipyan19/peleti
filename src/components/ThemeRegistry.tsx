@@ -27,6 +27,7 @@ export default function ThemeRegistry({
   children: React.ReactNode;
 }) {
   const [mode, setMode] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
 
   // Emotion cache + SSR style flush
   const [{ cache, flush }] = useState(() => {
@@ -63,6 +64,7 @@ export default function ThemeRegistry({
   });
 
   useEffect(() => {
+    setMounted(true);
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark" || savedTheme === "light") {
       setMode(savedTheme);
@@ -87,6 +89,30 @@ export default function ThemeRegistry({
     () => createTheme(mode === "light" ? lightTheme : darkTheme),
     [mode]
   );
+
+  // Prevent hydration mismatch by showing loading state on initial render
+  if (!mounted) {
+    return (
+      <CacheProvider value={cache}>
+        <ThemeContext.Provider value={{ mode: "light", toggleTheme: () => {} }}>
+          <ThemeProvider theme={createTheme(lightTheme)}>
+            <CssBaseline />
+            <Box
+              sx={{
+                minHeight: "100vh",
+                width: "100%",
+                position: "relative",
+                backgroundColor: "#fafafa",
+                color: "#212121",
+              }}
+            >
+              <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>
+            </Box>
+          </ThemeProvider>
+        </ThemeContext.Provider>
+      </CacheProvider>
+    );
+  }
 
   return (
     <CacheProvider value={cache}>
