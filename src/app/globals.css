@@ -1,36 +1,105 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #7b7b7b;
-  --primary-light: #e9e9e9;
-  --primary-dark: #262626;
-  --accent: #2563eb;
-  --border: #e5e7eb;
+  --background: #f4ede1;
+  --foreground: #231a13;
+  --primary: #a8693a;
+  --primary-light: #f0dfcf;
+  --primary-dark: #7c4421;
+  --gold: #c8941e;
+  --accent: #5e6b52;
+  --border: rgba(35, 26, 19, 0.1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #9d9d9d;
-    --primary-light: #434343;
-    --primary-dark: #f5f5f5;
-    --accent: #60a5fa;
-    --border: #262626;
-  }
+[data-theme="dark"] {
+  --background: #15100b;
+  --foreground: #f2eadf;
+  --primary: #d9a36b;
+  --primary-light: #3a2a20;
+  --primary-dark: #e8be8f;
+  --gold: #e2a652;
+  --accent: #a9b39b;
+  --border: rgba(242, 234, 223, 0.1);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(168, 106, 60, 0.2);
+}
+
+a {
+  color: inherit;
+}
+
+/* Scrollbar acorde a la marca */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(168, 106, 60, 0.45) transparent;
+}
+*::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(168, 106, 60, 0.4);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 106, 60, 0.65);
+  background-clip: content-box;
+}
+
+.skip-link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 2000;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #231a13;
+  color: #fffdfa;
+  transform: translateY(-140%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
