@@ -7,8 +7,8 @@ import { workProcessSettingsUpdateSchema } from '@/utils/validation/workProcessV
 const prisma = new PrismaClient();
 
 // GET /api/work-process/settings/[id] - Get work process settings by ID
-export const GET = withErrorHandling(async (request: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   const settings = await prisma.workProcessSettings.findUnique({
     where: { id }
@@ -22,8 +22,8 @@ export const GET = withErrorHandling(async (request: NextRequest, { params }: { 
 });
 
 // PUT /api/work-process/settings/[id] - Update work process settings by ID
-export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const body = await request.json();
   const validatedData = workProcessSettingsUpdateSchema.parse(body);
 
@@ -36,8 +36,8 @@ export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequ
 }));
 
 // DELETE /api/work-process/settings/[id] - Delete work process settings by ID
-export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   await prisma.workProcessSettings.delete({
     where: { id }

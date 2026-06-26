@@ -144,7 +144,7 @@ export default function Portfolio() {
                       scale: 1.008,
                       boxShadow:
                         "0 24px 56px rgba(35,26,19,0.14), 0 8px 18px rgba(35,26,19,0.08)",
-                      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+                      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
                     }}
                     whileTap={{ scale: 0.985 }}
                     sx={{

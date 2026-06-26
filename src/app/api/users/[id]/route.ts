@@ -6,8 +6,8 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const { searchParams } = req.nextUrl;
   const includeBase64 = searchParams.get('includeBase64') === 'true';
 
@@ -33,11 +33,11 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(user);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const contentType = req.headers.get('content-type') || '';
 
-  let updateData: any = {};
+  const updateData: Record<string, unknown> = {};
   let imageData: { base64: string | null; mime: string | null } | undefined;
 
   if (contentType.includes('multipart/form-data')) {
@@ -164,8 +164,8 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(updated);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   // Check if this is the last admin user
   const user = await prisma.user.findUnique({

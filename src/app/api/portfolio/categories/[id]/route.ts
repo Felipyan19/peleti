@@ -15,8 +15,8 @@ function createSlug(text: string): string {
     .trim();
 }
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const { searchParams } = req.nextUrl;
   const includeItems = searchParams.get('includeItems') === 'true';
 
@@ -51,12 +51,12 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(category);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const body = await req.json();
   const { name, slug } = body;
 
-  const updateData: any = {};
+  const updateData: Record<string, unknown> = {};
 
   if (name) {
     updateData.name = name.trim();
@@ -87,8 +87,8 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(updated);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   // Check if category has items
   const itemCount = await prisma.portfolioItem.count({
