@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { setAuthCookie } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
@@ -36,7 +37,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 		{ expiresIn: '1d' }
 	);
 
-	return ApiResponse.success({
+	const response = ApiResponse.success({
 		token,
 		user: {
 			id: user.id,
@@ -45,4 +46,6 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
 			role: user.role,
 		},
 	});
+
+	return setAuthCookie(response, token);
 });

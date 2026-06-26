@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAdminProtection } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
@@ -51,7 +52,7 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(technique);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withAdminProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const body = await req.json();
   const { name, slug } = body;
@@ -89,9 +90,9 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   });
 
   return ApiResponse.success(updated);
-});
+}));
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const DELETE = withErrorHandling(withAdminProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   // Check if technique is used by any items
@@ -114,4 +115,4 @@ export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { p
   });
 
   return ApiResponse.success({ message: 'Technique deleted successfully' });
-});
+}));

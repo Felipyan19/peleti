@@ -19,24 +19,34 @@ import {
   Chip,
 } from "@mui/material";
 import { FaTimes, FaExpand } from "react-icons/fa";
-import portfolioData from "@/data/portfolio.json";
 import SectionHeading from "./SectionHeading";
 
 const MotionCard = motion(Card);
 
 interface PortfolioItem {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image: string;
-  dimensions: string;
+  dimensions?: string | null;
   technique: string;
   category: string;
+  images: Array<{
+    id: string;
+    image: string;
+    alt?: string | null;
+  }>;
 }
 
 const ITEMS_PER_PAGE = 6;
 
-export default function Portfolio() {
+interface PortfolioProps {
+  title: string;
+  description: string;
+  items: PortfolioItem[];
+}
+
+export default function Portfolio({ title, description, items }: PortfolioProps) {
   const theme = useTheme();
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("catalogo", {
@@ -49,7 +59,6 @@ export default function Portfolio() {
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(null);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
-  const items: PortfolioItem[] = portfolioData.dataPortfolio;
   const categories = [
     "Todas",
     ...Array.from(new Set(items.map((item) => item.category))),
@@ -79,8 +88,8 @@ export default function Portfolio() {
         <SectionHeading
           eyebrow="Catálogo"
           index="04"
-          title={portfolioData.title}
-          lead={portfolioData.description}
+          title={title}
+          lead={description}
         />
 
         <motion.div

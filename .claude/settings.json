@@ -7,7 +7,9 @@
       "Bash(echo \"PID: $!\")",
       "Bash(yarn build *)",
       "PowerShell(Get-Process -Name node -ErrorAction SilentlyContinue)",
-      "PowerShell(Stop-Process -Force -Confirm:$false)"
+      "PowerShell(Stop-Process -Force -Confirm:$false)",
+      "Bash(npx jest *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

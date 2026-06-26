@@ -22,7 +22,37 @@ import {
 import workProcessData from "@/data/workProcess.json";
 import SectionHeading from "./SectionHeading";
 
-export default function WorkProcess() {
+interface WorkProcessProps {
+  content?: {
+    settings: {
+      title: string;
+      description: string;
+      stepLabel: string;
+    };
+    steps: Array<{
+      id: string;
+      title: string;
+      description: string;
+      icon?: string;
+    }>;
+  };
+}
+
+const defaultWorkProcessContent = {
+  settings: {
+    title: workProcessData.title,
+    description: workProcessData.description,
+    stepLabel: workProcessData.step,
+  },
+  steps: workProcessData.stepsData.map((step) => ({
+    ...step,
+    id: String(step.id),
+  })),
+};
+
+export default function WorkProcess({
+  content = defaultWorkProcessContent,
+}: WorkProcessProps) {
   const theme = useTheme();
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("proceso", {
@@ -31,7 +61,7 @@ export default function WorkProcess() {
       animationDuration: 0.8,
     });
 
-  const steps = workProcessData.stepsData;
+  const steps = content.steps;
 
   const IconComponent = {
     FaFlask,
@@ -51,8 +81,8 @@ export default function WorkProcess() {
         <SectionHeading
           eyebrow="Nuestro proceso"
           index="03"
-          title={workProcessData.title}
-          lead={workProcessData.description}
+          title={content.settings.title}
+          lead={content.settings.description}
         />
 
         <motion.div
@@ -64,7 +94,8 @@ export default function WorkProcess() {
           <Timeline position="alternate">
             {steps.map((step, idx) => {
               const Icon =
-                IconComponent[step.icon as keyof typeof IconComponent];
+                IconComponent[step.icon as keyof typeof IconComponent] ??
+                FaCheckCircle;
               return (
                 <TimelineItem key={step.id}>
                   <TimelineOppositeContent
@@ -85,7 +116,7 @@ export default function WorkProcess() {
                         opacity: 0.7,
                       }}
                     >
-                      {workProcessData.step} {step.id}
+                      {content.settings.stepLabel} {idx + 1}
                     </Typography>
                   </TimelineOppositeContent>
 

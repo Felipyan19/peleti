@@ -6,7 +6,8 @@ type Props = { children: React.ReactNode };
 
 export default function AppShell({ children }: Props) {
   const pathname = usePathname();
-  const hideChrome = pathname?.startsWith("/docs");
+  const hideChrome =
+    pathname?.startsWith("/docs") || pathname?.startsWith("/admin");
 
   return (
     <>

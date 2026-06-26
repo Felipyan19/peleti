@@ -1,12 +1,13 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withRequiredAdmin } from '@/utils/api/authHelpers';
 import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest) => {
+export const GET = withErrorHandling(withRequiredAdmin(async (req: NextRequest) => {
   const { searchParams } = req.nextUrl;
   const role = searchParams.get('role') as 'ADMIN' | 'USER' | null;
   const includeBase64 = searchParams.get('includeBase64') === 'true';
@@ -44,9 +45,9 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
     limit,
     totalPages: Math.ceil(total / limit)
   });
-});
+}));
 
-export const POST = withErrorHandling(async (req: NextRequest) => {
+export const POST = withErrorHandling(withRequiredAdmin(async (req: NextRequest) => {
   const contentType = req.headers.get('content-type') || '';
 
   let name: string | null = null;
@@ -141,4 +142,4 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   });
 
   return ApiResponse.created(created);
-});
+}));

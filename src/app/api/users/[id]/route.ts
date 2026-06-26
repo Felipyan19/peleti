@@ -1,12 +1,13 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withRequiredAdmin } from '@/utils/api/authHelpers';
 import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const GET = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const { searchParams } = req.nextUrl;
   const includeBase64 = searchParams.get('includeBase64') === 'true';
@@ -31,9 +32,9 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   }
 
   return ApiResponse.success(user);
-});
+}));
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const contentType = req.headers.get('content-type') || '';
 
@@ -162,9 +163,9 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   });
 
   return ApiResponse.success(updated);
-});
+}));
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const DELETE = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   // Check if this is the last admin user
@@ -192,4 +193,4 @@ export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { p
   });
 
   return ApiResponse.success({ message: 'User deleted successfully' });
-});
+}));

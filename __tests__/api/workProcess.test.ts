@@ -1,12 +1,50 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { GET as getSettings, POST as createSettings, PUT as updateSettings, DELETE as deleteSettings } from '@/app/api/work-process/settings/route';
 import { GET as getStep, PUT as updateStep, DELETE as deleteStep } from '@/app/api/work-process/steps/[id]/route';
 import { GET as getSteps, POST as createStep, PUT as updateSteps, DELETE as deleteSteps } from '@/app/api/work-process/steps/route';
 import { GET as getWorkProcess } from '@/app/api/work-process/route';
 
-// Mock Prisma
-jest.mock('@/generated/prisma', () => ({
-  PrismaClient: jest.fn().mockImplementation(() => ({
+// Mock response helpers
+jest.mock('@/utils/api/responseHelpers', () => ({
+  ApiResponse: {
+    success: (data: any) => new Response(JSON.stringify(data), { status: 200 }),
+    created: (data: any) => new Response(JSON.stringify(data), { status: 201 }),
+    noContent: () => new Response(null, { status: 204 }),
+    badRequest: (message: string) => new Response(JSON.stringify({ error: message }), { status: 400 }),
+    unauthorized: (message: string) => new Response(JSON.stringify({ error: message }), { status: 401 }),
+    forbidden: (message: string) => new Response(JSON.stringify({ error: message }), { status: 403 }),
+    notFound: (message: string) => new Response(JSON.stringify({ error: message }), { status: 404 }),
+  },
+  withErrorHandling: (handler: any) => async (...args: any[]) => {
+    try {
+      return await handler(...args);
+    } catch (error) {
+      if (error instanceof Response) {
+        return error;
+      }
+      if ((error as any)?.name === 'ZodError') {
+        return new Response(JSON.stringify({ error: 'Invalid request data' }), { status: 400 });
+      }
+      throw error;
+    }
+  },
+}));
+
+// Mock auth helpers — bypass authentication for unit tests
+jest.mock('@/utils/api/authHelpers', () => ({
+  withAuthProtection: (handler: any) => handler,
+  withAdminProtection: (handler: any) => handler,
+  requireAdmin: jest.fn(),
+  AUTH_COOKIE_NAME: 'test_auth_token',
+  getSessionFromToken: jest.fn(),
+}));
+
+// Mock Prisma — shared singleton so routes and tests use the same instance
+jest.mock('@/generated/prisma', () => {
+  const mockPrisma = {
     workProcessSettings: {
       findMany: jest.fn(),
       findFirst: jest.fn(),
@@ -25,12 +63,19 @@ jest.mock('@/generated/prisma', () => ({
       delete: jest.fn(),
       deleteMany: jest.fn(),
     },
-  })),
-}));
+  };
+  return {
+    PrismaClient: jest.fn().mockImplementation(() => mockPrisma),
+  };
+});
 
 describe('WorkProcess API', () => {
+  let mockPrisma: any;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    const { PrismaClient } = require('@/generated/prisma');
+    mockPrisma = new PrismaClient();
   });
 
   describe('WorkProcessSettings', () => {
@@ -45,8 +90,6 @@ describe('WorkProcess API', () => {
 
     describe('GET /api/work-process/settings', () => {
       it('should return all work process settings', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workProcessSettings.findMany.mockResolvedValue([mockSettings]);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/settings');
@@ -54,14 +97,12 @@ describe('WorkProcess API', () => {
         const data = await response.json();
 
         expect(response.status).toBe(200);
-        expect(data).toEqual([mockSettings]);
+        expect(data).toEqual(JSON.parse(JSON.stringify([mockSettings])));
       });
     });
 
     describe('POST /api/work-process/settings', () => {
       it('should create new work process settings', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workProcessSettings.create.mockResolvedValue(mockSettings);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/settings', {
@@ -77,7 +118,7 @@ describe('WorkProcess API', () => {
         const data = await response.json();
 
         expect(response.status).toBe(201);
-        expect(data).toEqual(mockSettings);
+        expect(data).toEqual(JSON.parse(JSON.stringify(mockSettings)));
       });
 
       it('should return 400 for invalid data', async () => {
@@ -96,8 +137,6 @@ describe('WorkProcess API', () => {
 
     describe('PUT /api/work-process/settings', () => {
       it('should update work process settings', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workProcessSettings.findFirst.mockResolvedValue(mockSettings);
         mockPrisma.workProcessSettings.update.mockResolvedValue({
           ...mockSettings,
@@ -121,8 +160,6 @@ describe('WorkProcess API', () => {
 
     describe('DELETE /api/work-process/settings', () => {
       it('should delete all work process settings', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workProcessSettings.deleteMany.mockResolvedValue({ count: 1 });
 
         const request = new NextRequest('http://localhost:3000/api/work-process/settings', {
@@ -149,8 +186,6 @@ describe('WorkProcess API', () => {
 
     describe('GET /api/work-process/steps', () => {
       it('should return all work steps', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.findMany.mockResolvedValue([mockStep]);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/steps');
@@ -158,12 +193,10 @@ describe('WorkProcess API', () => {
         const data = await response.json();
 
         expect(response.status).toBe(200);
-        expect(data).toEqual([mockStep]);
+        expect(data).toEqual(JSON.parse(JSON.stringify([mockStep])));
       });
 
       it('should filter by published status', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.findMany.mockResolvedValue([mockStep]);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/steps?published=true');
@@ -179,8 +212,6 @@ describe('WorkProcess API', () => {
 
     describe('POST /api/work-process/steps', () => {
       it('should create new work step', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.findFirst.mockResolvedValue(null);
         mockPrisma.workStep.create.mockResolvedValue(mockStep);
 
@@ -197,31 +228,27 @@ describe('WorkProcess API', () => {
         const data = await response.json();
 
         expect(response.status).toBe(201);
-        expect(data).toEqual(mockStep);
+        expect(data).toEqual(JSON.parse(JSON.stringify(mockStep)));
       });
     });
 
     describe('GET /api/work-process/steps/[id]', () => {
       it('should return work step by ID', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.findUnique.mockResolvedValue(mockStep);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/steps/1');
-        const response = await getStep(request, { params: { id: '1' } });
+        const response = await getStep(request, { params: Promise.resolve({ id: '1' }) });
         const data = await response.json();
 
         expect(response.status).toBe(200);
-        expect(data).toEqual(mockStep);
+        expect(data).toEqual(JSON.parse(JSON.stringify(mockStep)));
       });
 
       it('should return 404 for non-existent step', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.findUnique.mockResolvedValue(null);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/steps/999');
-        const response = await getStep(request, { params: { id: '999' } });
+        const response = await getStep(request, { params: Promise.resolve({ id: '999' }) });
 
         expect(response.status).toBe(404);
       });
@@ -229,8 +256,6 @@ describe('WorkProcess API', () => {
 
     describe('PUT /api/work-process/steps/[id]', () => {
       it('should update work step by ID', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.update.mockResolvedValue({
           ...mockStep,
           title: 'Updated step',
@@ -243,7 +268,7 @@ describe('WorkProcess API', () => {
           }),
         });
 
-        const response = await updateStep(request, { params: { id: '1' } });
+        const response = await updateStep(request, { params: Promise.resolve({ id: '1' }) });
         const data = await response.json();
 
         expect(response.status).toBe(200);
@@ -253,15 +278,13 @@ describe('WorkProcess API', () => {
 
     describe('DELETE /api/work-process/steps/[id]', () => {
       it('should delete work step by ID', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
         mockPrisma.workStep.delete.mockResolvedValue(mockStep);
 
         const request = new NextRequest('http://localhost:3000/api/work-process/steps/1', {
           method: 'DELETE',
         });
 
-        const response = await deleteStep(request, { params: { id: '1' } });
+        const response = await deleteStep(request, { params: Promise.resolve({ id: '1' }) });
         expect(response.status).toBe(204);
       });
     });
@@ -270,9 +293,6 @@ describe('WorkProcess API', () => {
   describe('Complete WorkProcess', () => {
     describe('GET /api/work-process', () => {
       it('should return complete work process with settings and steps', async () => {
-        const { PrismaClient } = require('@/generated/prisma');
-        const mockPrisma = new PrismaClient();
-        
         const mockSettings = {
           id: '1',
           title: 'Cómo creamos tus figuras',
@@ -303,10 +323,10 @@ describe('WorkProcess API', () => {
         const data = await response.json();
 
         expect(response.status).toBe(200);
-        expect(data).toEqual({
+        expect(data).toEqual(JSON.parse(JSON.stringify({
           settings: mockSettings,
           steps: mockSteps,
-        });
+        })));
       });
     });
   });

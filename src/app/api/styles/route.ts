@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAdminProtection } from '@/utils/api/authHelpers';
 import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
 
 const prisma = new PrismaClient();
@@ -58,7 +59,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   });
 });
 
-export const POST = withErrorHandling(async (req: NextRequest) => {
+export const POST = withErrorHandling(withAdminProtection(async (req: NextRequest) => {
   const contentType = req.headers.get('content-type') || '';
 
   let name: string;
@@ -184,4 +185,4 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   const { imageBase64: _imageBase64, ogImageBase64: _ogImageBase64, ...response } = created;
 
   return ApiResponse.created(response);
-});
+}));
