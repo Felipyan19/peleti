@@ -10,8 +10,13 @@ export default function AppShell({ children }: Props) {
 
   return (
     <>
+      {!hideChrome && (
+        <a className="skip-link" href="#main-content">
+          Ir al contenido principal
+        </a>
+      )}
       {!hideChrome && <Navbar />}
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
     </>
   );
 }
