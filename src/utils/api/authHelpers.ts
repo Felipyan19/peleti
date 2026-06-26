@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { ApiResponse } from './responseHelpers';
 
@@ -50,27 +50,27 @@ export function requireAuth(req: NextRequest): JwtPayload {
 }
 
 // Wrapper that protects non-GET requests with authentication
-export function withAuthProtection<T extends unknown[], R>(
-  handler: (...args: T) => Promise<R>
+export function withAuthProtection<TContext extends unknown[]>(
+  handler: (req: NextRequest, ...context: TContext) => Promise<NextResponse>
 ) {
-  return async (req: NextRequest, ...args: T): Promise<R> => {
+  return async (req: NextRequest, ...context: TContext): Promise<NextResponse> => {
     // Allow GET requests without authentication
     if (req.method === 'GET') {
-      return await handler(req, ...args);
+      return await handler(req, ...context);
     }
 
     // Require authentication for all other HTTP methods
     requireAuth(req);
-    return await handler(req, ...args);
+    return await handler(req, ...context);
   };
 }
 
 // Wrapper that always requires authentication regardless of HTTP method
-export function withRequiredAuth<T extends unknown[], R>(
-  handler: (...args: T) => Promise<R>
+export function withRequiredAuth<TContext extends unknown[]>(
+  handler: (req: NextRequest, ...context: TContext) => Promise<NextResponse>
 ) {
-  return async (req: NextRequest, ...args: T): Promise<R> => {
+  return async (req: NextRequest, ...context: TContext): Promise<NextResponse> => {
     requireAuth(req);
-    return await handler(req, ...args);
+    return await handler(req, ...context);
   };
 }

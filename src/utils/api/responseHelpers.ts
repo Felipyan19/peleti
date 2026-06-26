@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { ApiError } from '@/types/hero';
 
 // Re-export ApiError type for workProcess
@@ -60,39 +60,37 @@ export class ApiResponse {
 }
 
 // Error handling wrapper
-export function withErrorHandling<T extends unknown[], R>(
-  handler: (...args: T) => Promise<R>
+export function withErrorHandling<TContext extends unknown[]>(
+  handler: (req: NextRequest, ...context: TContext) => Promise<NextResponse>
 ) {
-  return async (...args: T): Promise<R> => {
+  return async (req: NextRequest, ...context: TContext): Promise<NextResponse> => {
     try {
-      return await handler(...args);
+      return await handler(req, ...context);
     } catch (error) {
       console.error('API Error:', error);
       // Pass through already-formed Next.js responses (e.g., thrown via ApiResponse.*)
-      // Next.js supports throwing a Response/NextResponse to short-circuit handlers
       if (error instanceof NextResponse || error instanceof Response) {
-        // rethrow so Next.js returns it as-is
-        throw error as unknown as R;
+        throw error as unknown as NextResponse;
       }
 
       // Handle Zod validation errors explicitly
       if ((error as { name?: string; issues?: unknown })?.name === 'ZodError') {
-        throw ApiResponse.badRequest('Invalid request data', { issues: (error as { issues: unknown }).issues }) as unknown as R;
+        throw ApiResponse.badRequest('Invalid request data', { issues: (error as { issues: unknown }).issues }) as unknown as NextResponse;
       }
 
       if (error instanceof Error) {
         if (error.message.includes('validation')) {
-          throw ApiResponse.unprocessableEntity('Validation error', { message: error.message }) as unknown as R;
+          throw ApiResponse.unprocessableEntity('Validation error', { message: error.message }) as unknown as NextResponse;
         }
         if (error.message.includes('not found')) {
-          throw ApiResponse.notFound(error.message) as unknown as R;
+          throw ApiResponse.notFound(error.message) as unknown as NextResponse;
         }
         if (error.message.includes('duplicate') || error.message.includes('unique')) {
-          throw ApiResponse.conflict('Resource already exists') as unknown as R;
+          throw ApiResponse.conflict('Resource already exists') as unknown as NextResponse;
         }
       }
 
-      throw ApiResponse.internalServerError() as unknown as R;
+      throw ApiResponse.internalServerError() as unknown as NextResponse;
     }
   };
 }

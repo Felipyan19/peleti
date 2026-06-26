@@ -7,7 +7,7 @@ import { workProcessSettingsCreateSchema, workProcessSettingsUpdateSchema } from
 const prisma = new PrismaClient();
 
 // GET /api/work-process/settings - Get all work process settings
-export const GET = withErrorHandling(async (request: NextRequest) => {
+export const GET = withErrorHandling(async (_request: NextRequest) => {
   const settings = await prisma.workProcessSettings.findMany({
     orderBy: { createdAt: 'desc' }
   });
@@ -48,7 +48,7 @@ export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequ
 }));
 
 // DELETE /api/work-process/settings - Delete all work process settings
-export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest) => {
+export const DELETE = withErrorHandling(withAuthProtection(async (_request: NextRequest) => {
   await prisma.workProcessSettings.deleteMany();
   
   return ApiResponse.noContent();

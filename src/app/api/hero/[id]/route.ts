@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { fileToBase64AndMime, mapHeroForResponse, parseDataUrl, parseBoolean } from '@/utils/server/imageHelpers';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
@@ -127,36 +127,3 @@ export const DELETE = withErrorHandling(withAuthProtection(async (_: NextRequest
 	return ApiResponse.noContent();
 }));
 
-export const GET_IMAGE = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
-	const { id } = await validateHeroParams(params);
-	
-	const hero = await prisma.hero.findUnique({ where: { id } });
-	if (!hero || !hero.imageBase64 || !hero.imageMime) {
-		throw ApiResponse.notFound('Hero image not found');
-	}
-	
-	const bytes = Buffer.from(hero.imageBase64, 'base64');
-	return new NextResponse(bytes, { 
-		headers: { 
-			'Content-Type': hero.imageMime, 
-			'Cache-Control': 'public, max-age=3600, immutable' 
-		} 
-	});
-});
-
-export const GET_OG_IMAGE = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
-	const { id } = await validateHeroParams(params);
-	
-	const hero = await prisma.hero.findUnique({ where: { id } });
-	if (!hero || !hero.ogImageBase64 || !hero.ogImageMime) {
-		throw ApiResponse.notFound('Hero OG image not found');
-	}
-	
-	const bytes = Buffer.from(hero.ogImageBase64, 'base64');
-	return new NextResponse(bytes, { 
-		headers: { 
-			'Content-Type': hero.ogImageMime, 
-			'Cache-Control': 'public, max-age=3600, immutable' 
-		} 
-	});
-});

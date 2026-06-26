@@ -4,8 +4,8 @@ import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   const socialLink = await prisma.socialLink.findUnique({
     where: { id },
@@ -26,8 +26,8 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(socialLink);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const body = await req.json();
   const { platform, title, info, url, icon } = body;
 
@@ -53,8 +53,8 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(updated);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   await prisma.socialLink.delete({
     where: { id }

@@ -84,7 +84,7 @@ export default function StylesGallery() {
                   <Box
                     component={motion.div}
                     whileHover={{ y: -6 }}
-                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }}
                     sx={{
                       display: "flex",
                       flexDirection: {

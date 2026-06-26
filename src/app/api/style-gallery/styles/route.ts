@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { mapStyleGalleryStyleForResponse } from '@/utils/server/imageHelpers';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';

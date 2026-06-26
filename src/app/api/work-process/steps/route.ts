@@ -12,8 +12,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
   const queryParams = Object.fromEntries(searchParams.entries());
   const validatedQuery = workStepQuerySchema.parse(queryParams);
 
-  const where: any = {};
-  
+  const where: Record<string, unknown> = {};
+
   if (validatedQuery.published !== undefined) {
     where.published = validatedQuery.published;
   }
@@ -54,10 +54,10 @@ export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequ
     throw ApiResponse.badRequest('Expected array of work steps');
   }
 
-  const updatePromises = body.map(async (stepData: any) => {
+  const updatePromises = body.map(async (stepData: Record<string, unknown>) => {
     const { id, ...updateData } = stepData;
     return prisma.workStep.update({
-      where: { id },
+      where: { id: id as string },
       data: updateData
     });
   });
@@ -68,7 +68,7 @@ export const PUT = withErrorHandling(withAuthProtection(async (request: NextRequ
 }));
 
 // DELETE /api/work-process/steps - Delete all work steps
-export const DELETE = withErrorHandling(withAuthProtection(async (request: NextRequest) => {
+export const DELETE = withErrorHandling(withAuthProtection(async (_request: NextRequest) => {
   await prisma.workStep.deleteMany();
   
   return ApiResponse.noContent();

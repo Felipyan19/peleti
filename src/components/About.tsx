@@ -48,7 +48,7 @@ export default function About() {
               <motion.div
                 whileHover={{
                   scale: 1.015,
-                  transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] },
+                  transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
                 }}
                 style={{
                   position: "relative",

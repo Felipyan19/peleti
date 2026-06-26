@@ -94,7 +94,7 @@ export default function WorkProcess() {
                       variants={getStaggerVariants(idx + 1)}
                       whileHover={{
                         scale: 1.15,
-                        transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
+                        transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
                       }}
                     >
                       <TimelineDot

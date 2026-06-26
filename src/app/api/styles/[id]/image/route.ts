@@ -4,8 +4,8 @@ import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   const style = await prisma.style.findUnique({
     where: { id },

@@ -5,8 +5,8 @@ import { withAuthProtection } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   const settings = await prisma.contactSettings.findUnique({
     where: { id },
@@ -24,8 +24,8 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(settings);
 });
 
-export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const body = await req.json();
   const {
     title,
@@ -56,8 +56,8 @@ export const PUT = withErrorHandling(withAuthProtection(async (req: NextRequest,
   return ApiResponse.success(updated);
 }));
 
-export const DELETE = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(withAuthProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   await prisma.contactSettings.delete({
     where: { id }

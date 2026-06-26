@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 import { withAuthProtection } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest) => {
+export const GET = withErrorHandling(async (_req: NextRequest) => {
   const settings = await prisma.contactSettings.findMany({
     include: {
       socialLinks: {
@@ -45,7 +45,7 @@ export const POST = withErrorHandling(withAuthProtection(async (req: NextRequest
       submitSuccessText: submitSuccessText || 'Message sent!',
       submitErrorText: submitErrorText || 'Error sending message',
       socialLinks: socialLinks ? {
-        create: socialLinks.map((link: any) => ({
+        create: socialLinks.map((link: Record<string, unknown>) => ({
           platform: link.platform,
           title: link.title,
           info: link.info,

@@ -4,8 +4,8 @@ import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (_: NextRequest, { params }: { params: { id: string } }) => {
-	const hero = await prisma.hero.findUnique({ where: { id: params.id } });
+export const GET = withErrorHandling(async (_: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+	const hero = await prisma.hero.findUnique({ where: { id: (await params).id } });
 	if (!hero || !hero.imageBase64 || !hero.imageMime) {
 		throw ApiResponse.notFound('Hero image not found');
 	}

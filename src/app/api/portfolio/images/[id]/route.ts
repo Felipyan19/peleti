@@ -5,8 +5,8 @@ import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const { searchParams } = req.nextUrl;
   const includeBase64 = searchParams.get('includeBase64') === 'true';
   const asImage = searchParams.get('asImage') === 'true';
@@ -48,8 +48,8 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(response);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const contentType = req.headers.get('content-type') || '';
 
   let alt: string | undefined;
@@ -86,7 +86,7 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
     }
   }
 
-  const updateData: any = {};
+  const updateData: Record<string, unknown> = {};
 
   if (alt !== undefined) updateData.alt = alt?.trim() || null;
   if (order !== undefined) updateData.order = order;
@@ -112,8 +112,8 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(updated);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   await prisma.portfolioImage.delete({
     where: { id }

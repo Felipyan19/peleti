@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
 import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
@@ -16,8 +16,8 @@ function createSlug(text: string): string {
     .trim();
 }
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const { searchParams } = req.nextUrl;
   const includeBase64 = searchParams.get('includeBase64') === 'true';
 
@@ -41,11 +41,11 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(response);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const contentType = req.headers.get('content-type') || '';
 
-  let updateData: any = {};
+  const updateData: Record<string, unknown> = {};
   let mainImage: { base64: string | null; mime: string | null } | undefined;
   let ogImage: { base64: string | null; mime: string | null } | undefined;
 
@@ -183,13 +183,13 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   });
 
   // Filter base64 data from response
-  const { imageBase64: _, ogImageBase64: __, ...response } = updated;
+  const { imageBase64: _imageBase64, ogImageBase64: _ogImageBase64, ...response } = updated;
 
   return ApiResponse.success(response);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   await prisma.style.delete({
     where: { id }

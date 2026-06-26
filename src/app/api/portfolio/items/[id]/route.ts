@@ -15,8 +15,8 @@ function createSlug(text: string): string {
     .trim();
 }
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   const item = await prisma.portfolioItem.findUnique({
     where: { id },
@@ -41,8 +41,8 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(item);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   const body = await req.json();
   const {
     title,
@@ -57,7 +57,7 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
     metaDescription
   } = body;
 
-  const updateData: any = {};
+  const updateData: Record<string, unknown> = {};
 
   if (title) {
     updateData.title = title.trim();
@@ -152,8 +152,8 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(updated);
 });
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: { id: string } }) => {
-  const { id } = params;
+export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
 
   // Delete all related images first (cascade should handle this, but being explicit)
   await prisma.portfolioImage.deleteMany({

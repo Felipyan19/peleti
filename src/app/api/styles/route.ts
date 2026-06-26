@@ -26,7 +26,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
 
   const skip = (page - 1) * limit;
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (category) where.category = category;
   if (published !== null) where.published = published === 'true';
 
@@ -181,7 +181,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   });
 
   // Filter base64 data from response
-  const { imageBase64: _, ogImageBase64: __, ...response } = created;
+  const { imageBase64: _imageBase64, ogImageBase64: _ogImageBase64, ...response } = created;
 
   return ApiResponse.created(response);
 });
