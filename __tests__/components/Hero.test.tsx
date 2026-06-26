@@ -81,9 +81,10 @@ describe("Hero Component", () => {
   it("has the background image", () => {
     renderWithTheme(<Hero />);
 
-    const image = screen.getByAltText("Resin art background");
+    // The image alt text is dynamic based on currentImage.name
+    const image = screen.getByRole("img");
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute("src", "/images/art.jpg");
+    expect(image).toHaveAttribute("alt", expect.stringMatching(/Peleti - .+\.jpg/));
   });
 
   it("has the correct section id", () => {

@@ -62,9 +62,10 @@ describe("About Component", () => {
   it("displays the workshop image", () => {
     renderWithTheme(<About />);
 
-    const image = screen.getByAltText("Taller de resina artesanal");
+    // The image alt text is dynamic based on currentImage.name
+    const image = screen.getByRole("img");
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute("src", "/images/animal.jpg");
+    expect(image).toHaveAttribute("alt", expect.stringMatching(/Peleti - .+\.jpg/));
   });
 
   it("displays all paragraphs from about data", () => {

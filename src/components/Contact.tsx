@@ -18,6 +18,7 @@ import { motion } from "framer-motion";
 import { useScrollToSection } from "@/utils/useScrollToSection";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
 import contactData from "@/data/contact.json";
+import SectionHeading from "./SectionHeading";
 
 const IconComponent = {
   FaInstagram,
@@ -36,6 +37,7 @@ export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
+  const [submitMessage, setSubmitMessage] = useState("");
   const { ref, shouldAnimate } = useScrollToSection("contacto", {
     threshold: 0.1,
   });
@@ -50,12 +52,27 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus("idle");
+
     try {
-      await new Promise((res) => setTimeout(res, 1000));
+      const response = await fetch("/api/contact/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
       setSubmitStatus("success");
+      setSubmitMessage(contactData.submit.success);
       setFormData({ name: "", email: "", message: "" });
     } catch {
       setSubmitStatus("error");
+      setSubmitMessage(contactData.submit.error);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,42 +82,22 @@ export default function Contact() {
     <Box
       component="section"
       id="contacto"
-      sx={{ py: 10, backgroundColor: "background.paper" }}
+      sx={{ py: { xs: 8, md: 14 }, backgroundColor: "background.paper" }}
     >
       <Container maxWidth="md">
+        <SectionHeading
+          eyebrow="Hablemos"
+          index="05"
+          title={contactData.title}
+          lead={contactData.description}
+        />
+
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 20 }}
           animate={shouldAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
         >
-          <Box textAlign="center" mb={8}>
-            <Typography
-              variant="h2"
-              sx={{
-                fontWeight: 700,
-                letterSpacing: "0.05em",
-                color: "text.primary",
-                mb: 2,
-              }}
-            >
-              {contactData.title}
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              color="text.secondary"
-              sx={{
-                fontSize: "1.1rem",
-                lineHeight: 1.6,
-                opacity: 0.9,
-                maxWidth: 500,
-                mx: "auto",
-              }}
-            >
-              {contactData.description}
-            </Typography>
-          </Box>
-
           <Grid
             container
             spacing={6}
@@ -237,23 +234,25 @@ export default function Contact() {
                       {submitStatus === "success" && (
                         <Alert
                           severity="success"
+                          role="status"
                           sx={{
                             borderRadius: 3,
                             fontWeight: 500,
                           }}
                         >
-                          {contactData.submit.success}
+                          {submitMessage}
                         </Alert>
                       )}
                       {submitStatus === "error" && (
                         <Alert
                           severity="error"
+                          role="alert"
                           sx={{
                             borderRadius: 3,
                             fontWeight: 500,
                           }}
                         >
-                          {contactData.submit.error}
+                          {submitMessage}
                         </Alert>
                       )}
                     </Box>
@@ -314,24 +313,21 @@ export default function Contact() {
                       {[
                         {
                           Icon: IconComponent[
-                            contactData.social.instagram
-                              .icon as keyof typeof IconComponent
+                            contactData.social.instagram.icon as keyof typeof IconComponent
                           ],
                           href: contactData.social.instagram.url,
                           color: "#E4405F",
                         },
                         {
                           Icon: IconComponent[
-                            contactData.social.facebook
-                              .icon as keyof typeof IconComponent
+                            contactData.social.facebook.icon as keyof typeof IconComponent
                           ],
                           href: contactData.social.facebook.url,
                           color: "#1877F2",
                         },
                         {
                           Icon: IconComponent[
-                            contactData.social.whatsapp
-                              .icon as keyof typeof IconComponent
+                            contactData.social.whatsapp.icon as keyof typeof IconComponent
                           ],
                           href: contactData.social.whatsapp.url,
                           color: "#25D366",
@@ -389,14 +385,10 @@ export default function Contact() {
                         <strong>{contactData.social.instagram.title}:</strong>{" "}
                         {contactData.social.instagram.info}
                         <br />
-                        <strong>
-                          {contactData.social.facebook.title}:
-                        </strong>{" "}
+                        <strong>{contactData.social.facebook.title}:</strong>{" "}
                         {contactData.social.facebook.info}
                         <br />
-                        <strong>
-                          {contactData.social.whatsapp.title}:
-                        </strong>{" "}
+                        <strong>{contactData.social.whatsapp.title}:</strong>{" "}
                         {contactData.social.whatsapp.info}
                       </Typography>
                     </Box>

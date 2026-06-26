@@ -3,29 +3,39 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:seed": "prisma db seed",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:junit": "jest --reporters=default --reporters=jest-junit"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.11.3",
+    "@emotion/cache": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.10",
     "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.10",
+    "@prisma/client": "^6.14.0",
+    "bcryptjs": "^3.0.2",
     "framer-motion": "^12.16.0",
+    "jsonwebtoken": "^9.0.2",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
-    "react-magic-motion": "^1.1.2"
+    "react-magic-motion": "^1.1.2",
+    "swagger-ui-react": "^5.29.0",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -34,14 +44,17 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "jest-junit": "^16.0.0",
+    "prisma": "^6.14.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git merge *)",
+      "Skill(artifact-design)",
+      "Skill(artifact-design:*)",
+      "Bash(npx tsc *)",
+      "Bash(yarn dev *)",
+      "Bash(xargs -n1 basename)",
+      "Bash(npx next *)"
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "@testing-library/jest-dom";
-import StylesGallery from "@/components/StylesGallery";
 
+// Mock all the dependencies
 jest.mock("@/utils/useScrollToSection", () => ({
   useEnhancedAnimation: jest.fn(() => ({
     ref: { current: null },
@@ -19,32 +19,35 @@ jest.mock("@/utils/useScrollToSection", () => ({
   })),
 }));
 
+jest.mock("@/utils/useRandomImages", () => ({
+  useRandomImages: jest.fn(() => ({
+    currentImage: { name: "test.jpg", path: "/images/test.jpg" },
+    changeImage: jest.fn(),
+    isTransitioning: false,
+    allImages: [],
+  })),
+}));
+
+jest.mock("react-intersection-observer", () => ({
+  useInView: jest.fn(() => ({
+    ref: jest.fn(),
+    inView: true,
+    entry: null,
+  })),
+}));
+
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: { src: string; alt: string; [key: string]: unknown }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {
-      fill,
-      priority,
-      quality,
-      sizes,
-      width,
-      height,
-      style,
-      ...imgProps
-    } = props;
+    const { fill, priority, quality, sizes, width, height, style, ...imgProps } = props;
     return <img {...imgProps} />;
   },
 }));
 
 jest.mock("framer-motion", () => {
-  const createMotionComponent = (
-    Component: React.ComponentType<any> | string
-  ) => {
+  const createMotionComponent = (Component: React.ComponentType<any> | string) => {
     return ({ children, ...props }: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { whileHover, whileTap, animate, initial, variants, ...domProps } =
-        props;
+      const { whileHover, whileTap, animate, initial, variants, ...domProps } = props;
       if (typeof Component === "string") {
         return React.createElement(Component, domProps, children);
       }
@@ -60,40 +63,56 @@ jest.mock("framer-motion", () => {
 });
 
 jest.mock("react-icons/fa", () => ({
-  FaExpand: () => <div data-testid="expand-icon">Expand Icon</div>,
+  FaUniversity: () => <div data-testid="fa-university">University Icon</div>,
+  FaShieldAlt: () => <div data-testid="fa-shield">Shield Icon</div>,
+  FaLeaf: () => <div data-testid="fa-leaf">Leaf Icon</div>,
+  FaCheck: () => <div data-testid="fa-check">Check Icon</div>,
 }));
 
 jest.mock("@/data/styleGallery.json", () => ({
-  title: "Galería de Estilos",
-  description: "Explora nuestros diferentes estilos de arte en resina",
-  categories: {
-    all: "Todos",
-    natural: "Natural",
-    modern: "Moderno",
-  },
+  title: "Técnicas y Estilos",
+  description: "Cada estilo refleja una filosofía artística única, combinando técnicas especializadas con paletas cromáticas cuidadosamente seleccionadas.",
   styles: [
     {
       id: 1,
-      name: "Estilo Natural",
-      description: "Arte inspirado en la naturaleza",
-      image: "/images/style1.jpg",
-      category: "natural",
+      name: "Clásico & Escultórico",
+      description: "Recreamos la elegancia atemporal de las grandes obras escultóricas. Figuras humanas, mitológicas y religiosas cobran vida con acabados que evocan mármol, oro y bronce envejecido.",
+      icon: "FaUniversity",
+      techniques: [
+        "Acabados metálicos multicapa",
+        "Pátinas envejecidas realistas",
+        "Efectos de mármol veteado",
+        "Incrustaciones doradas"
+      ],
+      examples: "Vírgenes, arcángeles, figuras clásicas, alegorías"
     },
     {
       id: 2,
-      name: "Estilo Moderno",
-      description: "Diseños contemporáneos y elegantes",
-      image: "/images/style2.jpg",
-      category: "modern",
+      name: "Épico & Histórico",
+      description: "Forjamos la esencia de épocas legendarias. Guerreros, armas y elementos históricos recreados con la fuerza del hierro, el temple del acero y la nobleza del cobre.",
+      icon: "FaShieldAlt",
+      techniques: [
+        "Efectos de hierro forjado",
+        "Oxidaciones controladas",
+        "Grabados rúnicos",
+        "Temple de acero realista"
+      ],
+      examples: "Vikingos, guerreros, espadas, armaduras"
     },
     {
       id: 3,
-      name: "Estilo Mixto",
-      description: "Combinación de elementos naturales y modernos",
-      image: "/images/style3.jpg",
-      category: "natural",
-    },
-  ],
+      name: "Natural & Orgánico",
+      description: "Capturamos la esencia pura de la naturaleza. Fauna y elementos orgánicos que respiran vida con texturas auténticas y paletas que honran los tonos terrestres.",
+      icon: "FaLeaf",
+      techniques: [
+        "Texturas orgánicas realistas",
+        "Acabados mate naturales",
+        "Gradientes terrestres",
+        "Efectos de madera y piedra"
+      ],
+      examples: "Elefantes, fauna silvestre, elementos botánicos"
+    }
+  ]
 }));
 
 const theme = createTheme();
@@ -103,7 +122,20 @@ const renderWithTheme = (component: React.ReactElement) => {
 };
 
 describe("StylesGallery Component", () => {
+  it("can be imported and is a function", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
+    expect(StylesGallery).toBeDefined();
+    expect(typeof StylesGallery).toBe("function");
+  });
+
+  it("renders without crashing", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
+    const { container } = renderWithTheme(<StylesGallery />);
+    expect(container).toBeInTheDocument();
+  });
+
   it("renders the styles gallery section correctly", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
     const section = document.querySelector("#estilos");
@@ -111,104 +143,56 @@ describe("StylesGallery Component", () => {
   });
 
   it("displays the correct title and description", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    const title = screen.getByText("Galería de Estilos");
+    const title = screen.getByText("Técnicas y Estilos");
     expect(title).toBeInTheDocument();
 
     const description = screen.getByText(
-      "Explora nuestros diferentes estilos de arte en resina"
+      "Cada estilo refleja una filosofía artística única, combinando técnicas especializadas con paletas cromáticas cuidadosamente seleccionadas."
     );
     expect(description).toBeInTheDocument();
   });
 
-  it("displays all category filter buttons", () => {
+  it("displays all styles", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    const allButton = screen.getByText("Todos");
-    const naturalButton = screen.getByText("Natural");
-    const modernButton = screen.getByText("Moderno");
-
-    expect(allButton).toBeInTheDocument();
-    expect(naturalButton).toBeInTheDocument();
-    expect(modernButton).toBeInTheDocument();
+    expect(screen.getByText("Clásico & Escultórico")).toBeInTheDocument();
+    expect(screen.getByText("Épico & Histórico")).toBeInTheDocument();
+    expect(screen.getByText("Natural & Orgánico")).toBeInTheDocument();
   });
 
-  it("displays all styles by default", () => {
+  it("displays techniques for each style", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    expect(screen.getByText("Estilo Natural")).toBeInTheDocument();
-    expect(screen.getByText("Estilo Moderno")).toBeInTheDocument();
-    expect(screen.getByText("Estilo Mixto")).toBeInTheDocument();
+    // Check that techniques are displayed
+    expect(screen.getByText("Acabados metálicos multicapa")).toBeInTheDocument();
+    expect(screen.getByText("Efectos de hierro forjado")).toBeInTheDocument();
+    expect(screen.getByText("Texturas orgánicas realistas")).toBeInTheDocument();
   });
 
-  it("filters styles correctly when category button is clicked", () => {
+  it("displays examples for each style", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    const modernButton = screen.getByText("Moderno");
-    fireEvent.click(modernButton);
-
-    expect(screen.getByText("Estilo Moderno")).toBeInTheDocument();
-    expect(screen.queryByText("Estilo Natural")).not.toBeInTheDocument();
-    expect(screen.queryByText("Estilo Mixto")).not.toBeInTheDocument();
+    expect(screen.getByText("Vírgenes, arcángeles, figuras clásicas, alegorías")).toBeInTheDocument();
+    expect(screen.getByText("Vikingos, guerreros, espadas, armaduras")).toBeInTheDocument();
+    expect(screen.getByText("Elefantes, fauna silvestre, elementos botánicos")).toBeInTheDocument();
   });
 
-  it("shows natural styles when natural filter is applied", () => {
+  it("displays style chips for each style", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    const naturalButton = screen.getByText("Natural");
-    fireEvent.click(naturalButton);
-
-    expect(screen.getByText("Estilo Natural")).toBeInTheDocument();
-    expect(screen.getByText("Estilo Mixto")).toBeInTheDocument();
-    expect(screen.queryByText("Estilo Moderno")).not.toBeInTheDocument();
-  });
-
-  it("returns to all styles when 'Todos' button is clicked", () => {
-    renderWithTheme(<StylesGallery />);
-
-    // First filter by modern
-    const modernButton = screen.getByText("Moderno");
-    fireEvent.click(modernButton);
-
-    // Then click 'Todos' to show all
-    const allButton = screen.getByText("Todos");
-    fireEvent.click(allButton);
-
-    expect(screen.getByText("Estilo Natural")).toBeInTheDocument();
-    expect(screen.getByText("Estilo Moderno")).toBeInTheDocument();
-    expect(screen.getByText("Estilo Mixto")).toBeInTheDocument();
-  });
-
-  it("displays style images with correct attributes", () => {
-    renderWithTheme(<StylesGallery />);
-
-    const images = screen.getAllByRole("img");
-    expect(images.length).toBeGreaterThan(0);
-
-    const firstImage = images[0];
-    expect(firstImage).toHaveAttribute("src", "/images/style1.jpg");
-    expect(firstImage).toHaveAttribute("alt", "Estilo Natural");
-  });
-
-  it("displays category chips for each style", () => {
-    renderWithTheme(<StylesGallery />);
-
-    const naturalChips = screen.getAllByText("natural");
-    const modernChips = screen.getAllByText("modern");
-
-    expect(naturalChips.length).toBe(2); // Two natural styles
-    expect(modernChips.length).toBe(1); // One modern style
-  });
-
-  it("displays expand icons on hover (via CSS classes)", () => {
-    renderWithTheme(<StylesGallery />);
-
-    const expandIcons = screen.getAllByTestId("expand-icon");
-    expect(expandIcons.length).toBe(3); // One for each style card
+    const styleChips = screen.getAllByText(/Estilo \d+/);
+    expect(styleChips.length).toBe(3); // One for each style
   });
 
   it("has correct section id for navigation", () => {
+    const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
     const section = document.querySelector("#estilos");

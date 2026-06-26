@@ -1,0 +1,252 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== Enums =====
+enum Role {
+  ADMIN
+  USER
+}
+
+enum SocialPlatform {
+  INSTAGRAM
+  FACEBOOK
+  WHATSAPP
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+enum StyleCategory {
+  NATURAL
+  MODERN
+  CLASSIC
+  HISTORIC
+}
+
+// ===== Usuarios =====
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  imageBase64  String?  @db.Text
+  imageMime    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ===== HERO =====
+model Hero {
+  id              String   @id @default(uuid()) @db.Uuid
+  title           String
+  description     String
+  buttonText      String?
+  imageBase64     String?  @db.Text
+  imageMime       String?
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImageBase64   String?  @db.Text
+  ogImageMime     String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ===== ABOUT =====
+// Guardamos el contenido como JSON para respetar el array de "paragraphs".
+model About {
+  id              String   @id @default(uuid()) @db.Uuid
+  title           String
+  imageBase64     String?  @db.Text
+  imageMime       String?
+  paragraphs      Json     // array de strings (párrafos)
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImageBase64   String?  @db.Text
+  ogImageMime     String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ===== CONTACT (config + mensajes) =====
+model ContactSettings {
+  id                 String       @id @default(uuid()) @db.Uuid
+  title              String
+  description        String
+  formNameLabel      String
+  formEmailLabel     String
+  formMessageLabel   String
+  submitSuccessText  String
+  submitErrorText    String
+  socialLinks        SocialLink[]
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+}
+
+model SocialLink {
+  id                String          @id @default(uuid()) @db.Uuid
+  platform          SocialPlatform
+  title             String
+  info              String?
+  url               String
+  icon              String?
+  contactSettingsId String          @db.Uuid
+  contactSettings   ContactSettings @relation(fields: [contactSettingsId], references: [id], onDelete: Cascade)
+
+  @@index([contactSettingsId])
+}
+
+model ContactMessage {
+  id        String               @id @default(uuid()) @db.Uuid
+  name      String
+  email     String
+  message   String
+  status    ContactMessageStatus @default(NEW)
+  createdAt DateTime             @default(now())
+}
+
+// ===== PORTFOLIO =====
+model PortfolioCategory {
+  id        String          @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String          @unique
+  items     PortfolioItem[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model TechniqueTag {
+  id        String          @id @default(uuid()) @db.Uuid
+  name      String          @unique
+  slug      String          @unique
+  items     PortfolioItem[] @relation("ItemTechniques")
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model PortfolioItem {
+  id              String            @id @default(uuid()) @db.Uuid
+  title           String
+  slug            String            @unique
+  description     String
+  dimensions      String?
+  order           Int               @default(0)
+  published       Boolean           @default(true)
+  categoryId      String            @db.Uuid
+  category        PortfolioCategory @relation(fields: [categoryId], references: [id])
+  images          PortfolioImage[]
+  techniques      TechniqueTag[]    @relation("ItemTechniques")
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImageBase64   String?           @db.Text
+  ogImageMime     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([categoryId])
+  @@index([published, order])
+}
+
+model PortfolioImage {
+  id          String        @id @default(uuid()) @db.Uuid
+  itemId      String        @db.Uuid
+  item        PortfolioItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  imageBase64 String        @db.Text
+  imageMime   String
+  alt         String?
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+
+  @@index([itemId, order])
+}
+
+// ===== STYLE GALLERY =====
+model StyleGallerySettings {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StyleGalleryStyle {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String
+  icon        String?
+  techniques  Json     // array de strings (técnicas)
+  examples    String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published, order])
+}
+
+// ===== STYLES (catálogo de estilos) =====
+model Style {
+  id              String        @id @default(uuid()) @db.Uuid
+  name            String
+  slug            String        @unique
+  description     String
+  category        StyleCategory?
+  imageBase64     String?       @db.Text
+  imageMime       String?
+  techniques      Json          // array de strings
+  order           Int           @default(0)
+  published       Boolean       @default(true)
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  ogImageBase64   String?       @db.Text
+  ogImageMime     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([published, order])
+}
+
+// ===== WORK PROCESS =====
+model WorkProcessSettings {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  stepLabel   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WorkStep {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  icon        String?
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published, order])
+}
