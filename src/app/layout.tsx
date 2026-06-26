@@ -1,25 +1,66 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import AppShell from "../components/AppShell";
 import ThemeRegistry from "../components/ThemeRegistry";
 
-const inter = Inter({ subsets: ["latin"] });
+const displayFont = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
+});
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: "Peleti",
-  description: "Peleti – Artesanías en Resina",
+  title: {
+    default: "Peleti | Artesanías en Resina",
+    template: "%s | Peleti",
+  },
+  description:
+    "Piezas decorativas y regalos en resina hechos a mano, con acabados artesanales y diseño personalizado para espacios memorables.",
+  keywords: [
+    "resina artesanal",
+    "decoración en resina",
+    "artesanías personalizadas",
+    "regalos hechos a mano",
+    "peleti",
+  ],
+  openGraph: {
+    title: "Peleti | Artesanías en Resina",
+    description:
+      "Colecciones en resina con carácter artesanal, acabados premium y piezas hechas para transformar espacios.",
+    type: "website",
+    locale: "es_CO",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Peleti | Artesanías en Resina",
+    description:
+      "Arte en resina con identidad artesanal, composiciones decorativas y piezas personalizadas.",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#f4ede1",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <head>
         <script
+          id="theme-init"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -33,7 +74,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body
+        className={`${displayFont.variable} ${bodyFont.variable}`}
+        suppressHydrationWarning
+      >
         <ThemeRegistry>
           <AppShell>{children}</AppShell>
         </ThemeRegistry>
