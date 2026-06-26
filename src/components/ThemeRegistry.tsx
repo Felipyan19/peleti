@@ -102,8 +102,8 @@ export default function ThemeRegistry({
                 minHeight: "100vh",
                 width: "100%",
                 position: "relative",
-                backgroundColor: "#fafafa",
-                color: "#212121",
+                backgroundColor: "background.default",
+                color: "text.primary",
               }}
             >
               <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>
@@ -124,39 +124,23 @@ export default function ThemeRegistry({
               minHeight: "100vh",
               width: "100%",
               position: "relative",
-              backgroundColor: mode === "dark" ? "#020617" : "#fafafa",
-              color: mode === "dark" ? "#ffffff" : "#212121",
+              backgroundColor: "background.default",
+              color: "text.primary",
             }}
           >
-            {/* Fondo modo oscuro - Dark Radial Glow */}
-            {mode === "dark" && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 0,
-                  pointerEvents: "none",
-                  background: `radial-gradient(circle 500px at 50% 200px, #3e3e3e, transparent)`,
-                }}
-              />
-            )}
-
-            {/* Fondo modo claro - Diagonal Grid */}
-            {mode === "light" && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  zIndex: 0,
-                  pointerEvents: "none",
-                  backgroundImage: `
-                    repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 20px),
-                    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.1) 0, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 20px)
-                  `,
-                  backgroundSize: "40px 40px",
-                }}
-              />
-            )}
+            {/* Atmósfera cálida — resplandor de bronce, coherente con la marca */}
+            <Box
+              sx={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 0,
+                pointerEvents: "none",
+                background:
+                  mode === "dark"
+                    ? "radial-gradient(60vw 40vh at 50% -5%, rgba(217,163,107,0.10), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(94,107,82,0.06), transparent 70%)"
+                    : "radial-gradient(60vw 40vh at 50% -5%, rgba(168,105,58,0.08), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(94,107,82,0.05), transparent 70%)",
+              }}
+            />
 
             {/* Contenido principal */}
             <Box sx={{ position: "relative", zIndex: 1 }}>{children}</Box>

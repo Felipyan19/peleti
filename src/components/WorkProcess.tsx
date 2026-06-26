@@ -20,6 +20,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import workProcessData from "@/data/workProcess.json";
+import SectionHeading from "./SectionHeading";
 
 export default function WorkProcess() {
   const theme = useTheme();
@@ -44,44 +45,22 @@ export default function WorkProcess() {
     <Box
       component="section"
       id="proceso"
-      sx={{ py: 10, backgroundColor: "background.paper" }}
+      sx={{ py: { xs: 8, md: 14 }, backgroundColor: "background.paper" }}
     >
       <Container maxWidth="lg">
+        <SectionHeading
+          eyebrow="Nuestro proceso"
+          index="03"
+          title={workProcessData.title}
+          lead={workProcessData.description}
+        />
+
         <motion.div
           ref={ref}
           variants={getContainerVariants()}
           initial="hidden"
           animate={shouldAnimate ? "visible" : "hidden"}
         >
-          <motion.div variants={getStaggerVariants(0)}>
-            <Box sx={{ textAlign: "center", mb: 8 }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontWeight: 700,
-                  letterSpacing: "0.05em",
-                  color: "text.primary",
-                  mb: 2,
-                }}
-              >
-                {workProcessData.title}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                mx="auto"
-                maxWidth={600}
-                sx={{
-                  fontSize: "1.1rem",
-                  lineHeight: 1.6,
-                  opacity: 0.9,
-                }}
-              >
-                {workProcessData.description}
-              </Typography>
-            </Box>
-          </motion.div>
-
           <Timeline position="alternate">
             {steps.map((step, idx) => {
               const Icon =
@@ -119,22 +98,28 @@ export default function WorkProcess() {
                       }}
                     >
                       <TimelineDot
-                        color="primary"
                         sx={{
-                          p: 2,
+                          p: 0,
+                          m: 0,
                           width: 56,
                           height: 56,
-                          boxShadow:
-                            "0 8px 25px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.1)",
-                          border: `3px solid ${theme.palette.background.paper}`,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: theme.palette.background.paper,
+                          border: `1px solid rgba(200,148,30,0.40)`,
+                          boxShadow: "0 6px 16px rgba(35,26,19,0.10)",
+                          color: theme.palette.primary.main,
                           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                           "&:hover": {
-                            boxShadow:
-                              "0 12px 35px rgba(0,0,0,0.2), 0 6px 15px rgba(0,0,0,0.15)",
+                            borderColor: "rgba(200,148,30,0.7)",
+                            backgroundColor: theme.palette.mode === "dark"
+                              ? "rgba(217,163,107,0.07)"
+                              : "rgba(168,105,58,0.06)",
                           },
                         }}
                       >
-                        <Icon size={24} style={{ color: "#fff" }} />
+                        <Icon size={22} style={{ color: theme.palette.primary.main }} />
                       </TimelineDot>
                     </motion.div>
                     {idx < steps.length - 1 && (

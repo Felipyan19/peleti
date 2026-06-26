@@ -2,25 +2,23 @@
 
 import { motion } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  useTheme,
-  Chip,
-  Stack,
-} from "@mui/material";
+import { Box, Container, Typography, useTheme, Chip, Stack } from "@mui/material";
 import { FaUniversity, FaShieldAlt, FaLeaf, FaCheck } from "react-icons/fa";
+import Image from "next/image";
 import styleGalleryData from "@/data/styleGallery.json";
-
-const MotionCard = motion(Card);
+import SectionHeading from "./SectionHeading";
 
 const IconComponents = {
   FaUniversity,
   FaShieldAlt,
   FaLeaf,
+};
+
+// Imagen representativa de cada estilo (piezas reales del taller)
+const STYLE_IMAGE: Record<number, string> = {
+  1: "/images/virgen.jpg",
+  2: "/images/guerrero.jpg",
+  3: "/images/elefantes.jpg",
 };
 
 interface StyleData {
@@ -34,6 +32,7 @@ interface StyleData {
 
 export default function StylesGallery() {
   const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("estilos", {
       threshold: 0.1,
@@ -48,256 +47,265 @@ export default function StylesGallery() {
       component="section"
       id="estilos"
       sx={{
-        py: 12,
+        py: { xs: 8, md: 14 },
         backgroundColor: "background.default",
         position: "relative",
       }}
     >
       <Container maxWidth="lg">
+        <SectionHeading
+          eyebrow="Técnicas y estilos"
+          index="02"
+          title={styleGalleryData.title}
+          lead={styleGalleryData.description}
+        />
+
         <motion.div
           ref={ref}
           variants={getContainerVariants()}
           initial="hidden"
           animate={shouldAnimate ? "visible" : "hidden"}
         >
-          {/* Header */}
-          <motion.div variants={getStaggerVariants(0)}>
-            <Box sx={{ textAlign: "center", mb: 10 }}>
-              <Typography
-                variant="h2"
-                sx={{
-                  fontWeight: 700,
-                  letterSpacing: "0.05em",
-                  color: "text.primary",
-                  mb: 3,
-                }}
-              >
-                {styleGalleryData.title}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                mx="auto"
-                maxWidth={700}
-                sx={{
-                  fontSize: "1.1rem",
-                  lineHeight: 1.6,
-                }}
-              >
-                {styleGalleryData.description}
-              </Typography>
-            </Box>
-          </motion.div>
-
-          {/* Styles Cards */}
-          <Stack spacing={6}>
+          <Stack spacing={{ xs: 5, md: 7 }}>
             {styles.map((style, index) => {
               const IconComponent = IconComponents[style.icon];
+              const reversed = index % 2 === 1;
+              const num = String(index + 1).padStart(2, "0");
+              const examples = style.examples
+                .split(",")
+                .map((e) => e.trim())
+                .filter(Boolean);
 
               return (
                 <motion.div
                   key={style.id}
                   variants={getStaggerVariants(index + 1)}
                 >
-                  <MotionCard
-                    elevation={2}
-                    whileHover={{
-                      y: -8,
-                      scale: 1.01,
-                      transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
-                    }}
+                  <Box
+                    component={motion.div}
+                    whileHover={{ y: -6 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                     sx={{
-                      borderRadius: 4,
+                      display: "flex",
+                      flexDirection: {
+                        xs: "column",
+                        md: reversed ? "row-reverse" : "row",
+                      },
+                      borderRadius: "18px",
                       overflow: "hidden",
-                      position: "relative",
-                      background: theme.palette.background.paper,
                       border: `1px solid ${theme.palette.divider}`,
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      background: isDark
+                        ? "linear-gradient(180deg, rgba(31,24,18,0.98) 0%, rgba(21,16,11,0.98) 100%)"
+                        : "linear-gradient(180deg, #fffdf8 0%, #f8f1e6 100%)",
+                      boxShadow: "0 18px 48px rgba(35,26,19,0.10)",
+                      transition: "border-color 0.35s ease, box-shadow 0.35s ease",
                       "&:hover": {
-                        "& .main-icon": {
-                          transform: "scale(1.1)",
-                        },
-                        "& .category-chip": {
-                          transform: "scale(1.05)",
-                          backgroundColor: theme.palette.primary.main,
-                          "& .MuiChip-label": {
-                            color: "white",
-                          },
-                        },
+                        borderColor: "rgba(200,148,30,0.35)",
+                        boxShadow: "0 30px 70px rgba(35,26,19,0.16)",
                       },
                     }}
                   >
-                    {/* Category Chip - Estilo del Portfolio */}
-                    <Chip
-                      className="category-chip"
-                      label={`Estilo ${style.id}`}
-                      size="small"
+                    {/* ── Panel de imagen (placa de galería) ── */}
+                    <Box
                       sx={{
-                        position: "absolute",
-                        top: 16,
-                        right: 16,
-                        fontSize: "0.7rem",
-                        fontWeight: 600,
-                        height: 28,
-                        borderRadius: "14px",
-                        border: `1px solid ${theme.palette.divider}`,
-                        backgroundColor: theme.palette.background.default,
-                        color: theme.palette.text.secondary,
-                        transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                        zIndex: 2,
-                        "& .MuiChip-label": {
-                          px: 1.5,
-                        },
+                        position: "relative",
+                        flex: { md: "0 0 42%" },
+                        aspectRatio: { xs: "16 / 11", md: "auto" },
+                        minHeight: { md: 380 },
+                        overflow: "hidden",
+                        background: isDark
+                          ? "radial-gradient(circle at 50% 32%, rgba(217,163,107,0.14), transparent 38%), #0d0a08"
+                          : "radial-gradient(circle at 50% 30%, rgba(200,148,30,0.14), transparent 40%), #eee4d6",
                       }}
-                    />
-
-                    <CardContent sx={{ p: 4 }}>
+                    >
+                      <Image
+                        src={STYLE_IMAGE[style.id] ?? "/images/art.jpg"}
+                        alt={style.name}
+                        fill
+                        sizes="(max-width: 900px) 100vw, 42vw"
+                        style={{
+                          objectFit: "contain",
+                          objectPosition: "center",
+                          padding: "28px",
+                          filter: "contrast(1.06) brightness(1.03)",
+                        }}
+                      />
+                      {/* Marco de bronce */}
                       <Box
                         sx={{
-                          display: "flex",
-                          flexDirection: { xs: "column", md: "row" },
-                          gap: 4,
-                          alignItems: { xs: "center", md: "flex-start" },
+                          position: "absolute",
+                          inset: 14,
+                          borderRadius: "12px",
+                          border: "1px solid rgba(200,148,30,0.18)",
+                          pointerEvents: "none",
+                        }}
+                      />
+                      {/* Numeral de catálogo */}
+                      <Typography
+                        sx={{
+                          position: "absolute",
+                          top: 18,
+                          left: 22,
+                          fontFamily: 'var(--font-display), Georgia, serif',
+                          fontSize: "3rem",
+                          fontWeight: 600,
+                          lineHeight: 1,
+                          color: "rgba(200,148,30,0.55)",
+                          textShadow: "0 2px 12px rgba(0,0,0,0.4)",
                         }}
                       >
-                        {/* Icon Section */}
+                        {num}
+                      </Typography>
+                    </Box>
+
+                    {/* ── Panel de contenido ── */}
+                    <Box
+                      sx={{
+                        flex: 1,
+                        p: { xs: 3, md: 5 },
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        alignItems="center"
+                        sx={{ mb: 2 }}
+                      >
                         <Box
                           sx={{
+                            width: 52,
+                            height: 52,
+                            borderRadius: "50%",
+                            flexShrink: 0,
                             display: "flex",
-                            flexDirection: "column",
                             alignItems: "center",
-                            minWidth: 120,
+                            justifyContent: "center",
+                            border: "1px solid rgba(200,148,30,0.40)",
+                            backgroundColor: isDark
+                              ? "rgba(217,163,107,0.07)"
+                              : "rgba(168,105,58,0.06)",
+                            color: "primary.main",
                           }}
                         >
-                          <Box
-                            className="main-icon"
-                            sx={{
-                              width: 64,
-                              height: 64,
-                              borderRadius: "50%",
-                              backgroundColor: "primary.main",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              mb: 2,
-                              transition: "transform 0.3s ease",
-                              boxShadow: theme.shadows[3],
-                            }}
-                          >
-                            <IconComponent size={28} color="white" />
-                          </Box>
+                          <IconComponent size={22} />
                         </Box>
-
-                        {/* Content Section */}
-                        <Box sx={{ flex: 1 }}>
+                        <Box>
                           <Typography
-                            variant="h4"
+                            variant="overline"
+                            sx={{ color: "text.secondary", display: "block", lineHeight: 1.4, opacity: 0.7 }}
+                          >
+                            Estilo {num}
+                          </Typography>
+                          <Typography
+                            variant="h3"
                             sx={{
-                              fontWeight: 600,
                               color: "text.primary",
-                              mb: 2,
-                              fontSize: { xs: "1.5rem", md: "1.8rem" },
+                              fontSize: { xs: "1.55rem", md: "1.9rem" },
+                              lineHeight: 1.1,
                             }}
                           >
                             {style.name}
                           </Typography>
+                        </Box>
+                      </Stack>
 
+                      <Typography
+                        sx={{
+                          color: "text.secondary",
+                          fontSize: "1rem",
+                          lineHeight: 1.7,
+                          mb: 3,
+                        }}
+                      >
+                        {style.description}
+                      </Typography>
+
+                      <Box
+                        sx={{
+                          height: "1px",
+                          background:
+                            "linear-gradient(90deg, rgba(200,148,30,0.4), transparent)",
+                          mb: 3,
+                        }}
+                      />
+
+                      <Box
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                          gap: { xs: 3, sm: 4 },
+                        }}
+                      >
+                        {/* Técnicas */}
+                        <Box>
                           <Typography
-                            variant="body1"
-                            color="text.secondary"
-                            paragraph
-                            sx={{
-                              fontSize: "1rem",
-                              lineHeight: 1.6,
-                              mb: 4,
-                            }}
+                            variant="overline"
+                            sx={{ color: "text.secondary", display: "block", mb: 1.5 }}
                           >
-                            {style.description}
+                            Técnicas especializadas
                           </Typography>
+                          <Stack spacing={1.2}>
+                            {style.techniques.map((technique, i) => (
+                              <Box
+                                key={i}
+                                sx={{ display: "flex", alignItems: "baseline", gap: 1.2 }}
+                              >
+                                <FaCheck
+                                  size={11}
+                                  color={theme.palette.primary.main}
+                                  style={{ flexShrink: 0, opacity: 0.7, transform: "translateY(1px)" }}
+                                />
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: "text.secondary", fontSize: "0.9rem" }}
+                                >
+                                  {technique}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Stack>
+                        </Box>
 
-                          <Box
-                            sx={{
-                              display: "grid",
-                              gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
-                              gap: 4,
-                            }}
+                        {/* Ejemplos */}
+                        <Box>
+                          <Typography
+                            variant="overline"
+                            sx={{ color: "text.secondary", display: "block", mb: 1.5 }}
                           >
-                            {/* Techniques */}
-                            <Box>
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 600,
-                                  color: "text.primary",
-                                  mb: 2,
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                Técnicas Especializadas
-                              </Typography>
-                              <Stack spacing={1}>
-                                {style.techniques.map((technique, i) => (
-                                  <Box
-                                    key={i}
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                      gap: 1,
-                                    }}
-                                  >
-                                    <FaCheck
-                                      size={12}
-                                      color={theme.palette.primary.main}
-                                    />
-                                    <Typography
-                                      variant="body2"
-                                      color="text.secondary"
-                                      sx={{ fontSize: "0.9rem" }}
-                                    >
-                                      {technique}
-                                    </Typography>
-                                  </Box>
-                                ))}
-                              </Stack>
-                            </Box>
-
-                            {/* Examples */}
-                            <Box>
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 600,
-                                  color: "text.primary",
-                                  mb: 2,
-                                  fontSize: "1rem",
-                                }}
-                              >
-                                Ejemplos de Aplicación
-                              </Typography>
+                            Ejemplos de aplicación
+                          </Typography>
+                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                            {examples.map((ex, i) => (
                               <Chip
-                                label={style.examples}
+                                key={i}
+                                label={ex}
                                 size="small"
                                 sx={{
-                                  fontSize: "0.7rem",
-                                  fontWeight: 600,
                                   height: 28,
-                                  borderRadius: "14px",
-                                  border: `1px solid ${theme.palette.divider}`,
-                                  backgroundColor:
-                                    theme.palette.background.default,
-                                  color: theme.palette.text.secondary,
-                                  "& .MuiChip-label": {
-                                    px: 1.5,
-                                    whiteSpace: "normal",
-                                  },
+                                  borderRadius: "999px",
+                                  fontSize: "0.78rem",
+                                  fontWeight: 500,
+                                  textTransform: "capitalize",
+                                  color: "text.primary",
+                                  backgroundColor: isDark
+                                    ? "rgba(217,163,107,0.10)"
+                                    : "rgba(168,105,58,0.08)",
+                                  border: `1px solid ${
+                                    isDark
+                                      ? "rgba(217,163,107,0.22)"
+                                      : "rgba(168,105,58,0.18)"
+                                  }`,
                                 }}
                               />
-                            </Box>
+                            ))}
                           </Box>
                         </Box>
                       </Box>
-                    </CardContent>
-                  </MotionCard>
+                    </Box>
+                  </Box>
                 </motion.div>
               );
             })}

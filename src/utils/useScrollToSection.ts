@@ -31,7 +31,6 @@ export function useScrollToSection(
       if (link) {
         const href = link.getAttribute("href");
         if (href === `#${sectionId}`) {
-          console.log(`🎯 Navigating to section: ${sectionId}`);
           setIsNavigating(true);
           setShouldAnimate(false);
 
@@ -40,7 +39,6 @@ export function useScrollToSection(
           }
 
           navigationTimeoutRef.current = setTimeout(() => {
-            console.log(`✨ Triggering animation for section: ${sectionId}`);
             setShouldAnimate(true);
             setIsNavigating(false);
           }, 500);
@@ -51,7 +49,6 @@ export function useScrollToSection(
     const handleHashChange = () => {
       const hash = window.location.hash.substring(1);
       if (hash === sectionId) {
-        console.log(`🔗 Hash changed to section: ${sectionId}`);
         setIsNavigating(true);
         setShouldAnimate(false);
 
@@ -80,11 +77,10 @@ export function useScrollToSection(
 
   useEffect(() => {
     if (inView && !hasAnimated && !isNavigating) {
-      console.log(`👁️ Section ${sectionId} came into view - animating`);
       setShouldAnimate(true);
       setHasAnimated(true);
     }
-  }, [inView, hasAnimated, isNavigating, sectionId]);
+  }, [inView, hasAnimated, isNavigating]);
 
   useEffect(() => {
     return () => {
@@ -102,7 +98,6 @@ export function useScrollToSection(
   };
 }
 
-// Enhanced hook for more sophisticated animations
 interface UseEnhancedAnimationOptions extends UseScrollToSectionOptions {
   staggerDelay?: number;
   animationDuration?: number;
@@ -132,13 +127,12 @@ export function useEnhancedAnimation(
 
   useEffect(() => {
     if (shouldAnimate && !animationState.isReady) {
-      console.log(`🎬 Setting up enhanced animation for section: ${sectionId}`);
       setAnimationState({
         isReady: true,
         currentStagger: 0,
       });
     }
-  }, [shouldAnimate, animationState.isReady, sectionId]);
+  }, [shouldAnimate, animationState.isReady]);
 
   const getStaggerVariants = (index: number = 0) => ({
     hidden: {
