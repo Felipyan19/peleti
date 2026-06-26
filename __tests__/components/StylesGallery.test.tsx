@@ -178,9 +178,14 @@ describe("StylesGallery Component", () => {
     const StylesGallery = require("@/components/StylesGallery").default;
     renderWithTheme(<StylesGallery />);
 
-    expect(screen.getByText("Vírgenes, arcángeles, figuras clásicas, alegorías")).toBeInTheDocument();
-    expect(screen.getByText("Vikingos, guerreros, espadas, armaduras")).toBeInTheDocument();
-    expect(screen.getByText("Elefantes, fauna silvestre, elementos botánicos")).toBeInTheDocument();
+    // Examples are split by comma and rendered as individual <Chip> components
+    expect(screen.getByText("Vírgenes")).toBeInTheDocument();
+    expect(screen.getByText("arcángeles")).toBeInTheDocument();
+    expect(screen.getByText("figuras clásicas")).toBeInTheDocument();
+    expect(screen.getByText("Vikingos")).toBeInTheDocument();
+    expect(screen.getByText("guerreros")).toBeInTheDocument();
+    expect(screen.getByText("Elefantes")).toBeInTheDocument();
+    expect(screen.getByText("fauna silvestre")).toBeInTheDocument();
   });
 
   it("displays style chips for each style", () => {

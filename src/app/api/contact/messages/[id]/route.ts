@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withRequiredAdmin } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const GET = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   const message = await prisma.contactMessage.findUnique({
@@ -25,9 +26,9 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   }
 
   return ApiResponse.success(message);
-});
+}));
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const body = await req.json();
   const { status } = body;
@@ -44,9 +45,9 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   });
 
   return ApiResponse.success(updated);
-});
+}));
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const DELETE = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   await prisma.contactMessage.delete({
@@ -54,4 +55,4 @@ export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { p
   });
 
   return ApiResponse.success({ message: 'Contact message deleted successfully' });
-});
+}));

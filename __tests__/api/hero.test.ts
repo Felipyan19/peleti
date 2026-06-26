@@ -27,8 +27,12 @@ jest.mock('@/generated/prisma', () => {
 jest.mock('@/utils/api/responseHelpers', () => ({
   ApiResponse: {
     success: (data: any) => new Response(JSON.stringify(data), { status: 200 }),
-    notFound: (message: string) => new Response(JSON.stringify({ error: message }), { status: 404 }),
+    created: (data: any) => new Response(JSON.stringify(data), { status: 201 }),
     noContent: () => new Response(null, { status: 204 }),
+    badRequest: (message: string) => new Response(JSON.stringify({ error: message }), { status: 400 }),
+    unauthorized: (message: string) => new Response(JSON.stringify({ error: message }), { status: 401 }),
+    forbidden: (message: string) => new Response(JSON.stringify({ error: message }), { status: 403 }),
+    notFound: (message: string) => new Response(JSON.stringify({ error: message }), { status: 404 }),
   },
   withErrorHandling: (handler: any) => async (...args: any[]) => {
     try {
@@ -40,6 +44,15 @@ jest.mock('@/utils/api/responseHelpers', () => ({
       throw error;
     }
   },
+}));
+
+// Mock auth helpers — bypass authentication for unit tests
+jest.mock('@/utils/api/authHelpers', () => ({
+  withAuthProtection: (handler: any) => handler,
+  withAdminProtection: (handler: any) => handler,
+  requireAdmin: jest.fn(),
+  AUTH_COOKIE_NAME: 'test_auth_token',
+  getSessionFromToken: jest.fn(),
 }));
 
 // Mock image helpers

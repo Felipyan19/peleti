@@ -17,7 +17,6 @@ import {
 import { motion } from "framer-motion";
 import { useScrollToSection } from "@/utils/useScrollToSection";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
-import contactData from "@/data/contact.json";
 import SectionHeading from "./SectionHeading";
 
 const IconComponent = {
@@ -26,7 +25,29 @@ const IconComponent = {
   FaWhatsapp,
 };
 
-export default function Contact() {
+interface ContactProps {
+  content: {
+    settings: {
+      title: string;
+      description: string;
+      formNameLabel: string;
+      formEmailLabel: string;
+      formMessageLabel: string;
+      submitSuccessText: string;
+      submitErrorText: string;
+    };
+    socialLinks: Array<{
+      id: string;
+      platform: "INSTAGRAM" | "FACEBOOK" | "WHATSAPP";
+      title: string;
+      info?: string | null;
+      url: string;
+      icon?: string | null;
+    }>;
+  };
+}
+
+export default function Contact({ content }: ContactProps) {
   const theme = useTheme();
   const [formData, setFormData] = useState({
     name: "",
@@ -38,6 +59,7 @@ export default function Contact() {
     "idle" | "success" | "error"
   >("idle");
   const [submitMessage, setSubmitMessage] = useState("");
+  const socialLinks = content.socialLinks;
   const { ref, shouldAnimate } = useScrollToSection("contacto", {
     threshold: 0.1,
   });
@@ -68,11 +90,11 @@ export default function Contact() {
       }
 
       setSubmitStatus("success");
-      setSubmitMessage(contactData.submit.success);
+      setSubmitMessage(content.settings.submitSuccessText);
       setFormData({ name: "", email: "", message: "" });
     } catch {
       setSubmitStatus("error");
-      setSubmitMessage(contactData.submit.error);
+      setSubmitMessage(content.settings.submitErrorText);
     } finally {
       setIsSubmitting(false);
     }
@@ -88,8 +110,8 @@ export default function Contact() {
         <SectionHeading
           eyebrow="Hablemos"
           index="05"
-          title={contactData.title}
-          lead={contactData.description}
+          title={content.settings.title}
+          lead={content.settings.description}
         />
 
         <motion.div
@@ -145,7 +167,7 @@ export default function Contact() {
                       }}
                     >
                       <TextField
-                        label={contactData.form.name}
+                        label={content.settings.formNameLabel}
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
@@ -163,7 +185,7 @@ export default function Contact() {
                         }}
                       />
                       <TextField
-                        label={contactData.form.email}
+                        label={content.settings.formEmailLabel}
                         name="email"
                         type="email"
                         value={formData.email}
@@ -182,7 +204,7 @@ export default function Contact() {
                         }}
                       />
                       <TextField
-                        label={contactData.form.message}
+                        label={content.settings.formMessageLabel}
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
@@ -310,31 +332,26 @@ export default function Contact() {
                         mb: 4,
                       }}
                     >
-                      {[
-                        {
-                          Icon: IconComponent[
-                            contactData.social.instagram.icon as keyof typeof IconComponent
-                          ],
-                          href: contactData.social.instagram.url,
-                          color: "#E4405F",
-                        },
-                        {
-                          Icon: IconComponent[
-                            contactData.social.facebook.icon as keyof typeof IconComponent
-                          ],
-                          href: contactData.social.facebook.url,
-                          color: "#1877F2",
-                        },
-                        {
-                          Icon: IconComponent[
-                            contactData.social.whatsapp.icon as keyof typeof IconComponent
-                          ],
-                          href: contactData.social.whatsapp.url,
-                          color: "#25D366",
-                        },
-                      ].map(({ Icon, href, color }) => (
+                      {socialLinks.map((link) => {
+                        const Icon =
+                          (link.icon && IconComponent[link.icon as keyof typeof IconComponent]) ||
+                          IconComponent[
+                            ({
+                              INSTAGRAM: "FaInstagram",
+                              FACEBOOK: "FaFacebook",
+                              WHATSAPP: "FaWhatsapp",
+                            } as const)[link.platform]
+                          ];
+                        const color =
+                          link.platform === "INSTAGRAM"
+                            ? "#E4405F"
+                            : link.platform === "FACEBOOK"
+                              ? "#1877F2"
+                              : "#25D366";
+
+                        return (
                         <motion.div
-                          key={href}
+                          key={link.id}
                           whileHover={{
                             scale: 1.1,
                             transition: {
@@ -346,7 +363,7 @@ export default function Contact() {
                         >
                           <IconButton
                             component="a"
-                            href={href}
+                            href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
@@ -369,7 +386,8 @@ export default function Contact() {
                             <Icon size={24} />
                           </IconButton>
                         </motion.div>
-                      ))}
+                        );
+                      })}
                     </Box>
 
                     <Box sx={{ textAlign: "left", space: 2 }}>
@@ -382,14 +400,11 @@ export default function Contact() {
                           opacity: 0.85,
                         }}
                       >
-                        <strong>{contactData.social.instagram.title}:</strong>{" "}
-                        {contactData.social.instagram.info}
-                        <br />
-                        <strong>{contactData.social.facebook.title}:</strong>{" "}
-                        {contactData.social.facebook.info}
-                        <br />
-                        <strong>{contactData.social.whatsapp.title}:</strong>{" "}
-                        {contactData.social.whatsapp.info}
+                        {socialLinks.map((link) => (
+                          <Box key={link.id} component="span" sx={{ display: "block" }}>
+                            <strong>{link.title}:</strong> {link.info}
+                          </Box>
+                        ))}
                       </Typography>
                     </Box>
                   </CardContent>

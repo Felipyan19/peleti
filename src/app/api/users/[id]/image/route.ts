@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withRequiredAdmin } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const GET = withErrorHandling(withRequiredAdmin(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   const user = await prisma.user.findUnique({
@@ -31,4 +32,4 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
       'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });
-});
+}));

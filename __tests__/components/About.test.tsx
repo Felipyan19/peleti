@@ -62,10 +62,10 @@ describe("About Component", () => {
   it("displays the workshop image", () => {
     renderWithTheme(<About />);
 
-    // The image alt text is dynamic based on currentImage.name
+    // The component uses content.title as the image alt text
     const image = screen.getByRole("img");
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute("alt", expect.stringMatching(/Peleti - .+\.jpg/));
+    expect(image).toHaveAttribute("alt", "Nuestra historia");
   });
 
   it("displays all paragraphs from about data", () => {

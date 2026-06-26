@@ -7,7 +7,17 @@ import Image from "next/image";
 import aboutData from "@/data/about.json";
 import SectionHeading from "./SectionHeading";
 
-export default function About() {
+interface AboutContent {
+  title: string;
+  paragraphs: string[];
+  imageUrl?: string;
+}
+
+interface AboutProps {
+  content?: AboutContent;
+}
+
+export default function About({ content = aboutData }: AboutProps) {
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("sobre-nosotros", {
       threshold: 0.2,
@@ -15,7 +25,7 @@ export default function About() {
       animationDuration: 0.8,
     });
 
-  const [lead, ...rest] = aboutData.paragraphs;
+  const [lead, ...rest] = content.paragraphs;
 
   return (
     <Box
@@ -27,7 +37,7 @@ export default function About() {
         <SectionHeading
           eyebrow="Sobre nosotros"
           index="01"
-          title={aboutData.title}
+          title={content.title}
         />
 
         <motion.div
@@ -74,8 +84,8 @@ export default function About() {
                   }}
                 />
                 <Image
-                  src={aboutData.image}
-                  alt={aboutData.title}
+                  src={content.imageUrl ?? "/images/animal.jpg"}
+                  alt={content.title}
                   fill
                   sizes="(max-width: 900px) 100vw, 680px"
                   style={{
@@ -115,7 +125,7 @@ export default function About() {
                     fontSize: "3.9rem",
                     lineHeight: 0.66,
                     pr: 1.4,
-                    mt: "0.02em",
+                    mt: "-0.08em",
                     color: "primary.main",
                     fontWeight: 700,
                   },

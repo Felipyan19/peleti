@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
-import contactData from "@/data/contact.json";
 
 const NAV = [
   { label: "Sobre nosotros", href: "#sobre-nosotros" },
@@ -21,14 +20,44 @@ const NAV = [
   { label: "Contacto", href: "#contacto" },
 ];
 
-const SOCIAL = [
-  { Icon: FaInstagram, href: contactData.social.instagram.url, color: "#E4405F", label: "Instagram" },
-  { Icon: FaFacebook, href: contactData.social.facebook.url, color: "#1877F2", label: "Facebook" },
-  { Icon: FaWhatsapp, href: contactData.social.whatsapp.url, color: "#25D366", label: "WhatsApp" },
-];
+const SOCIAL = {
+  FaInstagram,
+  FaFacebook,
+  FaWhatsapp,
+};
 
-export default function Footer() {
+interface FooterProps {
+  socialLinks: Array<{
+    id: string;
+    platform: "INSTAGRAM" | "FACEBOOK" | "WHATSAPP";
+    title: string;
+    url: string;
+    icon?: string | null;
+  }>;
+}
+
+export default function Footer({ socialLinks }: FooterProps) {
   const theme = useTheme();
+  const socialItems = socialLinks.map((link) => ({
+    id: link.id,
+    label: link.title,
+    href: link.url,
+    Icon:
+      (link.icon && SOCIAL[link.icon as keyof typeof SOCIAL]) ||
+      SOCIAL[
+        ({
+          INSTAGRAM: "FaInstagram",
+          FACEBOOK: "FaFacebook",
+          WHATSAPP: "FaWhatsapp",
+        } as const)[link.platform]
+      ],
+    color:
+      link.platform === "INSTAGRAM"
+        ? "#E4405F"
+        : link.platform === "FACEBOOK"
+          ? "#1877F2"
+          : "#25D366",
+  }));
 
   return (
     <Box
@@ -121,9 +150,9 @@ export default function Footer() {
 
           {/* Redes */}
           <Stack direction="row" spacing={1.5}>
-            {SOCIAL.map(({ Icon, href, color, label }) => (
+            {socialItems.map(({ Icon, href, color, label, id }) => (
               <motion.div
-                key={label}
+                key={id}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >

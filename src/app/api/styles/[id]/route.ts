@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAdminProtection } from '@/utils/api/authHelpers';
 import { fileToBase64AndMime, parseDataUrl } from '@/utils/server/imageHelpers';
 
 const prisma = new PrismaClient();
@@ -41,7 +42,7 @@ export const GET = withErrorHandling(async (req: NextRequest, { params }: { para
   return ApiResponse.success(response);
 });
 
-export const PUT = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const PUT = withErrorHandling(withAdminProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const contentType = req.headers.get('content-type') || '';
 
@@ -186,9 +187,9 @@ export const PUT = withErrorHandling(async (req: NextRequest, { params }: { para
   const { imageBase64: _imageBase64, ogImageBase64: _ogImageBase64, ...response } = updated;
 
   return ApiResponse.success(response);
-});
+}));
 
-export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+export const DELETE = withErrorHandling(withAdminProtection(async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
 
   await prisma.style.delete({
@@ -196,4 +197,4 @@ export const DELETE = withErrorHandling(async (req: NextRequest, { params }: { p
   });
 
   return ApiResponse.success({ message: 'Style deleted successfully' });
-});
+}));

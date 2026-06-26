@@ -7,10 +7,21 @@ import { useRandomImages } from "@/utils/useRandomImages";
 import Image from "next/image";
 import heroData from "@/data/hero.json";
 
+interface HeroContent {
+  title: string;
+  description: string;
+  buttonText: string;
+  imageUrl?: string;
+}
+
+interface HeroProps {
+  content?: HeroContent;
+}
+
 // Fondo oscuro cálido del hero: escenario donde la imagen se funde hacia el texto.
 const STAGE = "#19110b";
 
-export default function Hero() {
+export default function Hero({ content = heroData }: HeroProps) {
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("inicio", {
       threshold: 0.2,
@@ -20,7 +31,9 @@ export default function Hero() {
 
   const { currentImage, isTransitioning } = useRandomImages();
 
-  const pieceName = currentImage.name.replace(/\.(jpe?g|png|webp)$/i, "");
+  const activeImagePath = content.imageUrl ?? currentImage.path;
+  const activeImageName = content.imageUrl ? content.title : currentImage.name;
+  const pieceName = activeImageName.replace(/\.(jpe?g|png|webp)$/i, "");
   const pieceTitle = pieceName.charAt(0).toUpperCase() + pieceName.slice(1);
 
   return (
@@ -84,7 +97,7 @@ export default function Hero() {
           sx={{
             position: "absolute",
             inset: { xs: "7% 2% 14%", md: "10% 7% 8% 5%" },
-            opacity: isTransitioning ? 0 : 1,
+            opacity: isTransitioning && !content.imageUrl ? 0 : 1,
             transition: "opacity 1s cubic-bezier(0.4, 0, 0.2, 1)",
             filter: "drop-shadow(0 28px 54px rgba(0,0,0,0.42))",
             clipPath:
@@ -93,8 +106,8 @@ export default function Hero() {
           }}
         >
           <Image
-            src={currentImage.path}
-            alt={`Peleti - ${currentImage.name}`}
+            src={activeImagePath}
+            alt={`Peleti - ${activeImageName}`}
             fill
             sizes="(max-width: 900px) 100vw, 64vw"
             style={{
@@ -152,6 +165,21 @@ export default function Hero() {
         />
       </Box>
 
+      {/* ── Overlay oscuro mobile/tablet sobre toda la sección ── */}
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "linear-gradient(to bottom, rgba(25,17,11,0.72) 0%, rgba(25,17,11,0.60) 40%, rgba(25,17,11,0.55) 70%, rgba(25,17,11,0.40) 100%)",
+          backdropFilter: "blur(1px)",
+          WebkitBackdropFilter: "blur(1px)",
+          pointerEvents: "none",
+        }}
+      />
+
       {/* ── Contenido a la izquierda ── */}
       <Box
         sx={{
@@ -172,7 +200,15 @@ export default function Hero() {
             initial="hidden"
             animate={shouldAnimate ? "visible" : "hidden"}
           >
-            <Stack spacing={4} sx={{ maxWidth: { xs: 760, md: 600 } }}>
+            <Stack
+              spacing={4}
+              sx={{
+                maxWidth: { xs: 760, md: 600 },
+                // Fondo difuminado solo en mobile para legibilidad
+                px: { xs: 1, md: 0 },
+                py: { xs: 0, md: 0 },
+              }}
+            >
               <motion.div variants={getStaggerVariants(0)}>
                 <Chip
                   label="Taller artesanal de piezas en resina"
@@ -209,14 +245,27 @@ export default function Hero() {
                     maxWidth: 640,
                   }}
                 >
-                  Arte en resina con presencia, textura y{" "}
-                  <Box
-                    component="em"
-                    sx={{ color: "primary.light", fontStyle: "italic" }}
-                  >
-                    alma
-                  </Box>
-                  .
+                  {(() => {
+                    const words = content.title.split(" ");
+                    const last = words.pop();
+                    return (
+                      <>
+                        {words.join(" ")}{" "}
+                        <Box
+                          component="span"
+                          sx={{
+                            background: "linear-gradient(135deg, #a8693a 0%, #d4924e 50%, #e8b87a 100%)",
+                            backgroundClip: "text",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            filter: "drop-shadow(0 0 18px rgba(168,105,58,0.4))",
+                          }}
+                        >
+                          {last}
+                        </Box>
+                      </>
+                    );
+                  })()}
                 </Typography>
               </motion.div>
 
@@ -231,9 +280,7 @@ export default function Hero() {
                     textShadow: "0 2px 18px rgba(0,0,0,0.35)",
                   }}
                 >
-                  {heroData.description}. Diseñamos piezas decorativas, regalos y
-                  colecciones personalizadas para hogares, marcas y momentos que
-                  merecen verse especiales.
+                  {content.description}
                 </Typography>
               </motion.div>
 
@@ -257,7 +304,7 @@ export default function Hero() {
                       boxShadow: "0 18px 36px rgba(0,0,0,0.28)",
                     }}
                   >
-                    {heroData.buttonText}
+                    {content.buttonText}
                   </Button>
                   <Button
                     variant="outlined"

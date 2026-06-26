@@ -16,21 +16,44 @@ const IconComponents = {
 
 // Imagen representativa de cada estilo (piezas reales del taller)
 const STYLE_IMAGE: Record<number, string> = {
-  1: "/images/virgen.jpg",
-  2: "/images/guerrero.jpg",
-  3: "/images/elefantes.jpg",
+  0: "/images/virgen.jpg",
+  1: "/images/guerrero.jpg",
+  2: "/images/elefantes.jpg",
 };
 
 interface StyleData {
-  id: number;
+  id: string;
   name: string;
   description: string;
-  icon: keyof typeof IconComponents;
+  icon?: string;
   techniques: string[];
-  examples: string;
+  examples?: string;
 }
 
-export default function StylesGallery() {
+interface StylesGalleryProps {
+  content?: {
+    settings: {
+      title: string;
+      description: string;
+    };
+    styles: StyleData[];
+  };
+}
+
+const defaultStyleGalleryContent = {
+  settings: {
+    title: styleGalleryData.title,
+    description: styleGalleryData.description,
+  },
+  styles: styleGalleryData.styles.map((style) => ({
+    ...style,
+    id: String(style.id),
+  })),
+};
+
+export default function StylesGallery({
+  content = defaultStyleGalleryContent,
+}: StylesGalleryProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
@@ -40,7 +63,7 @@ export default function StylesGallery() {
       animationDuration: 0.8,
     });
 
-  const styles = styleGalleryData.styles as StyleData[];
+  const styles = content.styles;
 
   return (
     <Box
@@ -56,8 +79,8 @@ export default function StylesGallery() {
         <SectionHeading
           eyebrow="Técnicas y estilos"
           index="02"
-          title={styleGalleryData.title}
-          lead={styleGalleryData.description}
+          title={content.settings.title}
+          lead={content.settings.description}
         />
 
         <motion.div
@@ -68,10 +91,13 @@ export default function StylesGallery() {
         >
           <Stack spacing={{ xs: 5, md: 7 }}>
             {styles.map((style, index) => {
-              const IconComponent = IconComponents[style.icon];
+              const IconComponent =
+                style.icon && style.icon in IconComponents
+                  ? IconComponents[style.icon]
+                  : FaLeaf;
               const reversed = index % 2 === 1;
               const num = String(index + 1).padStart(2, "0");
-              const examples = style.examples
+              const examples = (style.examples ?? "")
                 .split(",")
                 .map((e) => e.trim())
                 .filter(Boolean);
@@ -119,7 +145,7 @@ export default function StylesGallery() {
                       }}
                     >
                       <Image
-                        src={STYLE_IMAGE[style.id] ?? "/images/art.jpg"}
+                        src={STYLE_IMAGE[index] ?? "/images/art.jpg"}
                         alt={style.name}
                         fill
                         sizes="(max-width: 900px) 100vw, 42vw"

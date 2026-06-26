@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withRequiredAdmin } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
-export const GET = withErrorHandling(async (req: NextRequest) => {
+export const GET = withErrorHandling(withRequiredAdmin(async (req: NextRequest) => {
   const { searchParams } = req.nextUrl;
   const status = searchParams.get('status') as 'NEW' | 'READ' | 'ARCHIVED' | null;
   const page = parseInt(searchParams.get('page') || '1');
@@ -30,7 +31,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
     limit,
     totalPages: Math.ceil(total / limit)
   });
-});
+}));
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const body = await req.json();

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { PrismaClient } from '@/generated/prisma';
 import { ApiResponse, withErrorHandling } from '@/utils/api/responseHelpers';
+import { withAdminProtection } from '@/utils/api/authHelpers';
 
 const prisma = new PrismaClient();
 
@@ -62,7 +63,7 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   });
 });
 
-export const POST = withErrorHandling(async (req: NextRequest) => {
+export const POST = withErrorHandling(withAdminProtection(async (req: NextRequest) => {
   const body = await req.json();
   const {
     title,
@@ -144,4 +145,4 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   });
 
   return ApiResponse.created(created);
-});
+}));
