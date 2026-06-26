@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Alert,
   Box,
@@ -11,11 +12,13 @@ import {
   CardContent,
   Checkbox,
   Chip,
+  Collapse,
   Divider,
   FormControlLabel,
   FormGroup,
   FormLabel,
   Grid,
+  IconButton,
   MenuItem,
   Snackbar,
   Stack,
@@ -105,11 +108,16 @@ function SectionCard({
   title,
   subtitle,
   children,
+  collapsible = true,
+  defaultOpen = false,
 }: {
   title: string;
   subtitle?: string;
   children: React.ReactNode;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <Card
       sx={{
@@ -119,26 +127,53 @@ function SectionCard({
         boxShadow: "0 2px 16px rgba(0,0,0,0.25)",
       }}
     >
-      <CardContent sx={{ p: { xs: 2.5, md: 3.5 } }}>
-        <Stack spacing={3}>
-          <Box>
-            <Typography
-              variant="h5"
-              sx={{
-                fontFamily: "var(--font-display), Georgia, serif",
-                color: "white",
-                lineHeight: 1.1,
-              }}
-            >
-              {title}
-            </Typography>
-            {subtitle ? (
-              <Typography sx={{ color: "rgba(255,255,255,0.5)", fontSize: "0.82rem", mt: 0.6 }}>
-                {subtitle}
-              </Typography>
-            ) : null}
+      <CardContent sx={{ p: { xs: 2.5, md: 3.5 }, pb: open ? undefined : "20px !important" }}>
+        <Stack spacing={open ? 3 : 0}>
+          <Box
+            onClick={collapsible ? () => setOpen((v) => !v) : undefined}
+            sx={collapsible ? { cursor: "pointer", userSelect: "none" } : undefined}
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+              <Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontFamily: "var(--font-display), Georgia, serif",
+                    color: "white",
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {title}
+                </Typography>
+                {subtitle ? (
+                  <Typography sx={{ color: "rgba(255,255,255,0.5)", fontSize: "0.82rem", mt: 0.6 }}>
+                    {subtitle}
+                  </Typography>
+                ) : null}
+              </Box>
+              {collapsible ? (
+                <IconButton
+                  size="small"
+                  sx={{
+                    color: "rgba(255,255,255,0.5)",
+                    flexShrink: 0,
+                    ml: 1,
+                    transition: "transform 0.25s",
+                    transform: open ? "rotate(180deg)" : "rotate(0deg)",
+                    "&:hover": { color: "#c8853a" },
+                  }}
+                  onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+                >
+                  <ExpandMoreIcon />
+                </IconButton>
+              ) : null}
+            </Stack>
           </Box>
-          {children}
+          <Collapse in={open} unmountOnExit>
+            <Stack spacing={3}>
+              {children}
+            </Stack>
+          </Collapse>
         </Stack>
       </CardContent>
     </Card>
@@ -242,6 +277,85 @@ function TechniqueCheckboxes({
         ))}
       </FormGroup>
     </Box>
+  );
+}
+
+/** Ítem colapsable para listas de elementos (estilos, pasos, portfolio items). */
+function CollapsibleItem({
+  label,
+  badge,
+  badgeColor,
+  children,
+  defaultOpen = false,
+}: {
+  label: string;
+  badge?: string;
+  badgeColor?: "success" | "default" | "error" | "warning" | "info";
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <Card
+      variant="outlined"
+      sx={{ borderRadius: 3, border: "1px solid rgba(168,105,58,0.14)" }}
+    >
+      <Box
+        onClick={() => setOpen((v) => !v)}
+        sx={{
+          px: 2.5,
+          py: 1.8,
+          cursor: "pointer",
+          userSelect: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 1.5,
+          "&:hover": { background: "rgba(200,133,58,0.05)" },
+        }}
+      >
+        <Stack direction="row" spacing={1.2} alignItems="center" sx={{ minWidth: 0 }}>
+          <Typography
+            fontWeight={600}
+            sx={{
+              color: "white",
+              fontSize: "0.95rem",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {label}
+          </Typography>
+          {badge ? (
+            <Chip
+              label={badge}
+              size="small"
+              color={badgeColor ?? "default"}
+              variant={badgeColor === "success" ? "filled" : "outlined"}
+            />
+          ) : null}
+        </Stack>
+        <IconButton
+          size="small"
+          sx={{
+            color: "rgba(255,255,255,0.5)",
+            flexShrink: 0,
+            transition: "transform 0.25s",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            "&:hover": { color: "#c8853a" },
+          }}
+          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </Box>
+      <Collapse in={open} unmountOnExit>
+        <Box sx={{ px: 2.5, pb: 2.5, pt: 0.5 }}>
+          {children}
+        </Box>
+      </Collapse>
+    </Card>
   );
 }
 
@@ -798,12 +912,12 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                   <SectionCard title="Estilos de la galería">
                     <Stack spacing={2.5}>
                       {initialData.styleGalleryStyles.map((style) => (
-                        <Card
+                        <CollapsibleItem
                           key={style.id}
-                          variant="outlined"
-                          sx={{ borderRadius: 3, border: "1px solid rgba(168,105,58,0.14)" }}
+                          label={style.name}
+                          badge={style.published ? "Publicado" : "Oculto"}
+                          badgeColor={style.published ? "success" : "default"}
                         >
-                          <CardContent>
                             <Box
                               component="form"
                               onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
@@ -934,8 +1048,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                                 </Grid>
                               </Grid>
                             </Box>
-                          </CardContent>
-                        </Card>
+                        </CollapsibleItem>
                       ))}
 
                       <Divider />
@@ -1115,12 +1228,12 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                   <SectionCard title="Pasos del proceso">
                     <Stack spacing={2}>
                       {initialData.workSteps.map((step) => (
-                        <Card
+                        <CollapsibleItem
                           key={step.id}
-                          variant="outlined"
-                          sx={{ borderRadius: 3, border: "1px solid rgba(168,105,58,0.14)" }}
+                          label={`Paso ${step.order}: ${step.title}`}
+                          badge={step.published ? "Publicado" : "Oculto"}
+                          badgeColor={step.published ? "success" : "default"}
                         >
-                          <CardContent>
                             <Box
                               component="form"
                               onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
@@ -1221,8 +1334,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                                 </Grid>
                               </Grid>
                             </Box>
-                          </CardContent>
-                        </Card>
+                        </CollapsibleItem>
                       ))}
 
                       <Divider />
@@ -1531,12 +1643,12 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                   <SectionCard title="Ítems del catálogo">
                     <Stack spacing={3}>
                       {initialData.portfolioItems.map((item) => (
-                        <Card
+                        <CollapsibleItem
                           key={item.id}
-                          variant="outlined"
-                          sx={{ borderRadius: 3, border: "1px solid rgba(168,105,58,0.14)" }}
+                          label={item.title}
+                          badge={item.published ? "Publicado" : "Oculto"}
+                          badgeColor={item.published ? "success" : "default"}
                         >
-                          <CardContent>
                             <Stack spacing={3}>
                               {/* Datos del ítem */}
                               <Box
@@ -1882,8 +1994,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                                 </Grid>
                               </Box>
                             </Stack>
-                          </CardContent>
-                        </Card>
+                        </CollapsibleItem>
                       ))}
 
                       <Divider />
@@ -2314,6 +2425,21 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
               ) : null}
             </Stack>
       </Box>
+
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={4000}
+        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          severity={toast.type}
+          onClose={() => setToast((t) => ({ ...t, open: false }))}
+          sx={{ width: "100%" }}
+        >
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

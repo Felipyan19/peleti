@@ -165,6 +165,21 @@ export default function Hero({ content = heroData }: HeroProps) {
         />
       </Box>
 
+      {/* ── Overlay oscuro mobile/tablet sobre toda la sección ── */}
+      <Box
+        sx={{
+          display: { xs: "block", md: "none" },
+          position: "absolute",
+          inset: 0,
+          zIndex: 1,
+          background:
+            "linear-gradient(to bottom, rgba(25,17,11,0.72) 0%, rgba(25,17,11,0.60) 40%, rgba(25,17,11,0.55) 70%, rgba(25,17,11,0.40) 100%)",
+          backdropFilter: "blur(1px)",
+          WebkitBackdropFilter: "blur(1px)",
+          pointerEvents: "none",
+        }}
+      />
+
       {/* ── Contenido a la izquierda ── */}
       <Box
         sx={{
@@ -185,7 +200,15 @@ export default function Hero({ content = heroData }: HeroProps) {
             initial="hidden"
             animate={shouldAnimate ? "visible" : "hidden"}
           >
-            <Stack spacing={4} sx={{ maxWidth: { xs: 760, md: 600 } }}>
+            <Stack
+              spacing={4}
+              sx={{
+                maxWidth: { xs: 760, md: 600 },
+                // Fondo difuminado solo en mobile para legibilidad
+                px: { xs: 1, md: 0 },
+                py: { xs: 0, md: 0 },
+              }}
+            >
               <motion.div variants={getStaggerVariants(0)}>
                 <Chip
                   label="Taller artesanal de piezas en resina"
@@ -222,7 +245,27 @@ export default function Hero({ content = heroData }: HeroProps) {
                     maxWidth: 640,
                   }}
                 >
-                  {content.title}
+                  {(() => {
+                    const words = content.title.split(" ");
+                    const last = words.pop();
+                    return (
+                      <>
+                        {words.join(" ")}{" "}
+                        <Box
+                          component="span"
+                          sx={{
+                            background: "linear-gradient(135deg, #a8693a 0%, #d4924e 50%, #e8b87a 100%)",
+                            backgroundClip: "text",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            filter: "drop-shadow(0 0 18px rgba(168,105,58,0.4))",
+                          }}
+                        >
+                          {last}
+                        </Box>
+                      </>
+                    );
+                  })()}
                 </Typography>
               </motion.div>
 
