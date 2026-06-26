@@ -4,11 +4,12 @@ import { motion } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
 import { Box, Container, Typography, useTheme, Chip, Stack } from "@mui/material";
 import { FaUniversity, FaShieldAlt, FaLeaf, FaCheck } from "react-icons/fa";
+import type { IconType } from "react-icons";
 import Image from "next/image";
 import styleGalleryData from "@/data/styleGallery.json";
 import SectionHeading from "./SectionHeading";
 
-const IconComponents = {
+const IconComponents: Record<string, IconType> = {
   FaUniversity,
   FaShieldAlt,
   FaLeaf,
