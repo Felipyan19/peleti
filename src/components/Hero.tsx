@@ -20,6 +20,9 @@ export default function Hero() {
 
   const { currentImage, isTransitioning } = useRandomImages();
 
+  const pieceName = currentImage.name.replace(/\.(jpe?g|png|webp)$/i, "");
+  const pieceTitle = pieceName.charAt(0).toUpperCase() + pieceName.slice(1);
+
   return (
     <Box
       component="section"
@@ -237,8 +240,9 @@ export default function Hero() {
               <motion.div variants={getStaggerVariants(3)}>
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  sx={{ width: "100%", maxWidth: 460 }}
+                  spacing={1.75}
+                  alignItems={{ xs: "stretch", sm: "center" }}
+                  sx={{ flexWrap: "wrap", rowGap: 1.75 }}
                 >
                   <Button
                     variant="contained"
@@ -246,9 +250,10 @@ export default function Hero() {
                     href="#catalogo"
                     size="large"
                     sx={{
-                      px: 4,
-                      py: 1.75,
-                      fontSize: "1rem",
+                      px: 3.5,
+                      py: 1.6,
+                      fontSize: "0.98rem",
+                      whiteSpace: "nowrap",
                       boxShadow: "0 18px 36px rgba(0,0,0,0.28)",
                     }}
                   >
@@ -259,15 +264,17 @@ export default function Hero() {
                     href="#contacto"
                     size="large"
                     sx={{
-                      px: 4,
-                      py: 1.75,
+                      px: 3.5,
+                      py: 1.6,
+                      fontSize: "0.98rem",
+                      whiteSpace: "nowrap",
                       color: "white",
-                      borderColor: "rgba(255,255,255,0.28)",
-                      backgroundColor: "rgba(255,255,255,0.06)",
+                      borderColor: "rgba(255,255,255,0.24)",
+                      backgroundColor: "rgba(255,255,255,0.05)",
                       backdropFilter: "blur(10px)",
                       "&:hover": {
                         borderColor: "rgba(200,148,30,0.6)",
-                        backgroundColor: "rgba(255,255,255,0.12)",
+                        backgroundColor: "rgba(255,255,255,0.10)",
                       },
                     }}
                   >
@@ -277,32 +284,39 @@ export default function Hero() {
               </motion.div>
 
               <motion.div variants={getStaggerVariants(4)}>
-                <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ pt: 1 }}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  sx={{ flexWrap: "wrap", rowGap: 1, columnGap: 2, pt: 2.5 }}
+                >
                   {[
                     "Piezas hechas a mano",
                     "Diseños personalizados",
                     "Catálogo en constante renovación",
-                  ].map((item) => (
-                    <Box
-                      key={item}
-                      sx={{
-                        px: 2,
-                        py: 1.2,
-                        borderRadius: 999,
-                        border: "1px solid rgba(255,255,255,0.14)",
-                        backgroundColor: "rgba(255,255,255,0.06)",
-                        backdropFilter: "blur(12px)",
-                      }}
-                    >
+                  ].map((item, i) => (
+                    <Stack key={item} direction="row" alignItems="center" spacing={2}>
+                      {i > 0 && (
+                        <Box
+                          aria-hidden
+                          sx={{
+                            width: 4,
+                            height: 4,
+                            borderRadius: "50%",
+                            backgroundColor: "rgba(200,148,30,0.7)",
+                          }}
+                        />
+                      )}
                       <Typography
                         sx={{
-                          fontSize: "0.9rem",
-                          color: "rgba(255,255,255,0.84)",
+                          fontSize: "0.82rem",
+                          fontWeight: 500,
+                          letterSpacing: "0.04em",
+                          color: "rgba(255,255,255,0.72)",
                         }}
                       >
                         {item}
                       </Typography>
-                    </Box>
+                    </Stack>
                   ))}
                 </Stack>
               </motion.div>
@@ -315,40 +329,52 @@ export default function Hero() {
       <Box
         sx={{
           position: "absolute",
-          bottom: { xs: 24, md: 36 },
-          right: { xs: 20, md: 36 },
+          bottom: { xs: 24, md: 40 },
+          right: { xs: 20, md: 40 },
           zIndex: 2,
-          maxWidth: 260,
+          maxWidth: 230,
           display: { xs: "none", sm: "block" },
-          background: "rgba(25,17,11,0.45)",
+          background: "rgba(25,17,11,0.40)",
           backdropFilter: "blur(14px)",
-          borderRadius: 4,
-          px: 2.2,
-          py: 1.5,
-          border: "1px solid rgba(200,148,30,0.28)",
+          borderRadius: 3,
+          px: 2.4,
+          py: 2,
+          borderLeft: "2px solid rgba(200,148,30,0.55)",
         }}
       >
         <Typography
           sx={{
-            color: "rgba(255,255,255,0.72)",
-            fontSize: "0.7rem",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: "0.66rem",
             textTransform: "uppercase",
-            letterSpacing: "0.16em",
+            letterSpacing: "0.2em",
             fontWeight: 700,
-            mb: 0.5,
+            mb: 1,
           }}
         >
           Pieza destacada
         </Typography>
         <Typography
           sx={{
+            fontFamily: 'var(--font-display), Georgia, serif',
             color: "white",
-            fontSize: "0.95rem",
-            lineHeight: 1.45,
+            fontSize: "1.5rem",
+            fontWeight: 600,
+            lineHeight: 1.1,
+            mb: 0.6,
+            textTransform: "capitalize",
           }}
         >
-          Inspirada en texturas orgánicas y acabados brillantes, como{" "}
-          {currentImage.name.replace(".jpeg", "").replace(".jpg", "")}.
+          {pieceTitle}
+        </Typography>
+        <Typography
+          sx={{
+            color: "rgba(255,255,255,0.66)",
+            fontSize: "0.82rem",
+            lineHeight: 1.5,
+          }}
+        >
+          Resina hecha a mano
         </Typography>
       </Box>
     </Box>
