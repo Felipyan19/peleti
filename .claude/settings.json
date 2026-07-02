@@ -15,7 +15,9 @@
       "Bash(npm test *)",
       "Bash(echo \"tsc exit: $?\")",
       "WebFetch(domain:www.wix.com)",
-      "WebFetch(domain:www.figma.com)"
+      "WebFetch(domain:www.figma.com)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId = 18380\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"ProcessId = 24488\")"
     ]
   }
 }
