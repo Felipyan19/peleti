@@ -9,7 +9,13 @@
       "PowerShell(Get-Process -Name node -ErrorAction SilentlyContinue)",
       "PowerShell(Stop-Process -Force -Confirm:$false)",
       "Bash(npx jest *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(node \"C:\\\\Users\\\\USUARIO\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-USUARIO-Documents-codes-peleti\\\\6ecdf4a9-d341-4e31-8e83-124eee95c3fa\\\\scratchpad\\\\repalette.js\")",
+      "Bash(node \"C:\\\\Users\\\\USUARIO\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-USUARIO-Documents-codes-peleti\\\\6ecdf4a9-d341-4e31-8e83-124eee95c3fa\\\\scratchpad\\\\repalette-admin.js\")",
+      "Bash(npm test *)",
+      "Bash(echo \"tsc exit: $?\")",
+      "WebFetch(domain:www.wix.com)",
+      "WebFetch(domain:www.figma.com)"
     ]
   }
 }
