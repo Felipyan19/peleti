@@ -6,6 +6,8 @@ import { useEnhancedAnimation } from "@/utils/useScrollToSection";
 import { useRandomImages } from "@/utils/useRandomImages";
 import Image from "next/image";
 import heroData from "@/data/hero.json";
+import { withWhatsAppMessage, DEFAULT_WHATSAPP_MESSAGE } from "@/utils/whatsapp";
+import { BLUR_DATA_URL } from "@/utils/imagePlaceholder";
 
 interface HeroContent {
   title: string;
@@ -16,12 +18,16 @@ interface HeroContent {
 
 interface HeroProps {
   content?: HeroContent;
+  whatsappUrl?: string;
 }
 
 // Fondo oscuro cálido del hero: escenario donde la imagen se funde hacia el texto.
-const STAGE = "#19110b";
+const STAGE = "#0b1b1e";
 
-export default function Hero({ content = heroData }: HeroProps) {
+export default function Hero({ content = heroData, whatsappUrl }: HeroProps) {
+  const whatsappHref = whatsappUrl
+    ? withWhatsAppMessage(whatsappUrl, DEFAULT_WHATSAPP_MESSAGE)
+    : "#contacto";
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("inicio", {
       threshold: 0.2,
@@ -45,9 +51,9 @@ export default function Hero({ content = heroData }: HeroProps) {
         minHeight: "100vh",
         overflow: "hidden",
         backgroundColor: STAGE,
-        // Resplandor de bronce sutil sobre el escenario
+        // Resplandor turquesa sutil sobre el escenario
         backgroundImage:
-          "radial-gradient(58vw 54vh at 82% 22%, rgba(168,105,58,0.20), transparent 64%), radial-gradient(42vw 44vh at 0% 88%, rgba(94,107,82,0.10), transparent 62%)",
+          "radial-gradient(58vw 54vh at 82% 22%, rgba(15,163,168,0.20), transparent 64%), radial-gradient(42vw 44vh at 0% 88%, rgba(255,107,87,0.10), transparent 62%)",
       }}
     >
       {/* ── Imagen a la derecha, fundida hacia el texto ── */}
@@ -71,8 +77,8 @@ export default function Hero({ content = heroData }: HeroProps) {
             inset: { xs: "8% 4% 18%", md: "13% 8% 12% 9%" },
             borderRadius: { xs: "32% 68% 42% 58% / 42% 36% 64% 58%", md: "38% 62% 44% 56% / 46% 36% 64% 54%" },
             background:
-              "linear-gradient(135deg, rgba(255,255,255,0.10), rgba(200,148,30,0.06) 44%, rgba(25,17,11,0.20))",
-            border: "1px solid rgba(200,148,30,0.22)",
+              "linear-gradient(135deg, rgba(255,255,255,0.10), rgba(233,180,48,0.06) 44%, rgba(11,27,30,0.20))",
+            border: "1px solid rgba(233,180,48,0.22)",
             boxShadow:
               "inset 0 0 0 1px rgba(255,255,255,0.06), 0 38px 90px rgba(0,0,0,0.30)",
             backdropFilter: "blur(2px)",
@@ -87,7 +93,7 @@ export default function Hero({ content = heroData }: HeroProps) {
             height: { xs: "48%", md: "54%" },
             borderRadius: "50%",
             background:
-              "radial-gradient(ellipse at center, rgba(217,163,107,0.24), rgba(217,163,107,0.08) 34%, transparent 68%)",
+              "radial-gradient(ellipse at center, rgba(53,201,206,0.24), rgba(53,201,206,0.08) 34%, transparent 68%)",
             filter: "blur(30px)",
             opacity: 0.72,
             pointerEvents: "none",
@@ -102,13 +108,15 @@ export default function Hero({ content = heroData }: HeroProps) {
             filter: "drop-shadow(0 28px 54px rgba(0,0,0,0.42))",
             clipPath:
               "polygon(8% 12%, 58% 0%, 95% 20%, 100% 68%, 72% 100%, 20% 92%, 0% 56%)",
-            borderRadius: 4,
+            borderRadius: "20px",
           }}
         >
           <Image
             src={activeImagePath}
             alt={`Peleti - ${activeImageName}`}
             fill
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
             sizes="(max-width: 900px) 100vw, 64vw"
             style={{
               objectFit: "contain",
@@ -127,8 +135,8 @@ export default function Hero({ content = heroData }: HeroProps) {
             position: "absolute",
             inset: 0,
             background: {
-              xs: `linear-gradient(to top, ${STAGE} 4%, rgba(25,17,11,0.78) 35%, rgba(25,17,11,0.30) 70%, rgba(25,17,11,0.12) 100%)`,
-              md: `linear-gradient(100deg, ${STAGE} 0%, rgba(25,17,11,0.96) 16%, rgba(25,17,11,0.70) 31%, rgba(25,17,11,0.28) 49%, rgba(25,17,11,0.04) 70%, transparent 100%)`,
+              xs: `linear-gradient(to top, ${STAGE} 4%, rgba(11,27,30,0.78) 35%, rgba(11,27,30,0.30) 70%, rgba(11,27,30,0.12) 100%)`,
+              md: `linear-gradient(100deg, ${STAGE} 0%, rgba(11,27,30,0.96) 16%, rgba(11,27,30,0.70) 31%, rgba(11,27,30,0.28) 49%, rgba(11,27,30,0.04) 70%, transparent 100%)`,
             },
           }}
         />
@@ -141,7 +149,7 @@ export default function Hero({ content = heroData }: HeroProps) {
             width: { xs: "100%", md: "46%" },
             background: {
               xs: "transparent",
-              md: `linear-gradient(to right, ${STAGE} 0%, rgba(25,17,11,0.82) 42%, rgba(25,17,11,0.22) 76%, transparent 100%)`,
+              md: `linear-gradient(to right, ${STAGE} 0%, rgba(11,27,30,0.82) 42%, rgba(11,27,30,0.22) 76%, transparent 100%)`,
             },
             pointerEvents: "none",
           }}
@@ -151,14 +159,14 @@ export default function Hero({ content = heroData }: HeroProps) {
           sx={{
             position: "absolute",
             inset: 0,
-            background: `linear-gradient(to bottom, rgba(25,17,11,0.55) 0%, transparent 20%, transparent 78%, rgba(25,17,11,0.62) 100%)`,
+            background: `linear-gradient(to bottom, rgba(11,27,30,0.55) 0%, transparent 20%, transparent 78%, rgba(11,27,30,0.62) 100%)`,
           }}
         />
         <Box
           sx={{
             position: "absolute",
             inset: { xs: "15% 10% 16%", md: "16% 12% 12% 18%" },
-            border: "1px solid rgba(200,148,30,0.18)",
+            border: "1px solid rgba(233,180,48,0.18)",
             borderRadius: { xs: "34% 66% 46% 54% / 42% 38% 62% 58%", md: "40% 60% 46% 54% / 48% 38% 62% 52%" },
             pointerEvents: "none",
           }}
@@ -173,7 +181,7 @@ export default function Hero({ content = heroData }: HeroProps) {
           inset: 0,
           zIndex: 1,
           background:
-            "linear-gradient(to bottom, rgba(25,17,11,0.72) 0%, rgba(25,17,11,0.60) 40%, rgba(25,17,11,0.55) 70%, rgba(25,17,11,0.40) 100%)",
+            "linear-gradient(to bottom, rgba(11,27,30,0.50) 0%, rgba(11,27,30,0.44) 40%, rgba(11,27,30,0.40) 70%, rgba(11,27,30,0.30) 100%)",
           backdropFilter: "blur(1px)",
           WebkitBackdropFilter: "blur(1px)",
           pointerEvents: "none",
@@ -217,7 +225,7 @@ export default function Hero({ content = heroData }: HeroProps) {
                     borderRadius: 999,
                     color: "white",
                     backgroundColor: "rgba(255,255,255,0.10)",
-                    border: "1px solid rgba(200,148,30,0.35)",
+                    border: "1px solid rgba(233,180,48,0.35)",
                     backdropFilter: "blur(12px)",
                     "& .MuiChip-label": {
                       px: 2,
@@ -254,11 +262,11 @@ export default function Hero({ content = heroData }: HeroProps) {
                         <Box
                           component="span"
                           sx={{
-                            background: "linear-gradient(135deg, #a8693a 0%, #d4924e 50%, #e8b87a 100%)",
+                            background: "linear-gradient(135deg, #0fa3a8 0%, #2cbdc3 50%, #7adee2 100%)",
                             backgroundClip: "text",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
-                            filter: "drop-shadow(0 0 18px rgba(168,105,58,0.4))",
+                            filter: "drop-shadow(0 0 18px rgba(15,163,168,0.4))",
                           }}
                         >
                           {last}
@@ -308,7 +316,10 @@ export default function Hero({ content = heroData }: HeroProps) {
                   </Button>
                   <Button
                     variant="outlined"
-                    href="#contacto"
+                    href={whatsappHref}
+                    {...(whatsappUrl
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
                     size="large"
                     sx={{
                       px: 3.5,
@@ -320,7 +331,7 @@ export default function Hero({ content = heroData }: HeroProps) {
                       backgroundColor: "rgba(255,255,255,0.05)",
                       backdropFilter: "blur(10px)",
                       "&:hover": {
-                        borderColor: "rgba(200,148,30,0.6)",
+                        borderColor: "rgba(233,180,48,0.6)",
                         backgroundColor: "rgba(255,255,255,0.10)",
                       },
                     }}
@@ -349,7 +360,7 @@ export default function Hero({ content = heroData }: HeroProps) {
                             width: 4,
                             height: 4,
                             borderRadius: "50%",
-                            backgroundColor: "rgba(200,148,30,0.7)",
+                            backgroundColor: "rgba(233,180,48,0.7)",
                           }}
                         />
                       )}
@@ -381,17 +392,17 @@ export default function Hero({ content = heroData }: HeroProps) {
           zIndex: 2,
           maxWidth: 230,
           display: { xs: "none", sm: "block" },
-          background: "rgba(25,17,11,0.40)",
+          background: "rgba(11,27,30,0.55)",
           backdropFilter: "blur(14px)",
           borderRadius: 3,
           px: 2.4,
           py: 2,
-          borderLeft: "2px solid rgba(200,148,30,0.55)",
+          borderLeft: "2px solid rgba(233,180,48,0.55)",
         }}
       >
         <Typography
           sx={{
-            color: "rgba(255,255,255,0.6)",
+            color: "rgba(255,255,255,0.8)",
             fontSize: "0.66rem",
             textTransform: "uppercase",
             letterSpacing: "0.2em",
@@ -416,7 +427,7 @@ export default function Hero({ content = heroData }: HeroProps) {
         </Typography>
         <Typography
           sx={{
-            color: "rgba(255,255,255,0.66)",
+            color: "rgba(255,255,255,0.8)",
             fontSize: "0.82rem",
             lineHeight: 1.5,
           }}

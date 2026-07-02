@@ -138,15 +138,15 @@ export default function WorkProcess({
                           alignItems: "center",
                           justifyContent: "center",
                           backgroundColor: theme.palette.background.paper,
-                          border: `1px solid rgba(200,148,30,0.40)`,
-                          boxShadow: "0 6px 16px rgba(35,26,19,0.10)",
+                          border: `1px solid rgba(233,180,48,0.40)`,
+                          boxShadow: "0 6px 16px rgba(18,38,42,0.10)",
                           color: theme.palette.primary.main,
                           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                           "&:hover": {
-                            borderColor: "rgba(200,148,30,0.7)",
+                            borderColor: "rgba(233,180,48,0.7)",
                             backgroundColor: theme.palette.mode === "dark"
-                              ? "rgba(217,163,107,0.07)"
-                              : "rgba(168,105,58,0.06)",
+                              ? "rgba(53,201,206,0.07)"
+                              : "rgba(15,163,168,0.06)",
                           },
                         }}
                       >

@@ -2,12 +2,14 @@
 
 import { motion } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
-import { Box, Container, Typography, useTheme, Chip, Stack } from "@mui/material";
-import { FaUniversity, FaShieldAlt, FaLeaf, FaCheck } from "react-icons/fa";
+import { Box, Button, Container, Typography, useTheme, Chip, Stack } from "@mui/material";
+import { FaUniversity, FaShieldAlt, FaLeaf, FaCheck, FaWhatsapp } from "react-icons/fa";
 import type { IconType } from "react-icons";
 import Image from "next/image";
 import styleGalleryData from "@/data/styleGallery.json";
 import SectionHeading from "./SectionHeading";
+import { withWhatsAppMessage } from "@/utils/whatsapp";
+import { BLUR_DATA_URL } from "@/utils/imagePlaceholder";
 
 const IconComponents: Record<string, IconType> = {
   FaUniversity,
@@ -39,6 +41,7 @@ interface StylesGalleryProps {
     };
     styles: StyleData[];
   };
+  whatsappUrl?: string;
 }
 
 const defaultStyleGalleryContent = {
@@ -54,6 +57,7 @@ const defaultStyleGalleryContent = {
 
 export default function StylesGallery({
   content = defaultStyleGalleryContent,
+  whatsappUrl,
 }: StylesGalleryProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -122,13 +126,13 @@ export default function StylesGallery({
                       overflow: "hidden",
                       border: `1px solid ${theme.palette.divider}`,
                       background: isDark
-                        ? "linear-gradient(180deg, rgba(31,24,18,0.98) 0%, rgba(21,16,11,0.98) 100%)"
-                        : "linear-gradient(180deg, #fffdf8 0%, #f8f1e6 100%)",
-                      boxShadow: "0 18px 48px rgba(35,26,19,0.10)",
+                        ? "linear-gradient(180deg, rgba(15,34,38,0.98) 0%, rgba(8,22,25,0.98) 100%)"
+                        : "linear-gradient(180deg, #fcfefe 0%, #e9f6f5 100%)",
+                      boxShadow: "0 18px 48px rgba(18,38,42,0.10)",
                       transition: "border-color 0.35s ease, box-shadow 0.35s ease",
                       "&:hover": {
-                        borderColor: "rgba(200,148,30,0.35)",
-                        boxShadow: "0 30px 70px rgba(35,26,19,0.16)",
+                        borderColor: "rgba(233,180,48,0.35)",
+                        boxShadow: "0 30px 70px rgba(18,38,42,0.16)",
                       },
                     }}
                   >
@@ -141,14 +145,16 @@ export default function StylesGallery({
                         minHeight: { md: 380 },
                         overflow: "hidden",
                         background: isDark
-                          ? "radial-gradient(circle at 50% 32%, rgba(217,163,107,0.14), transparent 38%), #0d0a08"
-                          : "radial-gradient(circle at 50% 30%, rgba(200,148,30,0.14), transparent 40%), #eee4d6",
+                          ? "radial-gradient(circle at 50% 32%, rgba(53,201,206,0.14), transparent 38%), #06090a"
+                          : "radial-gradient(circle at 50% 30%, rgba(233,180,48,0.14), transparent 40%), #ddf3f4",
                       }}
                     >
                       <Image
                         src={STYLE_IMAGE[index] ?? "/images/art.jpg"}
                         alt={style.name}
                         fill
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
                         sizes="(max-width: 900px) 100vw, 42vw"
                         style={{
                           objectFit: "contain",
@@ -157,13 +163,13 @@ export default function StylesGallery({
                           filter: "contrast(1.06) brightness(1.03)",
                         }}
                       />
-                      {/* Marco de bronce */}
+                      {/* Marco turquesa */}
                       <Box
                         sx={{
                           position: "absolute",
                           inset: 14,
                           borderRadius: "12px",
-                          border: "1px solid rgba(200,148,30,0.18)",
+                          border: "1px solid rgba(233,180,48,0.18)",
                           pointerEvents: "none",
                         }}
                       />
@@ -177,7 +183,7 @@ export default function StylesGallery({
                           fontSize: "3rem",
                           fontWeight: 600,
                           lineHeight: 1,
-                          color: "rgba(200,148,30,0.55)",
+                          color: "rgba(233,180,48,0.55)",
                           textShadow: "0 2px 12px rgba(0,0,0,0.4)",
                         }}
                       >
@@ -210,10 +216,10 @@ export default function StylesGallery({
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            border: "1px solid rgba(200,148,30,0.40)",
+                            border: "1px solid rgba(233,180,48,0.40)",
                             backgroundColor: isDark
-                              ? "rgba(217,163,107,0.07)"
-                              : "rgba(168,105,58,0.06)",
+                              ? "rgba(53,201,206,0.07)"
+                              : "rgba(15,163,168,0.06)",
                             color: "primary.main",
                           }}
                         >
@@ -254,7 +260,7 @@ export default function StylesGallery({
                         sx={{
                           height: "1px",
                           background:
-                            "linear-gradient(90deg, rgba(200,148,30,0.4), transparent)",
+                            "linear-gradient(90deg, rgba(233,180,48,0.4), transparent)",
                           mb: 3,
                         }}
                       />
@@ -318,12 +324,12 @@ export default function StylesGallery({
                                   textTransform: "capitalize",
                                   color: "text.primary",
                                   backgroundColor: isDark
-                                    ? "rgba(217,163,107,0.10)"
-                                    : "rgba(168,105,58,0.08)",
+                                    ? "rgba(53,201,206,0.10)"
+                                    : "rgba(15,163,168,0.08)",
                                   border: `1px solid ${
                                     isDark
-                                      ? "rgba(217,163,107,0.22)"
-                                      : "rgba(168,105,58,0.18)"
+                                      ? "rgba(53,201,206,0.22)"
+                                      : "rgba(15,163,168,0.18)"
                                   }`,
                                 }}
                               />
@@ -337,6 +343,65 @@ export default function StylesGallery({
               );
             })}
           </Stack>
+
+          {/* ── CTA: pieza personalizada ── */}
+          <motion.div variants={getStaggerVariants(styles.length + 1)}>
+            <Box
+              sx={{
+                mt: { xs: 6, md: 8 },
+                p: { xs: 3.5, md: 5 },
+                borderRadius: "18px",
+                textAlign: "center",
+                border: "1px solid rgba(233,180,48,0.30)",
+                background: isDark
+                  ? "linear-gradient(135deg, rgba(53,201,206,0.10) 0%, rgba(15,34,38,0.6) 100%)"
+                  : "linear-gradient(135deg, rgba(15,163,168,0.08) 0%, rgba(233,180,48,0.06) 100%)",
+              }}
+            >
+              <Typography
+                variant="h4"
+                sx={{
+                  color: "text.primary",
+                  mb: 1.5,
+                  fontSize: { xs: "1.45rem", md: "1.7rem" },
+                }}
+              >
+                ¿Tienes una idea en mente?
+              </Typography>
+              <Typography
+                sx={{
+                  color: "text.secondary",
+                  maxWidth: 480,
+                  mx: "auto",
+                  mb: 3,
+                  lineHeight: 1.7,
+                }}
+              >
+                Creamos piezas personalizadas en cualquiera de estos estilos,
+                diseñadas contigo desde el primer boceto.
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={whatsappUrl ? <FaWhatsapp /> : undefined}
+                href={
+                  whatsappUrl
+                    ? withWhatsAppMessage(
+                        whatsappUrl,
+                        "Hola Peleti 👋 Quiero cotizar una pieza personalizada en resina."
+                      )
+                    : "#contacto"
+                }
+                {...(whatsappUrl
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                sx={{ px: 4, py: 1.5, fontSize: "1rem" }}
+              >
+                Cotiza tu pieza personalizada
+              </Button>
+            </Box>
+          </motion.div>
         </motion.div>
       </Container>
     </Box>

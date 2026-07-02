@@ -128,7 +128,7 @@ export default function ThemeRegistry({
               color: "text.primary",
             }}
           >
-            {/* Atmósfera cálida — resplandor de bronce, coherente con la marca */}
+            {/* Atmósfera cálida — resplandor turquesa, coherente con la marca */}
             <Box
               sx={{
                 position: "fixed",
@@ -137,8 +137,8 @@ export default function ThemeRegistry({
                 pointerEvents: "none",
                 background:
                   mode === "dark"
-                    ? "radial-gradient(60vw 40vh at 50% -5%, rgba(217,163,107,0.10), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(94,107,82,0.06), transparent 70%)"
-                    : "radial-gradient(60vw 40vh at 50% -5%, rgba(168,105,58,0.08), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(94,107,82,0.05), transparent 70%)",
+                    ? "radial-gradient(60vw 40vh at 50% -5%, rgba(53,201,206,0.10), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(255,107,87,0.06), transparent 70%)"
+                    : "radial-gradient(60vw 40vh at 50% -5%, rgba(15,163,168,0.08), transparent 70%), radial-gradient(50vw 50vh at 100% 100%, rgba(255,107,87,0.05), transparent 70%)",
               }}
             />
 

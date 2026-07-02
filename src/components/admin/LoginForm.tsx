@@ -79,7 +79,7 @@ export default function LoginForm() {
               px: { xs: 3, md: 5 },
               py: { xs: 4, md: 5 },
               background:
-                "linear-gradient(135deg, #20130c 0%, #493122 65%, #7b4f32 100%)",
+                "linear-gradient(135deg, #06171a 0%, #0d3b40 65%, #14666c 100%)",
               color: "white",
             }}
           >
@@ -134,8 +134,8 @@ export default function LoginForm() {
                     borderRadius: 999,
                     fontWeight: 700,
                     letterSpacing: "0.04em",
-                    background: "linear-gradient(135deg, #8a5b36 0%, #c8853a 100%)",
-                    "&:hover": { background: "linear-gradient(135deg, #9e6a40 0%, #d9943e 100%)" },
+                    background: "linear-gradient(135deg, #0b6e74 0%, #35c9ce 100%)",
+                    "&:hover": { background: "linear-gradient(135deg, #0e8489 0%, #2cbdc3 100%)" },
                   }}
                 >
                   {isPending ? "Ingresando..." : "Entrar al panel"}

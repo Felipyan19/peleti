@@ -17,6 +17,7 @@ import {
 import { motion } from "framer-motion";
 import { useScrollToSection } from "@/utils/useScrollToSection";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
+import { withWhatsAppMessage, DEFAULT_WHATSAPP_MESSAGE } from "@/utils/whatsapp";
 import SectionHeading from "./SectionHeading";
 
 const IconComponent = {
@@ -363,7 +364,11 @@ export default function Contact({ content }: ContactProps) {
                         >
                           <IconButton
                             component="a"
-                            href={link.url}
+                            href={
+                              link.platform === "WHATSAPP"
+                                ? withWhatsAppMessage(link.url, DEFAULT_WHATSAPP_MESSAGE)
+                                : link.url
+                            }
                             target="_blank"
                             rel="noopener noreferrer"
                             sx={{
