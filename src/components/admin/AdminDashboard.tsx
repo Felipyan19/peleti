@@ -160,7 +160,7 @@ function SectionCard({
                     ml: 1,
                     transition: "transform 0.25s",
                     transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                    "&:hover": { color: "#c8853a" },
+                    "&:hover": { color: "#35c9ce" },
                   }}
                   onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
                 >
@@ -209,8 +209,8 @@ function ImagePreviewField({
             maxHeight: 140,
             objectFit: "contain",
             borderRadius: 2,
-            backgroundColor: "rgba(168,105,58,0.05)",
-            border: "1px solid rgba(168,105,58,0.12)",
+            backgroundColor: "rgba(15,163,168,0.05)",
+            border: "1px solid rgba(15,163,168,0.12)",
           }}
         />
       ) : null}
@@ -298,7 +298,7 @@ function CollapsibleItem({
   return (
     <Card
       variant="outlined"
-      sx={{ borderRadius: 3, border: "1px solid rgba(168,105,58,0.14)" }}
+      sx={{ borderRadius: 3, border: "1px solid rgba(15,163,168,0.14)" }}
     >
       <Box
         onClick={() => setOpen((v) => !v)}
@@ -311,7 +311,7 @@ function CollapsibleItem({
           alignItems: "center",
           justifyContent: "space-between",
           gap: 1.5,
-          "&:hover": { background: "rgba(200,133,58,0.05)" },
+          "&:hover": { background: "rgba(53,201,206,0.05)" },
         }}
       >
         <Stack direction="row" spacing={1.2} alignItems="center" sx={{ minWidth: 0 }}>
@@ -343,7 +343,7 @@ function CollapsibleItem({
             flexShrink: 0,
             transition: "transform 0.25s",
             transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            "&:hover": { color: "#c8853a" },
+            "&:hover": { color: "#35c9ce" },
           }}
           onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
         >
@@ -462,7 +462,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
           px: { xs: 2.5, md: 5 },
           py: { xs: 2, md: 2.5 },
           borderBottom: "1px solid rgba(255,255,255,0.07)",
-          background: "rgba(25,15,8,0.9)",
+          background: "rgba(6,20,23,0.9)",
           backdropFilter: "blur(12px)",
         }}
       >
@@ -497,7 +497,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
               borderColor: "rgba(255,255,255,0.2)",
               borderRadius: 999,
               flexShrink: 0,
-              "&:hover": { borderColor: "#c8853a", color: "#c8853a", background: "rgba(200,133,58,0.08)" },
+              "&:hover": { borderColor: "#35c9ce", color: "#35c9ce", background: "rgba(53,201,206,0.08)" },
             }}
           >
             Cerrar sesión
@@ -523,7 +523,7 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                   "&.Mui-selected": { color: "white" },
                 },
                 "& .MuiTabs-indicator": {
-                  backgroundColor: "#c8853a",
+                  backgroundColor: "#35c9ce",
                   height: 2,
                   borderRadius: 2,
                 },
@@ -684,8 +684,8 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                             sx={{
                               p: 2,
                               borderRadius: 3,
-                              backgroundColor: "rgba(168,105,58,0.05)",
-                              border: "1px solid rgba(168,105,58,0.08)",
+                              backgroundColor: "rgba(15,163,168,0.05)",
+                              border: "1px solid rgba(15,163,168,0.08)",
                             }}
                           >
                             <Stack direction="row" spacing={1.2} alignItems="center">
@@ -1849,8 +1849,8 @@ export default function AdminDashboard({ initialData }: { initialData: AdminData
                                             maxHeight: 120,
                                             objectFit: "contain",
                                             borderRadius: 2,
-                                            backgroundColor: "rgba(168,105,58,0.05)",
-                                            border: "1px solid rgba(168,105,58,0.12)",
+                                            backgroundColor: "rgba(15,163,168,0.05)",
+                                            border: "1px solid rgba(15,163,168,0.12)",
                                           }}
                                         />
                                       </Grid>
