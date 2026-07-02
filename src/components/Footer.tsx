@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
+import LogoIcon from "./LogoIcon";
+import { withWhatsAppMessage, DEFAULT_WHATSAPP_MESSAGE } from "@/utils/whatsapp";
 
 const NAV = [
   { label: "Sobre nosotros", href: "#sobre-nosotros" },
@@ -41,7 +43,10 @@ export default function Footer({ socialLinks }: FooterProps) {
   const socialItems = socialLinks.map((link) => ({
     id: link.id,
     label: link.title,
-    href: link.url,
+    href:
+      link.platform === "WHATSAPP"
+        ? withWhatsAppMessage(link.url, DEFAULT_WHATSAPP_MESSAGE)
+        : link.url,
     Icon:
       (link.icon && SOCIAL[link.icon as keyof typeof SOCIAL]) ||
       SOCIAL[
@@ -93,15 +98,11 @@ export default function Footer({ socialLinks }: FooterProps) {
                   display: "grid",
                   placeItems: "center",
                   border: "1px solid",
-                  borderColor: "rgba(168,105,58,0.4)",
-                  background: "rgba(168,105,58,0.08)",
-                  color: "primary.main",
-                  fontFamily: 'var(--font-display), Georgia, serif',
-                  fontWeight: 700,
-                  fontSize: "1.05rem",
+                  borderColor: "rgba(15,163,168,0.4)",
+                  background: "rgba(15,163,168,0.08)",
                 }}
               >
-                P
+                <LogoIcon size={24} />
               </Box>
               <Typography
                 variant="h6"

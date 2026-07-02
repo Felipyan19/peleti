@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
 import {
   Box,
@@ -17,9 +17,12 @@ import {
   Button,
   useTheme,
   Chip,
+  Zoom,
 } from "@mui/material";
-import { FaTimes, FaExpand } from "react-icons/fa";
+import { FaTimes, FaExpand, FaWhatsapp } from "react-icons/fa";
 import SectionHeading from "./SectionHeading";
+import { withWhatsAppMessage } from "@/utils/whatsapp";
+import { BLUR_DATA_URL } from "@/utils/imagePlaceholder";
 
 const MotionCard = motion(Card);
 
@@ -44,9 +47,10 @@ interface PortfolioProps {
   title: string;
   description: string;
   items: PortfolioItem[];
+  whatsappUrl?: string;
 }
 
-export default function Portfolio({ title, description, items }: PortfolioProps) {
+export default function Portfolio({ title, description, items, whatsappUrl }: PortfolioProps) {
   const theme = useTheme();
   const { ref, shouldAnimate, getContainerVariants, getStaggerVariants } =
     useEnhancedAnimation("catalogo", {
@@ -129,7 +133,14 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
             </Box>
           </motion.div>
 
+          <AnimatePresence mode="wait">
           <Box
+            component={motion.div}
+            key={selectedCategory}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
             sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -152,7 +163,7 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                       y: -6,
                       scale: 1.008,
                       boxShadow:
-                        "0 24px 56px rgba(35,26,19,0.14), 0 8px 18px rgba(35,26,19,0.08)",
+                        "0 24px 56px rgba(18,38,42,0.14), 0 8px 18px rgba(18,38,42,0.08)",
                       transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
                     }}
                     whileTap={{ scale: 0.985 }}
@@ -165,8 +176,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                       flexDirection: "column",
                       background:
                         theme.palette.mode === "dark"
-                          ? "linear-gradient(180deg, rgba(31,24,18,0.98) 0%, rgba(21,16,11,0.98) 100%)"
-                          : "linear-gradient(180deg, #fffdf8 0%, #f8f1e6 100%)",
+                          ? "linear-gradient(180deg, rgba(15,34,38,0.98) 0%, rgba(8,22,25,0.98) 100%)"
+                          : "linear-gradient(180deg, #fcfefe 0%, #e9f6f5 100%)",
                       border: `1px solid ${
                         theme.palette.mode === "dark"
                           ? "rgba(255,255,255,0.08)"
@@ -205,8 +216,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                         overflow: "hidden",
                         background:
                           theme.palette.mode === "dark"
-                            ? "radial-gradient(circle at 50% 30%, rgba(217,163,107,0.12), transparent 34%), #0d0a08"
-                            : "radial-gradient(circle at 50% 28%, rgba(200,148,30,0.13), transparent 36%), #eee4d6",
+                            ? "radial-gradient(circle at 50% 30%, rgba(53,201,206,0.12), transparent 34%), #06090a"
+                            : "radial-gradient(circle at 50% 28%, rgba(233,180,48,0.13), transparent 36%), #ddf3f4",
                         borderBottom: `1px solid ${theme.palette.divider}`,
                       }}
                     >
@@ -215,7 +226,7 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                           position: "absolute",
                           inset: 12,
                           borderRadius: "10px",
-                          border: "1px solid rgba(200,148,30,0.16)",
+                          border: "1px solid rgba(233,180,48,0.16)",
                           pointerEvents: "none",
                           zIndex: 1,
                         }}
@@ -225,6 +236,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                         src={item.image}
                         alt={item.title}
                         fill
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
                         sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
                         style={{
                           objectFit: "contain",
@@ -283,8 +296,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                           letterSpacing: "0.04em",
                           height: 28,
                           borderRadius: "999px",
-                          border: "1px solid rgba(255,255,255,0.22)",
-                          backgroundColor: "rgba(18,12,8,0.48)",
+                          border: "1px solid rgba(233,180,48,0.55)",
+                          backgroundColor: "rgba(11,27,30,0.65)",
                           backdropFilter: "blur(8px)",
                           color: "white",
                           transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -373,6 +386,7 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
               </Box>
             ))}
           </Box>
+          </AnimatePresence>
 
           {visibleItems.length < filteredItems.length && (
             <motion.div variants={getStaggerVariants(visibleItems.length + 2)}>
@@ -403,12 +417,9 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
           onClose={() => setSelectedItem(null)}
           maxWidth="md"
           fullWidth
+          TransitionComponent={Zoom}
+          transitionDuration={{ enter: 320, exit: 220 }}
           PaperProps={{
-            component: motion.div,
-            initial: { scale: 0.8, opacity: 0 },
-            animate: { scale: 1, opacity: 1 },
-            exit: { scale: 0.8, opacity: 0 },
-            transition: { duration: 0.3, ease: "easeOut" },
             sx: {
               borderRadius: 4,
               maxHeight: "90vh",
@@ -479,8 +490,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                     justifyContent: "center",
                     background:
                       theme.palette.mode === "dark"
-                        ? "radial-gradient(circle at 50% 35%, rgba(217,163,107,0.10), transparent 34%), #0d0a08"
-                        : "radial-gradient(circle at 50% 30%, rgba(200,148,30,0.12), transparent 36%), #eee4d6",
+                        ? "radial-gradient(circle at 50% 35%, rgba(53,201,206,0.10), transparent 34%), #06090a"
+                        : "radial-gradient(circle at 50% 30%, rgba(233,180,48,0.12), transparent 36%), #ddf3f4",
                   }}
                 >
                   <Box
@@ -488,7 +499,7 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                       position: "absolute",
                       inset: { xs: 16, md: 24 },
                       borderRadius: 3,
-                      border: "1px solid rgba(200,148,30,0.16)",
+                      border: "1px solid rgba(233,180,48,0.16)",
                       zIndex: 0,
                     }}
                   />
@@ -510,6 +521,8 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                       alt={selectedItem.title}
                       width={900}
                       height={1100}
+                      placeholder="blur"
+                      blurDataURL={BLUR_DATA_URL}
                       style={{
                         maxWidth: "100%",
                         maxHeight: "100%",
@@ -584,6 +597,25 @@ export default function Portfolio({ title, description, items }: PortfolioProps)
                       </Typography>
                     </Box>
                   </Box>
+
+                  {whatsappUrl && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      fullWidth
+                      startIcon={<FaWhatsapp />}
+                      href={withWhatsAppMessage(
+                        whatsappUrl,
+                        `Hola Peleti 👋 Me interesa la pieza "${selectedItem.title}". ¿Está disponible?`
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ mt: 3, py: 1.5, fontSize: "1rem" }}
+                    >
+                      Consultar por esta pieza
+                    </Button>
+                  )}
                 </Box>
               </DialogContent>
             </>

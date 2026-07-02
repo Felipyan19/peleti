@@ -6,6 +6,7 @@ import { useEnhancedAnimation } from "@/utils/useScrollToSection";
 import Image from "next/image";
 import aboutData from "@/data/about.json";
 import SectionHeading from "./SectionHeading";
+import { BLUR_DATA_URL } from "@/utils/imagePlaceholder";
 
 interface AboutContent {
   title: string;
@@ -64,47 +65,58 @@ export default function About({ content = aboutData }: AboutProps) {
                   position: "relative",
                   width: "100%",
                   maxWidth: "680px",
-                  aspectRatio: "4/5",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  boxShadow:
-                    "0 28px 60px rgba(35,26,19,0.16), 0 10px 20px rgba(35,26,19,0.08)",
-                  background:
-                    "radial-gradient(circle at 50% 28%, rgba(200,148,30,0.13), transparent 36%), #eee4d6",
                 }}
               >
+                {/* Filo del marco: degradado turquesa → oro */}
                 <Box
                   sx={{
-                    position: "absolute",
-                    inset: 18,
-                    borderRadius: "12px",
-                    border: "1px solid rgba(200,148,30,0.18)",
-                    zIndex: 1,
-                    pointerEvents: "none",
+                    position: "relative",
+                    aspectRatio: "4/5",
+                    borderRadius: "20px",
+                    p: "3px",
+                    background:
+                      "linear-gradient(155deg, rgba(15,163,168,0.95) 0%, rgba(11,110,116,0.5) 45%, rgba(233,180,48,0.9) 100%)",
+                    boxShadow:
+                      "0 28px 60px rgba(6,20,23,0.32), 0 6px 20px rgba(15,163,168,0.18)",
                   }}
-                />
-                <Image
-                  src={content.imageUrl ?? "/images/animal.jpg"}
-                  alt={content.title}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 680px"
-                  style={{
-                    objectFit: "contain",
-                    objectPosition: "center",
-                    padding: "18px",
-                    filter: "contrast(1.04) brightness(1.04) saturate(0.96)",
-                  }}
-                />
-                {/* Marco de bronce sutil */}
-                <Box
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    borderRadius: "16px",
-                    boxShadow: "inset 0 0 0 1px rgba(200,148,30,0.22)",
-                    pointerEvents: "none",
-                  }}
-                />
+                >
+                  {/* Paspartú que se adapta al tema claro/oscuro */}
+                  <Box
+                    sx={{
+                      position: "relative",
+                      height: "100%",
+                      borderRadius: "17px",
+                      overflow: "hidden",
+                      background:
+                        "radial-gradient(circle at 50% 28%, rgba(233,180,48,0.12), transparent 42%), var(--primary-light)",
+                    }}
+                  >
+                    <Image
+                      src={content.imageUrl ?? "/images/animal.jpg"}
+                      alt={content.title}
+                      fill
+                      placeholder="blur"
+                      blurDataURL={BLUR_DATA_URL}
+                      sizes="(max-width: 900px) 100vw, 680px"
+                      style={{
+                        objectFit: "contain",
+                        objectPosition: "center",
+                        padding: "22px",
+                        filter: "contrast(1.04) brightness(1.04) saturate(0.96)",
+                      }}
+                    />
+                    {/* Bisel dorado interior */}
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        inset: 14,
+                        borderRadius: "10px",
+                        border: "1px solid rgba(233,180,48,0.35)",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </Box>
+                </Box>
               </motion.div>
             </Box>
           </motion.div>

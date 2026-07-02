@@ -20,6 +20,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useThemeContext } from "./ThemeRegistry";
+import LogoIcon from "./LogoIcon";
 
 const MENU_ITEMS = [
   { label: "Inicio", href: "#inicio" },
@@ -124,8 +125,8 @@ const Navbar: React.FC = () => {
   const navSurface = isOverHero
     ? "rgba(255,255,255,0.04)"
     : muiTheme.palette.mode === "dark"
-      ? "rgba(31,24,18,0.54)"
-      : "rgba(252,250,245,0.58)";
+      ? "rgba(15,34,38,0.54)"
+      : "rgba(254,253,250,0.58)";
 
   return (
     <AppBar
@@ -170,16 +171,12 @@ const Navbar: React.FC = () => {
               display: "grid",
               placeItems: "center",
               border: "1px solid",
-              borderColor: isOverHero ? "rgba(255,255,255,0.35)" : "rgba(32,26,23,0.12)",
-              background: isOverHero ? "rgba(255,255,255,0.08)" : "rgba(169,106,60,0.08)",
-              color: isOverHero ? "white" : "primary.main",
-              fontFamily: 'var(--font-display), Georgia, serif',
-              fontSize: "0.98rem",
-              fontWeight: 700,
+              borderColor: isOverHero ? "rgba(255,255,255,0.35)" : "rgba(15,163,168,0.25)",
+              background: isOverHero ? "rgba(255,255,255,0.08)" : "rgba(15,163,168,0.08)",
               transition: "all 0.22s ease",
             }}
           >
-            P
+            <LogoIcon size={21} />
           </Box>
           <Typography
             variant="h6"
@@ -190,7 +187,7 @@ const Navbar: React.FC = () => {
               letterSpacing: "0.04em",
               color: isOverHero ? "white" : "text.primary",
               transition: "color 0.22s ease",
-              textShadow: isOverHero ? "0 1px 3px rgba(0,0,0,0.3)" : "none",
+              textShadow: isOverHero ? "0 2px 4px rgba(0,0,0,0.4)" : "none",
             }}
           >
             Peleti
@@ -208,7 +205,7 @@ const Navbar: React.FC = () => {
               color: isOverHero ? "white" : "text.primary",
               border: "1px solid",
               borderColor: isOverHero ? "rgba(255,255,255,0.16)" : muiTheme.palette.divider,
-              backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(168,105,58,0.06)",
+              backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
             }}
           >
             <MenuIcon />
@@ -227,7 +224,7 @@ const Navbar: React.FC = () => {
                 py: 0.5,
                 borderRadius: 999,
                 border: "1px solid",
-                borderColor: isOverHero ? "rgba(255,255,255,0.10)" : "rgba(35,26,19,0.08)",
+                borderColor: isOverHero ? "rgba(255,255,255,0.10)" : "rgba(18,38,42,0.08)",
                 backgroundColor: navSurface,
                 backdropFilter: "blur(14px)",
               }}
@@ -255,7 +252,7 @@ const Navbar: React.FC = () => {
                     textShadow: isOverHero ? "0 1px 2px rgba(0,0,0,0.3)" : "none",
                     "&:hover": {
                       color: isOverHero ? "white" : "primary.dark",
-                      backgroundColor: isOverHero ? "rgba(255,255,255,0.10)" : "rgba(168,105,58,0.08)",
+                      backgroundColor: isOverHero ? "rgba(255,255,255,0.10)" : "rgba(15,163,168,0.08)",
                     },
                   }}
                 >
@@ -280,12 +277,12 @@ const Navbar: React.FC = () => {
                   height: 40,
                   color: isOverHero ? "white" : "primary.main",
                   border: "1px solid",
-                  borderColor: isOverHero ? "rgba(255,255,255,0.14)" : "rgba(168,105,58,0.18)",
-                  backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(168,105,58,0.06)",
+                  borderColor: isOverHero ? "rgba(255,255,255,0.14)" : "rgba(15,163,168,0.18)",
+                  backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
                   transition: "all 0.18s ease",
                   filter: isOverHero ? "drop-shadow(0 1px 2px rgba(0,0,0,0.3))" : "none",
                   "&:hover": {
-                    backgroundColor: isOverHero ? "rgba(255,255,255,0.12)" : "rgba(168,105,58,0.12)",
+                    backgroundColor: isOverHero ? "rgba(255,255,255,0.12)" : "rgba(15,163,168,0.12)",
                   },
                 }}
               >

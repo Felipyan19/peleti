@@ -15,7 +15,7 @@ interface SectionHeadingProps {
 }
 
 /**
- * Encabezado de sección editorial: eyebrow en versalitas con regla de bronce,
+ * Encabezado de sección editorial: eyebrow en versalitas con regla turquesa,
  * título en serif de display y lead opcional. Da una jerarquía consistente
  * a todas las secciones del sitio sin caer en el h2 centrado genérico.
  */
