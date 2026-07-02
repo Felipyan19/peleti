@@ -1,17 +1,17 @@
 import { ThemeOptions } from "@mui/material/styles";
 
-// ── Atelier de Resina · paleta de marca ──────────────────────────────
-// Bronce y cobre como acento; neutros cálidos de galería; un dorado fino
-// reservado para detalles. Inspirado en mármol, bronce envejecido y resina ámbar.
+// ── Océano de Resina · paleta de marca ───────────────────────────────
+// Turquesa vibrante como acento; marfil luminoso de galería; coral encendido
+// y un oro brillante para detalles. Inspirado en el ocean pour de resina.
 const brand = {
-  sand: "#F4EDE1",       // fondo cálido de galería
-  parchment: "#FCFAF5",  // superficie / papel
-  ink: "#231A13",        // casi-negro cálido
-  muted: "#6E6258",      // texto secundario
-  copper: "#A8693A",     // acento principal (bronce/cobre)
-  copperDeep: "#7C4421", // bronce profundo
-  gold: "#C8941E",       // dorado fino para detalles
-  olive: "#5E6B52",      // verde oliva sereno
+  ivory: "#FBF8F0",      // fondo luminoso de galería
+  parchment: "#FEFDFA",  // superficie / papel
+  ink: "#12262A",        // azul-tinta profundo
+  muted: "#4E6468",      // texto secundario
+  teal: "#0FA3A8",       // acento principal (turquesa vivo)
+  tealDeep: "#0B6E74",   // petróleo profundo
+  gold: "#E9B430",       // oro brillante para detalles
+  coral: "#FF6B57",      // coral encendido
 };
 
 const display = 'var(--font-display), "Cormorant Garamond", Georgia, serif';
@@ -62,42 +62,42 @@ export const lightTheme: ThemeOptions = {
   palette: {
     mode: "light",
     primary: {
-      main: brand.copper,
-      light: "#C2884F",
-      dark: brand.copperDeep,
-      contrastText: "#FFFDFA",
+      main: brand.teal,
+      light: "#2CBDC3",
+      dark: brand.tealDeep,
+      contrastText: "#FFFFFF",
     },
     secondary: {
-      main: brand.olive,
-      contrastText: "#FFFDFA",
+      main: brand.coral,
+      contrastText: "#FFFFFF",
     },
     background: {
-      default: brand.sand,
+      default: brand.ivory,
       paper: brand.parchment,
     },
     text: {
       primary: brand.ink,
       secondary: brand.muted,
     },
-    divider: "rgba(35, 26, 19, 0.10)",
-    error: { main: "#B44332" },
+    divider: "rgba(18, 38, 42, 0.10)",
+    error: { main: "#D94A38" },
     warning: { main: "#D68A2D" },
-    info: { main: "#4B6B8A" },
-    success: { main: "#54714E" },
+    info: { main: "#3A7CA5" },
+    success: { main: "#1E9E6A" },
   },
   typography: sharedTypography,
   shape: { borderRadius: 14 },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        "::selection": { background: "rgba(168,105,58,0.20)" },
+        "::selection": { background: "rgba(15,163,168,0.20)" },
       },
     },
     MuiAppBar: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(252, 250, 245, 0.80)",
+          backgroundColor: "rgba(254, 253, 250, 0.80)",
           color: brand.ink,
           backdropFilter: "blur(20px)",
         },
@@ -113,18 +113,18 @@ export const lightTheme: ThemeOptions = {
         },
         containedPrimary: {
           background:
-            "linear-gradient(135deg, #B5743F 0%, #7C4421 100%)",
-          color: "#FFFDFA",
-          boxShadow: "0 10px 24px rgba(124, 68, 33, 0.22)",
+            "linear-gradient(135deg, #0FA3A8 0%, #0B6E74 100%)",
+          color: "#FFFFFF",
+          boxShadow: "0 10px 24px rgba(11, 110, 116, 0.22)",
           "&:hover": {
             background:
-              "linear-gradient(135deg, #C2884F 0%, #7C4421 100%)",
-            boxShadow: "0 14px 30px rgba(124, 68, 33, 0.30)",
+              "linear-gradient(135deg, #2CBDC3 0%, #0B6E74 100%)",
+            boxShadow: "0 14px 30px rgba(11, 110, 116, 0.30)",
           },
         },
         outlined: {
-          borderColor: "rgba(35, 26, 19, 0.18)",
-          "&:hover": { borderColor: brand.copper, backgroundColor: "rgba(168,105,58,0.06)" },
+          borderColor: "rgba(18, 38, 42, 0.18)",
+          "&:hover": { borderColor: brand.teal, backgroundColor: "rgba(15,163,168,0.06)" },
         },
       },
     },
@@ -133,8 +133,8 @@ export const lightTheme: ThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 18,
-          boxShadow: "0 18px 48px rgba(58, 41, 28, 0.07)",
-          border: "1px solid rgba(35, 26, 19, 0.07)",
+          boxShadow: "0 18px 48px rgba(12, 45, 50, 0.07)",
+          border: "1px solid rgba(18, 38, 42, 0.07)",
         },
       },
     },
@@ -145,43 +145,43 @@ export const darkTheme: ThemeOptions = {
   palette: {
     mode: "dark",
     primary: {
-      main: "#D9A36B",
-      light: "#E8BE8F",
-      dark: "#A56D3E",
-      contrastText: "#16110C",
+      main: "#35C9CE",
+      light: "#6ADCE0",
+      dark: "#1C8A90",
+      contrastText: "#081619",
     },
     secondary: {
-      main: "#A9B39B",
-      contrastText: "#16110C",
+      main: "#FF8A78",
+      contrastText: "#081619",
     },
     background: {
-      default: "#15100B",
-      paper: "#1F1812",
+      default: "#081619",
+      paper: "#0F2226",
     },
     text: {
-      primary: "#F2EADF",
-      secondary: "#BCAEA1",
+      primary: "#EAF4F4",
+      secondary: "#9FB8BA",
     },
-    divider: "rgba(242, 234, 223, 0.10)",
-    error: { main: "#E67F73" },
-    warning: { main: "#E2A652" },
-    info: { main: "#8FB5D8" },
-    success: { main: "#89B37D" },
+    divider: "rgba(234, 244, 244, 0.10)",
+    error: { main: "#FF8577" },
+    warning: { main: "#F2C34D" },
+    info: { main: "#7FC4E8" },
+    success: { main: "#4DC998" },
   },
   typography: sharedTypography,
   shape: { borderRadius: 14 },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        "::selection": { background: "rgba(217,163,107,0.24)" },
+        "::selection": { background: "rgba(53,201,206,0.24)" },
       },
     },
     MuiAppBar: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(31, 24, 18, 0.78)",
-          color: "#F2EADF",
+          backgroundColor: "rgba(15, 34, 38, 0.78)",
+          color: "#EAF4F4",
           backdropFilter: "blur(20px)",
         },
       },
@@ -196,17 +196,17 @@ export const darkTheme: ThemeOptions = {
         },
         containedPrimary: {
           background:
-            "linear-gradient(135deg, #D9A36B 0%, #A56D3E 100%)",
-          color: "#16110C",
+            "linear-gradient(135deg, #35C9CE 0%, #1C8A90 100%)",
+          color: "#081619",
           boxShadow: "0 10px 24px rgba(0, 0, 0, 0.35)",
           "&:hover": {
             background:
-              "linear-gradient(135deg, #E8BE8F 0%, #A56D3E 100%)",
+              "linear-gradient(135deg, #6ADCE0 0%, #1C8A90 100%)",
           },
         },
         outlined: {
-          borderColor: "rgba(242, 234, 223, 0.20)",
-          "&:hover": { borderColor: "#D9A36B", backgroundColor: "rgba(217,163,107,0.08)" },
+          borderColor: "rgba(234, 244, 244, 0.20)",
+          "&:hover": { borderColor: "#35C9CE", backgroundColor: "rgba(53,201,206,0.08)" },
         },
       },
     },
@@ -215,15 +215,15 @@ export const darkTheme: ThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 18,
-          backgroundColor: "#1F1812",
+          backgroundColor: "#0F2226",
           boxShadow: "0 18px 48px rgba(0, 0, 0, 0.30)",
-          border: "1px solid rgba(242, 234, 223, 0.07)",
+          border: "1px solid rgba(234, 244, 244, 0.07)",
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
-        root: { backgroundColor: "#1F1812", backgroundImage: "none" },
+        root: { backgroundColor: "#0F2226", backgroundImage: "none" },
       },
     },
   },
