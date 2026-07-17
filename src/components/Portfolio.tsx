@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useIsPresent } from "framer-motion";
+import type { Variants } from "framer-motion";
 import { useEnhancedAnimation } from "@/utils/useScrollToSection";
 import {
   Box,
@@ -48,6 +49,287 @@ interface PortfolioProps {
   description: string;
   items: PortfolioItem[];
   whatsappUrl?: string;
+}
+
+interface CatalogGridProps {
+  items: PortfolioItem[];
+  getStaggerVariants: (index: number) => Variants;
+  onSelectItem: (item: PortfolioItem) => void;
+  shouldAnimate: boolean;
+}
+
+// Componente propio para que useIsPresent() refleje el estado real de
+// salida de ESTE grid (AnimatePresence sigue renderizandolo mientras anima
+// el exit) y podamos desactivar los clics sin animar pointerEvents, que
+// framer-motion no puede tweenear junto a opacity/y y deja el exit colgado.
+//
+// El wrapper de abajo fija su propio `animate` como objeto (no como nombre
+// de variante), lo que corta la propagacion de variantes hacia las tarjetas:
+// sin initial/animate explicitos aqui, cada tarjeta queda congelada en su
+// variante "hidden" (opacity 0) y nunca se hace visible al cambiar de
+// categoria. Por eso cada tarjeta declara su propio initial/animate.
+function CatalogGrid({ items, getStaggerVariants, onSelectItem, shouldAnimate }: CatalogGridProps) {
+  const theme = useTheme();
+  const isPresent = useIsPresent();
+
+  return (
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
+        mx: { xs: -1.25, md: -2 },
+        pointerEvents: isPresent ? "auto" : "none",
+      }}
+    >
+      {items.map((item, idx) => (
+        <Box
+          key={item.id}
+          sx={{
+            width: { xs: "100%", sm: "50%", md: "33.33%" },
+            p: { xs: 1.25, md: 2 },
+          }}
+        >
+          <motion.div
+            initial="hidden"
+            animate={shouldAnimate ? "visible" : "hidden"}
+            variants={getStaggerVariants(idx + 2)}
+          >
+            <MotionCard
+              elevation={1}
+              whileHover={{
+                y: -6,
+                scale: 1.008,
+                boxShadow:
+                  "0 24px 56px rgba(18,38,42,0.14), 0 8px 18px rgba(18,38,42,0.08)",
+                transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
+              }}
+              whileTap={{ scale: 0.985 }}
+              sx={{
+                cursor: "pointer",
+                borderRadius: "14px",
+                overflow: "hidden",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                background:
+                  theme.palette.mode === "dark"
+                    ? "linear-gradient(180deg, rgba(15,34,38,0.98) 0%, rgba(8,22,25,0.98) 100%)"
+                    : "linear-gradient(180deg, #fcfefe 0%, #e9f6f5 100%)",
+                border: `1px solid ${
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.08)"
+                    : "rgba(0,0,0,0.06)"
+                }`,
+                position: "relative",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                "&:hover": {
+                  "& .expand-icon": {
+                    opacity: 1,
+                    transform: "scale(1) rotate(0deg)",
+                  },
+                  "& .image-overlay": {
+                    opacity: 1,
+                  },
+                  "& .category-chip": {
+                    transform: "scale(1.05)",
+                    backgroundColor: "rgba(255,255,255,0.95)",
+                    "& .MuiChip-label": {
+                      color: "black",
+                    },
+                  },
+                  "& .card-image": {
+                    transform: "scale(1.025)",
+                  },
+                },
+              }}
+              onClick={() => onSelectItem(item)}
+            >
+              <Box
+                sx={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "4 / 5",
+                  borderRadius: "14px 14px 0 0",
+                  overflow: "hidden",
+                  background:
+                    theme.palette.mode === "dark"
+                      ? "radial-gradient(circle at 50% 30%, rgba(53,201,206,0.12), transparent 34%), #06090a"
+                      : "radial-gradient(circle at 50% 28%, rgba(233,180,48,0.13), transparent 36%), #ddf3f4",
+                  borderBottom: `1px solid ${theme.palette.divider}`,
+                }}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    inset: 12,
+                    borderRadius: "10px",
+                    border: "1px solid rgba(233,180,48,0.16)",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                  }}
+                />
+                <Image
+                  className="card-image"
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
+                  sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+                  style={{
+                    objectFit: "contain",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    padding: "18px",
+                    filter: "contrast(1.04) brightness(1.04) saturate(0.96)",
+                    transition:
+                      "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }}
+                />
+                <Box
+                  className="image-overlay"
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background:
+                      "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 48%, rgba(0,0,0,0.34) 100%)",
+                    opacity: 0,
+                    transition:
+                      "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "14px 14px 0 0",
+                  }}
+                >
+                  <FaExpand
+                    className="expand-icon"
+                    style={{
+                      color: "white",
+                      fontSize: "22px",
+                      opacity: 0,
+                      transform: "scale(0.7) rotate(-15deg)",
+                      transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                      filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
+                    }}
+                  />
+                </Box>
+                <Chip
+                  className="category-chip"
+                  label={item.category}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 14,
+                    right: 14,
+                    fontSize: "0.68rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    height: 28,
+                    borderRadius: "999px",
+                    border: "1px solid rgba(233,180,48,0.55)",
+                    backgroundColor: "rgba(11,27,30,0.65)",
+                    backdropFilter: "blur(8px)",
+                    color: "white",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "& .MuiChip-label": {
+                      px: 1.5,
+                      color: "white",
+                    },
+                  }}
+                />
+              </Box>
+              <CardContent
+                sx={{
+                  flexGrow: 1,
+                  p: { xs: 2.5, sm: 3 },
+                  pb: { xs: 2.5, sm: 3 },
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      mb: 1.5,
+                      fontSize: { xs: "1.05rem", sm: "1.15rem" },
+                      lineHeight: 1.25,
+                      color: "text.primary",
+                      letterSpacing: "-0.01em",
+                    }}
+                  >
+                    {item.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      mb: 2,
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                      lineHeight: 1.5,
+                      fontSize: "0.875rem",
+                      opacity: 0.85,
+                    }}
+                  >
+                    {item.description}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mt: "auto",
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: "0.7rem",
+                      fontWeight: 600,
+                      color: "text.secondary",
+                      opacity: 0.7,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    {item.dimensions}
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: "50%",
+                      backgroundColor: "primary.main",
+                      opacity: 0.3,
+                    }}
+                  />
+                </Box>
+              </CardContent>
+            </MotionCard>
+          </motion.div>
+        </Box>
+      ))}
+    </Box>
+  );
 }
 
 export default function Portfolio({ title, description, items, whatsappUrl }: PortfolioProps) {
@@ -134,258 +416,13 @@ export default function Portfolio({ title, description, items, whatsappUrl }: Po
           </motion.div>
 
           <AnimatePresence mode="wait">
-          <Box
-            component={motion.div}
-            key={selectedCategory}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              mx: { xs: -1.25, md: -2 },
-            }}
-          >
-            {visibleItems.map((item, idx) => (
-              <Box
-                key={item.id}
-                sx={{
-                  width: { xs: "100%", sm: "50%", md: "33.33%" },
-                  p: { xs: 1.25, md: 2 },
-                }}
-              >
-                <motion.div variants={getStaggerVariants(idx + 2)}>
-                  <MotionCard
-                    elevation={1}
-                    whileHover={{
-                      y: -6,
-                      scale: 1.008,
-                      boxShadow:
-                        "0 24px 56px rgba(18,38,42,0.14), 0 8px 18px rgba(18,38,42,0.08)",
-                      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] },
-                    }}
-                    whileTap={{ scale: 0.985 }}
-                    sx={{
-                      cursor: "pointer",
-                      borderRadius: "14px",
-                      overflow: "hidden",
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      background:
-                        theme.palette.mode === "dark"
-                          ? "linear-gradient(180deg, rgba(15,34,38,0.98) 0%, rgba(8,22,25,0.98) 100%)"
-                          : "linear-gradient(180deg, #fcfefe 0%, #e9f6f5 100%)",
-                      border: `1px solid ${
-                        theme.palette.mode === "dark"
-                          ? "rgba(255,255,255,0.08)"
-                          : "rgba(0,0,0,0.06)"
-                      }`,
-                      position: "relative",
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      "&:hover": {
-                        "& .expand-icon": {
-                          opacity: 1,
-                          transform: "scale(1) rotate(0deg)",
-                        },
-                        "& .image-overlay": {
-                          opacity: 1,
-                        },
-                        "& .category-chip": {
-                          transform: "scale(1.05)",
-                          backgroundColor: "rgba(255,255,255,0.95)",
-                          "& .MuiChip-label": {
-                            color: "black",
-                          },
-                        },
-                        "& .card-image": {
-                          transform: "scale(1.025)",
-                        },
-                      },
-                    }}
-                    onClick={() => setSelectedItem(item)}
-                  >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        width: "100%",
-                        aspectRatio: "4 / 5",
-                        borderRadius: "14px 14px 0 0",
-                        overflow: "hidden",
-                        background:
-                          theme.palette.mode === "dark"
-                            ? "radial-gradient(circle at 50% 30%, rgba(53,201,206,0.12), transparent 34%), #06090a"
-                            : "radial-gradient(circle at 50% 28%, rgba(233,180,48,0.13), transparent 36%), #ddf3f4",
-                        borderBottom: `1px solid ${theme.palette.divider}`,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          position: "absolute",
-                          inset: 12,
-                          borderRadius: "10px",
-                          border: "1px solid rgba(233,180,48,0.16)",
-                          pointerEvents: "none",
-                          zIndex: 1,
-                        }}
-                      />
-                      <Image
-                        className="card-image"
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        placeholder="blur"
-                        blurDataURL={BLUR_DATA_URL}
-                        sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-                        style={{
-                          objectFit: "contain",
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: "100%",
-                          padding: "18px",
-                          filter: "contrast(1.04) brightness(1.04) saturate(0.96)",
-                          transition:
-                            "transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-                        }}
-                      />
-                      <Box
-                        className="image-overlay"
-                        sx={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          background:
-                            "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.08) 48%, rgba(0,0,0,0.34) 100%)",
-                          opacity: 0,
-                          transition:
-                            "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "14px 14px 0 0",
-                        }}
-                      >
-                        <FaExpand
-                          className="expand-icon"
-                          style={{
-                            color: "white",
-                            fontSize: "22px",
-                            opacity: 0,
-                            transform: "scale(0.7) rotate(-15deg)",
-                            transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-                            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))",
-                          }}
-                        />
-                      </Box>
-                      <Chip
-                        className="category-chip"
-                        label={item.category}
-                        size="small"
-                        sx={{
-                          position: "absolute",
-                          top: 14,
-                          right: 14,
-                          fontSize: "0.68rem",
-                          fontWeight: 600,
-                          letterSpacing: "0.04em",
-                          height: 28,
-                          borderRadius: "999px",
-                          border: "1px solid rgba(233,180,48,0.55)",
-                          backgroundColor: "rgba(11,27,30,0.65)",
-                          backdropFilter: "blur(8px)",
-                          color: "white",
-                          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                          "& .MuiChip-label": {
-                            px: 1.5,
-                            color: "white",
-                          },
-                        }}
-                      />
-                    </Box>
-                    <CardContent
-                      sx={{
-                        flexGrow: 1,
-                        p: { xs: 2.5, sm: 3 },
-                        pb: { xs: 2.5, sm: 3 },
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Box>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 700,
-                            mb: 1.5,
-                            fontSize: { xs: "1.05rem", sm: "1.15rem" },
-                            lineHeight: 1.25,
-                            color: "text.primary",
-                            letterSpacing: "-0.01em",
-                          }}
-                        >
-                          {item.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            mb: 2,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            lineHeight: 1.5,
-                            fontSize: "0.875rem",
-                            opacity: 0.85,
-                          }}
-                        >
-                          {item.description}
-                        </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          mt: "auto",
-                        }}
-                      >
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontSize: "0.7rem",
-                            fontWeight: 600,
-                            color: "text.secondary",
-                            opacity: 0.7,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                          }}
-                        >
-                          {item.dimensions}
-                        </Typography>
-                        <Box
-                          sx={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: "50%",
-                            backgroundColor: "primary.main",
-                            opacity: 0.3,
-                          }}
-                        />
-                      </Box>
-                    </CardContent>
-                  </MotionCard>
-                </motion.div>
-              </Box>
-            ))}
-          </Box>
+            <CatalogGrid
+              key={selectedCategory}
+              items={visibleItems}
+              getStaggerVariants={getStaggerVariants}
+              onSelectItem={setSelectedItem}
+              shouldAnimate={shouldAnimate}
+            />
           </AnimatePresence>
 
           {visibleItems.length < filteredItems.length && (

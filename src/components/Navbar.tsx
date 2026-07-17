@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import NextLink from "next/link";
 import {
   AppBar,
   Toolbar,
@@ -17,9 +18,7 @@ import {
   useTheme as useMuiTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { useThemeContext } from "./ThemeRegistry";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LogoIcon from "./LogoIcon";
 
 const MENU_ITEMS = [
@@ -37,7 +36,6 @@ const Navbar: React.FC = () => {
   const [isOverHero, setIsOverHero] = useState(true);
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("md"));
-  const { mode, toggleTheme } = useThemeContext();
 
   useEffect(() => {
     setMounted(true);
@@ -88,7 +86,6 @@ const Navbar: React.FC = () => {
   };
 
   const shouldShowMobile = mounted ? isMobile : false;
-  const currentMode = mounted ? mode : "light";
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -113,11 +110,6 @@ const Navbar: React.FC = () => {
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton onClick={toggleTheme} sx={{ minHeight: 48, textAlign: "center" }}>
-            <ListItemText primary={currentMode === "dark" ? "Modo oscuro" : "Modo claro"} />
-          </ListItemButton>
-        </ListItem>
       </List>
     </Box>
   );
@@ -155,15 +147,22 @@ const Navbar: React.FC = () => {
         }}
       >
         <Box
+          component="a"
+          href="#inicio"
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick("#inicio");
+          }}
           sx={{
             display: "flex",
             alignItems: "center",
             gap: 1.25,
             minWidth: { md: 190 },
+            textDecoration: "none",
+            cursor: "pointer",
           }}
         >
           <Box
-            aria-hidden="true"
             sx={{
               width: { xs: 34, md: 36 },
               height: { xs: 34, md: 36 },
@@ -174,6 +173,10 @@ const Navbar: React.FC = () => {
               borderColor: isOverHero ? "rgba(255,255,255,0.35)" : "rgba(15,163,168,0.25)",
               background: isOverHero ? "rgba(255,255,255,0.08)" : "rgba(15,163,168,0.08)",
               transition: "all 0.22s ease",
+              "&:hover": {
+                borderColor: isOverHero ? "rgba(255,255,255,0.5)" : "rgba(15,163,168,0.45)",
+                background: isOverHero ? "rgba(255,255,255,0.14)" : "rgba(15,163,168,0.16)",
+              },
             }}
           >
             <LogoIcon size={21} />
@@ -195,21 +198,38 @@ const Navbar: React.FC = () => {
         </Box>
 
         {shouldShowMobile ? (
-          <IconButton
-            onClick={handleDrawerToggle}
-            aria-label="Abrir menu"
-            edge="end"
-            sx={{
-              width: 40,
-              height: 40,
-              color: isOverHero ? "white" : "text.primary",
-              border: "1px solid",
-              borderColor: isOverHero ? "rgba(255,255,255,0.16)" : muiTheme.palette.divider,
-              backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <IconButton
+              component={NextLink}
+              href="/admin"
+              aria-label="Acceder al panel de administracion"
+              sx={{
+                width: 40,
+                height: 40,
+                color: isOverHero ? "white" : "text.primary",
+                border: "1px solid",
+                borderColor: isOverHero ? "rgba(255,255,255,0.16)" : muiTheme.palette.divider,
+                backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
+              }}
+            >
+              <AdminPanelSettingsIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              onClick={handleDrawerToggle}
+              aria-label="Abrir menu"
+              edge="end"
+              sx={{
+                width: 40,
+                height: 40,
+                color: isOverHero ? "white" : "text.primary",
+                border: "1px solid",
+                borderColor: isOverHero ? "rgba(255,255,255,0.16)" : muiTheme.palette.divider,
+                backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+          </Box>
         ) : (
           <>
             <Box
@@ -263,30 +283,30 @@ const Navbar: React.FC = () => {
 
             <Box
               sx={{
+                minWidth: { md: 190 },
                 display: "flex",
                 justifyContent: "flex-end",
-                alignItems: "center",
-                minWidth: { md: 190 },
               }}
             >
               <IconButton
-                onClick={toggleTheme}
-                aria-label="Cambiar tema"
+                component={NextLink}
+                href="/admin"
+                aria-label="Acceder al panel de administracion"
                 sx={{
-                  width: 40,
-                  height: 40,
-                  color: isOverHero ? "white" : "primary.main",
+                  width: { xs: 34, md: 36 },
+                  height: { xs: 34, md: 36 },
+                  color: isOverHero ? "white" : "text.primary",
                   border: "1px solid",
-                  borderColor: isOverHero ? "rgba(255,255,255,0.14)" : "rgba(15,163,168,0.18)",
-                  backgroundColor: isOverHero ? "rgba(255,255,255,0.06)" : "rgba(15,163,168,0.06)",
-                  transition: "all 0.18s ease",
-                  filter: isOverHero ? "drop-shadow(0 1px 2px rgba(0,0,0,0.3))" : "none",
+                  borderColor: isOverHero ? "rgba(255,255,255,0.35)" : "rgba(15,163,168,0.25)",
+                  background: isOverHero ? "rgba(255,255,255,0.08)" : "rgba(15,163,168,0.08)",
+                  transition: "all 0.22s ease",
                   "&:hover": {
-                    backgroundColor: isOverHero ? "rgba(255,255,255,0.12)" : "rgba(15,163,168,0.12)",
+                    borderColor: isOverHero ? "rgba(255,255,255,0.5)" : "rgba(15,163,168,0.45)",
+                    background: isOverHero ? "rgba(255,255,255,0.14)" : "rgba(15,163,168,0.16)",
                   },
                 }}
               >
-                {currentMode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+                <AdminPanelSettingsIcon fontSize="small" />
               </IconButton>
             </Box>
           </>

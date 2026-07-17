@@ -28,10 +28,17 @@ export function getAllImages(): ImageData[] {
 }
 
 export function useRandomImages() {
-  const [currentImage, setCurrentImage] = useState<ImageData>(() =>
-    getRandomImage()
+  const [currentImage, setCurrentImage] = useState<ImageData>(
+    GALLERY_IMAGES[0]
   );
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Randomiza recién después del montaje: el valor inicial debe ser
+  // determinista para que coincida con el HTML renderizado por el servidor
+  // y evitar un hydration mismatch.
+  useEffect(() => {
+    setCurrentImage(getRandomImage());
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
